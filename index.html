@@ -34,6 +34,7 @@ button small{display:block;font-size:.8em;font-weight:normal;opacity:.8;margin-t
 #tword{font-size:2.4rem;line-height:1.2;word-break:break-word;margin-bottom:20px}
 #tfb{font-size:1.6rem;font-weight:bold;min-height:1.6rem}
 #tans{font-size:2.1rem;margin-top:12px;word-break:break-word}
+#topts{width:100%}.bar button.tl{padding:8px 12px}
 #tmine{font-size:1rem;margin-top:12px;opacity:.9;word-break:break-word}
 #thint{font-size:.95rem;margin-top:20px;opacity:.85}
 #type.ok{background:var(--okbg)}
@@ -65,8 +66,11 @@ li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
 <section id="menu" class="screen on">
   <h1>Vokabeltrainer</h1>
   <p class="sub">Deutsch ⇄ Mazedonisch<br>Германски ⇄ Македонски</p>
+  <p class="sub" id="streak" style="margin:-24px 0 24px"></p>
   <button class="main" id="start">Start<small>Старт</small></button>
   <button id="btnstats">Statistik<small>Статистика</small></button>
+  <button id="bsearch">Suche<small>Пребарување</small></button>
+  <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
   <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
   <button class="dir" id="dir"></button>
   <button id="exit">Exit<small>Излез</small></button>
@@ -83,15 +87,20 @@ li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
   <h1 style="margin-top:20px">Modus<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Режим</small></h1>
   <button class="main" id="mlearn">Lernen · ohne Tippen<small>Учење · без пишување</small></button>
   <button class="main" id="mtype">Tippen · Antwort eingeben<small>Пишување · внеси одговор</small></button>
+  <button class="main" id="mmc">Auswahl · 4 Antworten<small>Избор · 4 одговори</small></button>
+  <button class="main" id="mwrong">Fehler wiederholen<small>Повтори грешки</small></button>
+  <button id="rlen"></button>
+  <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
   <button class="dir" id="dir2"></button>
 </section>
 
 <section id="type" class="screen">
-  <div class="bar"><button class="small" id="back4">Kategorien · Категории</button><span id="tcount"></span></div>
+  <div class="bar"><button class="small" id="back4">Kategorien · Категории</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="tcount"></span></span></div>
   <div id="tcard">
     <div id="tlang"></div>
     <div id="tword"></div>
     <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Antwort · Одговор">
+    <div id="topts"></div>
     <div id="tfb"></div>
     <div id="tans"></div>
     <div id="tmine"></div>
@@ -100,12 +109,30 @@ li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
   <button class="main" id="tcheck">Prüfen<small>Провери</small></button>
 </section>
 
+<section id="search" class="screen">
+  <div class="bar"><button class="small" id="back8">Menü · Мени</button></div>
+  <h1 style="margin-top:20px">Suche · Пребарување</h1>
+  <input id="sq" autocomplete="off" placeholder="Wort · Збор">
+  <ul id="sres"></ul>
+</section>
+
+<section id="backup" class="screen">
+  <div class="bar"><button class="small" id="back9">Menü · Мени</button></div>
+  <h1 style="margin-top:20px">Sicherung & Import<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Резервна копија и увоз</small></h1>
+  <p class="sub" style="margin:0 0 12px">Import: eine Zeile pro Wort, z. B. Haus;Куќа<br>Увоз: еден ред по збор</p>
+  <textarea id="bk" rows="8" style="width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)"></textarea>
+  <button id="bkexp" style="margin-top:12px">Exportieren<small>Извези</small></button>
+  <button class="main" id="bkimp">Importieren<small>Увези</small></button>
+  <p id="bkmsg" class="sub"></p>
+</section>
+
 <section id="statsview" class="screen">
   <div class="bar"><button class="small" id="back6">Menü · Мени</button></div>
   <h1 style="margin-top:20px">Statistik<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Статистика · Tippen / Пишување</small></h1>
   <p class="sub" style="margin:0 0 12px">✓ richtig · точно &nbsp; ✗ falsch · погрешно</p>
   <div id="statbox"></div>
   <p id="statempty" class="sub"></p>
+  <div id="learned"></div>
   <button id="reset" style="margin-top:24px;border-color:var(--red);color:var(--red)">Zurücksetzen<small>Ресетирај</small></button>
 </section>
 
@@ -116,8 +143,15 @@ li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
   <button id="mno">Abbrechen<small>Откажи</small></button>
 </div></div>
 
+<section id="result" class="screen">
+  <h1>Ergebnis<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Резултат</small></h1>
+  <p id="rscore" class="sub" style="font-size:1.8rem;color:var(--ink);margin-bottom:12px"></p>
+  <ul id="rmiss"></ul>
+  <button class="main" id="rback">Menü · Мени</button>
+</section>
+
 <section id="learn" class="screen">
-  <div class="bar"><button class="small" id="back1">Kategorien · Категории</button><span id="count"></span></div>
+  <div class="bar"><button class="small" id="back1">Kategorien · Категории</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="count"></span></span></div>
   <div id="card" role="button" tabindex="0" aria-label="Tippen für die nächste Anzeige">
     <div id="lang"></div>
     <div id="word"></div>
@@ -160,21 +194,21 @@ function addList(list,cat){list.forEach(function(w){if(w[0].charAt(0)==='#'){cat
 addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXTRA2,'Zahlen & Zeit');addList(EXTRA3,'Einkaufen & Restaurant');addList(EXTRA4,'Arbeit & Bewerbung');addList(EXTRA5,'Arbeit & Bewerbung');addList(EXTRA6,'Einkaufen & Restaurant');addList(EXTRA7,'Arbeit & Bewerbung');addList(EXTRA8,'Grundwortschatz');
 var mine=load('vt_mine',null);
 if(mine===null){mine=[];(load('vt_words',[])||[]).forEach(function(w){if(!seen[w[0]])mine.push([w[0],w[1]])});save('vt_mine',mine)}
-function pool(k){var m=mine.map(function(w){return [w[0],w[1],'Eigene Wörter']});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.filter(function(w){return w[2]===k})}
+function pool(k){var m=mine.map(function(w){return [w[0],w[1],'Eigene Wörter']});if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.filter(function(w){return w[2]===k})}
 function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(de));var s=document.createElement('small');s.textContent=mk+' · '+n;b.appendChild(s);b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n)btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
 var curMode='learn',tcur=null,tstate='ask',tAt=0;
-function go(k){words=pool(k);shuffle();if(curMode==='type'){show('type');nextType()}else{show('learn');next()}}
+function go(k){words=pool(k);shuffle();if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}}
 var stats=load('vt_stats',null)||{all:[0,0],cats:{}};
 function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[cat]=[0,0];stats.cats[cat][i]++;save('vt_stats',stats)}
 function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^a-z0-9а-џ\s]/g,' ').replace(/\s+/g,' ').trim()}
 function nextType(){
-  $('type').className='screen on';
+  $('type').className='screen on';if(rlen&&rnd.n>=rlen){showResult();return}
   var inp=$('tin');
   if(!words.length){$('tlang').textContent='';$('tword').textContent='Noch keine Wörter · Сè уште нема зборови';inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
   if(pos>=order.length)shuffle();
   var w=words[order[pos++]];
   var d2m=dirIx===0||(dirIx===2&&Math.random()<.5);
-  tcur={q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter'};
+  tcur={q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
   $('tlang').textContent=d2m?'Nach Mazedonisch · На македонски':'Nach Deutsch · На германски';
   $('tword').textContent=tcur.q;
   inp.style.display='';inp.value='';inp.disabled=false;
@@ -182,20 +216,20 @@ function nextType(){
   $('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';
   $('tcount').textContent=Math.min(pos,order.length)+' / '+order.length;
   tstate='ask';
-  setTimeout(function(){try{inp.focus()}catch(e){}},60);
+  if(curMode==='mc'){inp.style.display='none';$('tcheck').style.display='none';buildOpts()}else{$('topts').innerHTML='';setTimeout(function(){try{inp.focus()}catch(e){}},60)}
 }
-function checkType(){
+function checkType(v){
   if(tstate!=='ask'||!tcur)return;
-  var inp=$('tin'),u=inp.value,a=tcur.a;
+  var inp=$('tin'),u=(typeof v==='string')?v:inp.value,a=tcur.a;
   var nu=norm(u),ok=nu!==''&&(nu===norm(a)||nu===norm(a.replace(/\s*\([^)]*\)/g,'')));
-  rec(tcur.cat,ok);
+  rec(tcur.cat,ok);track(ok);
   $('type').className='screen on '+(ok?'ok':'bad');
   $('tfb').textContent=ok?'Richtig · Точно ✓':'Falsch · Погрешно ✗';
   $('tans').textContent=tcur.a;
   $('tmine').textContent=(!ok&&u.trim())?'Deine Antwort · Твој одговор: '+u.trim():'';
   $('thint').textContent='Tippen: nächstes Wort · Допри: следен збор';
   inp.blur();inp.style.display='none';$('tcheck').style.display='none';
-  tstate='shown';tAt=Date.now();
+  $('topts').innerHTML='';tstate='shown';tAt=Date.now();
 }
 function showStats(){
   var box=$('statbox');box.innerHTML='';
@@ -203,23 +237,33 @@ function showStats(){
   var tot=stats.all[0]+stats.all[1];
   $('statempty').textContent=tot?'':'Noch keine Ergebnisse. Spiele den Tipp-Modus! · Сè уште нема резултати. Играј го режимот на пишување!';
   if(tot){row('Alle Wörter','Сите зборови',stats.all);CATS.concat([['Eigene Wörter','Мои зборови']]).forEach(function(c){var a=stats.cats[c[0]];if(a&&a[0]+a[1])row(c[0],c[1],a)})}
+  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent='Gelernt (3× richtig in Folge) · Научени: '+m3+' / '+al.length;L.appendChild(h);CATS.forEach(function(c){var p=pool(c[0]),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=c[0]+' · '+c[1]+': '+n+' / '+p.length;L.appendChild(d)}});
   show('statsview');
 }
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
 $('tin').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();checkType()}};
-$('type').addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#back4'))return;if(tstate==='shown'&&Date.now()-tAt>300)nextType()});
+$('type').addEventListener('click',function(e){if(e.target.closest&&(e.target.closest('#back4')||e.target.closest('.tl')))return;if(tstate==='shown'&&Date.now()-tAt>300)nextType()});
 $('back4').onclick=function(){buildCats();show('cats')};
 $('mlearn').onclick=function(){curMode='learn';buildCats();show('cats')};
 $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
 $('back5').onclick=function(){show('menu')};
+$('mmc').onclick=function(){curMode='mc';buildCats();show('cats')};
+$('mwrong').onclick=function(){if(!Object.keys(wrong).length){$('mmsg').textContent='Noch keine Fehler gespeichert · Сè уште нема грешки';return}curMode='type';go('!')};
+$('rlen').onclick=function(){rlen=rlen===0?10:rlen===10?20:0;save('vt_rlen',rlen);rlabel()};
+$('rback').onclick=function(){show('menu')};
 $('btnstats').onclick=showStats;
 $('back6').onclick=function(){show('menu')};
 $('reset').onclick=function(){$('modal').classList.add('on')};
 $('mno').onclick=function(){$('modal').classList.remove('on')};
-$('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);$('modal').classList.remove('on');showStats()};
+$('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
 $('modal').onclick=function(e){if(e.target===$('modal'))$('modal').classList.remove('on')};
 if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXTRA.concat(EXTRA2,EXTRA3).forEach(function(w){if(!have[w[0].toLowerCase()]){words.push(w);have[w[0].toLowerCase()]=1}});save("vt_words",words);save("vt_ver",4)}
 var order=[],pos=0,shown=false,cur=null;
+var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
+function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
+function rlabel(){$('rlen').innerHTML='Runde: '+(rlen?rlen+' Wörter':'Endlos')+'<small>Рунда: '+(rlen?rlen+' зборови':'бесконечно')+'</small>';$('mwrong').innerHTML='Fehler wiederholen ('+Object.keys(wrong).length+')<small>Повтори грешки</small>';$('mmsg').textContent=''}
+function showResult(){$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
+function buildOpts(){var box=$('topts');box.innerHTML='';var o=[tcur.a],n=0,q=tcur.q===tcur.w[0];while(o.length<4&&n++<300){var w=ALL[Math.floor(Math.random()*ALL.length)],x=q?w[1]:w[0];if(o.indexOf(x)<0)o.push(x)}o.sort(function(){return Math.random()-.5});o.forEach(function(t){var b=document.createElement('button');b.textContent=t;b.onclick=function(e){e.stopPropagation();checkType(t)};box.appendChild(b)})}
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function $(id){return document.getElementById(id)}
@@ -247,10 +291,10 @@ function renderList(){
     var li=document.createElement("li"),sp=document.createElement("span"),b=document.createElement("button");
     sp.textContent=w[0]+" – "+w[1];b.textContent="Löschen";
     b.onclick=function(){mine.splice(i,1);save('vt_mine',mine);renderList()};
-    li.appendChild(sp);li.appendChild(b);ul.appendChild(li);
+    var e=document.createElement('button');e.textContent='Ändern';e.onclick=function(){$('de').value=w[0];$('mk').value=w[1];editIx=i;$('msg').textContent='Bearbeiten · Уредување …';$('de').focus()};li.appendChild(sp);li.appendChild(e);li.appendChild(b);ul.appendChild(li);
   });
 }
-$('start').onclick=function(){show('modes')};
+$('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=$("dir2").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
 $("exit").onclick=function(){show("bye");try{window.close()}catch(e){}};
@@ -261,11 +305,36 @@ $("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefaul
 $("add").onclick=function(){
   var de=$("de").value.trim(),mk=$("mk").value.trim();
   if(!de||!mk){$("msg").textContent="Bitte beide Felder ausfüllen.";return}
-  mine.push([de,mk]);save('vt_mine',mine);
+  if(editIx>=0&&mine[editIx]){mine[editIx]=[de,mk];editIx=-1}else mine.push([de,mk]);save('vt_mine',mine);
   $("de").value="";$("mk").value="";$("msg").textContent="Gespeichert: "+de+" – "+mk;
   renderList();$("de").focus();
 };
 dirLabel();
+var fav=load('vt_fav',{}),days=load('vt_days',{n:0,last:''}),editIx=-1;
+function isMk(s){return /[а-џ]/i.test(s)}
+function deOf(x){return isMk(x.q)?x.a:x.q}
+function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function touchDay(){var t=new Date(),k=dayKey(t);if(days.last===k)return;var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}
+function refreshMenu(){$('streak').textContent=days.n?'🔥 '+days.n+' Tage · дена':''}
+function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
+function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
+function speakAll(a){try{speechSynthesis.cancel();a.forEach(function(t){var u=new SpeechSynthesisUtterance(t);u.lang=isMk(t)?'mk-MK':'de-DE';speechSynthesis.speak(u)})}catch(e){}}
+var _show=show;show=function(id){_show(id);if(id==='menu')refreshMenu();refreshTools()};
+var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
+var _tap=tap;tap=function(){touchDay();_tap()};$('card').onclick=tap;
+var _go=go;go=function(k){_go(k);refreshTools()};
+var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode('Favoriten'));s.textContent='Омилени · '+n;b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tl');if(b){var c=curItem();if(c.it){var d=deOf(c.it);if(b.dataset.t==='fav'){if(fav[d])delete fav[d];else fav[d]=1;save('vt_fav',fav)}else speakAll(c.sh?[c.it.q,c.it.a]:[c.it.q])}}setTimeout(refreshTools,30)});
+function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(q.length<2)return;var pl=ALL.concat(mine),n=0;for(var i=0;i<pl.length&&n<40;i++){var w=pl[i];if(norm(w[0]).indexOf(q)>=0||norm(w[1]).indexOf(q)>=0){var li=document.createElement('li');li.textContent=w[0]+' – '+w[1];box.appendChild(li);n++}}if(!n){var l=document.createElement('li');l.textContent='—';box.appendChild(l)}}
+$('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
+$('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
+$('bkexp').onclick=function(){$('bk').value=JSON.stringify({mine:mine,fav:fav,wrong:wrong,mast:mast,stats:stats,days:days});try{$('bk').select()}catch(e){}$('bkmsg').textContent='Alles markieren und kopieren · Означи и копирај'};
+$('bkimp').onclick=function(){var t=$('bk').value.trim(),n=0,have={};mine.forEach(function(w){have[w[0]]=1});
+ function add(d,m){d=(d||'').trim();m=(m||'').trim();if(d&&m&&!have[d]){mine.push([d,m]);have[d]=1;n++}}
+ try{if(t.charAt(0)==='{'){var o=JSON.parse(t);(o.mine||[]).forEach(function(w){add(w[0],w[1])});if(o.fav){fav=o.fav;save('vt_fav',fav)}if(o.wrong){wrong=o.wrong;save('vt_wrong',wrong)}if(o.mast){mast=o.mast;save('vt_mast',mast)}if(o.stats){stats=o.stats;save('vt_stats',stats)}if(o.days){days=o.days;save('vt_days',days)}}
+ else t.split(/\r?\n/).forEach(function(l){var m=l.match(/^(.*?)\s*(?:;|=|\t| - | – )\s*(.*)$/);if(m)add(m[1],m[2])});
+ save('vt_mine',mine);$('bkmsg').textContent='Importiert · Увезено: '+n+' neue Wörter · нови зборови'}catch(e){$('bkmsg').textContent='Fehler im Text · Грешка во текстот'}};
+refreshMenu();refreshTools();
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
