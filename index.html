@@ -6,6 +6,8 @@
 <title>Vokabeltrainer Deutsch – Mazedonisch</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#c8202b">
+<meta name="description" content="Lerne Deutsch und Mazedonisch mit Karteikarten, Übungen, Kategorien und persönlichem Lernfortschritt.">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
@@ -59,6 +61,45 @@ ul{list-style:none;padding:0;margin:12px 0}
 li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 li span{flex:1;word-break:break-word}
 li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
+
+/* Vokabeltrainer refinement */
+:root{--radius:18px;--shadow:0 8px 24px rgba(42,24,18,.08)}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+.screen{width:100%;max-width:760px;margin-inline:auto;padding:clamp(18px,4vw,32px);padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+h1{letter-spacing:-.035em;font-weight:800}
+.sub{line-height:1.55}
+button{min-height:52px;border-radius:var(--radius);border-width:1px;box-shadow:0 2px 5px rgba(42,24,18,.05);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
+button:hover{filter:brightness(1.025);box-shadow:var(--shadow)}
+button:active{transform:scale(.985)}
+button.main{box-shadow:0 5px 14px rgba(200,32,43,.16)}
+button.small{min-height:42px}
+#card,#tcard{box-shadow:var(--shadow);border-radius:24px;min-height:240px}
+#word,#tword{font-weight:750;letter-spacing:-.025em}
+#answer,#tans{font-weight:700}
+input,textarea{font-size:16px!important;border-radius:14px;max-width:100%}
+li{gap:12px}
+li button{min-height:40px}
+.modal{backdrop-filter:blur(5px)}
+.box{box-shadow:0 20px 60px rgba(0,0,0,.2)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,#card:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+@media(min-width:600px){
+  .screen{padding-top:32px}
+  #menu{justify-content:center}
+  #menu h1{margin-top:0;font-size:clamp(2.5rem,5vw,3.4rem)}
+  #menu button{max-width:100%}
+  #card,#tcard{min-height:300px}
+}
+@media(max-width:380px){
+  .screen{padding-inline:14px}
+  #word,#tword{font-size:2rem}
+  #answer,#tans{font-size:1.7rem}
+  .bar{gap:8px}
+  .bar button.small{padding:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -243,16 +284,16 @@ function showStats(){
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
 $('tin').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();checkType()}};
 $('type').addEventListener('click',function(e){if(e.target.closest&&(e.target.closest('#back4')||e.target.closest('.tl')))return;if(tstate==='shown'&&Date.now()-tAt>300)nextType()});
-$('back4').onclick=function(){buildCats();show('cats')};
+$('back4').onclick=function(){goBack('cats')};
 $('mlearn').onclick=function(){curMode='learn';buildCats();show('cats')};
 $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
-$('back5').onclick=function(){show('menu')};
+$('back5').onclick=function(){goBack('menu')};
 $('mmc').onclick=function(){curMode='mc';buildCats();show('cats')};
 $('mwrong').onclick=function(){if(!Object.keys(wrong).length){$('mmsg').textContent='Noch keine Fehler gespeichert · Сè уште нема грешки';return}curMode='type';go('!')};
 $('rlen').onclick=function(){rlen=rlen===0?10:rlen===10?20:0;save('vt_rlen',rlen);rlabel()};
-$('rback').onclick=function(){show('menu')};
+$('rback').onclick=function(){goBack('menu')};
 $('btnstats').onclick=showStats;
-$('back6').onclick=function(){show('menu')};
+$('back6').onclick=function(){goBack('menu')};
 $('reset').onclick=function(){$('modal').classList.add('on')};
 $('mno').onclick=function(){$('modal').classList.remove('on')};
 $('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
@@ -263,11 +304,52 @@ var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0
 function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){$('rlen').innerHTML='Runde: '+(rlen?rlen+' Wörter':'Endlos')+'<small>Рунда: '+(rlen?rlen+' зборови':'бесконечно')+'</small>';$('mwrong').innerHTML='Fehler wiederholen ('+Object.keys(wrong).length+')<small>Повтори грешки</small>';$('mmsg').textContent=''}
 function showResult(){$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
-function buildOpts(){var box=$('topts');box.innerHTML='';var o=[tcur.a],n=0,q=tcur.q===tcur.w[0];while(o.length<4&&n++<300){var w=ALL[Math.floor(Math.random()*ALL.length)],x=q?w[1]:w[0];if(o.indexOf(x)<0)o.push(x)}o.sort(function(){return Math.random()-.5});o.forEach(function(t){var b=document.createElement('button');b.textContent=t;b.onclick=function(e){e.stopPropagation();checkType(t)};box.appendChild(b)})}
+function buildOpts(){
+  var box=$('topts');box.innerHTML='';
+  var answer=tcur.a, source=words.length?words:ALL, isDe=isMk(tcur.q)===false;
+  var candidates=source.map(function(w){return isDe?w[1]:w[0]}).filter(function(x){return x&&x!==answer});
+  var unique=Array.from(new Set(candidates)),o=[answer];
+  for(var i=unique.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=unique[i];unique[i]=unique[j];unique[j]=tmp}
+  o=o.concat(unique.slice(0,3));o.sort(function(){return Math.random()-.5});
+  o.forEach(function(t){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(e){e.stopPropagation();checkType(t)};box.appendChild(b)});
+}
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function $(id){return document.getElementById(id)}
-function show(id){document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("on",s.id===id)})}
+var screenHistory=[];
+var historyNavigation=false;
+function currentScreen(){var active=document.querySelector('.screen.on');return active?active.id:null}
+function show(id,opts){
+  opts=opts||{};
+  var previous=currentScreen();
+  if(previous===id)return;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on',s.id===id)});
+  if(!historyNavigation&&!opts.noHistory){
+    if(previous)screenHistory.push(previous);
+    try{history.pushState({vokabelScreen:id},'',location.href)}catch(e){}
+  }
+  historyNavigation=false;
+  window.scrollTo(0,0);
+}
+function goBack(fallback){
+  if(screenHistory.length){
+    try{history.back();return}catch(e){}
+    var previous=screenHistory.pop();
+    show(previous,{noHistory:true});
+    return;
+  }
+  if(fallback)show(fallback);
+}
+window.addEventListener('popstate',function(){
+  if(screenHistory.length){
+    var previous=screenHistory.pop();
+    historyNavigation=true;
+    show(previous,{noHistory:true});
+  }else{
+    // Keep the installed app on its first screen instead of allowing an accidental exit.
+    try{history.pushState({vokabelScreen:currentScreen()},'',location.href)}catch(e){}
+  }
+});
 function shuffle(){order=words.map(function(_,i){return i});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Richtung: '+DIRS[dirIx]+'<small>Насока</small>';$('dir').innerHTML=h;$('dir2').innerHTML=h}
 function next(){
@@ -297,9 +379,9 @@ function renderList(){
 $('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=$("dir2").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
-$("exit").onclick=function(){show("bye");try{window.close()}catch(e){}};
-$("again").onclick=function(){show("menu")};
-$('back1').onclick=function(){buildCats();show('cats')};$('back2').onclick=function(){show('menu')};$('back3').onclick=function(){show('modes')};
+$("exit").onclick=function(){show("menu")};
+$("again").onclick=function(){goBack("menu")};
+$('back1').onclick=function(){goBack('cats')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
 $("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}};
 $("add").onclick=function(){
@@ -329,13 +411,47 @@ function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
 $('bkexp').onclick=function(){$('bk').value=JSON.stringify({mine:mine,fav:fav,wrong:wrong,mast:mast,stats:stats,days:days});try{$('bk').select()}catch(e){}$('bkmsg').textContent='Alles markieren und kopieren · Означи и копирај'};
-$('bkimp').onclick=function(){var t=$('bk').value.trim(),n=0,have={};mine.forEach(function(w){have[w[0]]=1});
- function add(d,m){d=(d||'').trim();m=(m||'').trim();if(d&&m&&!have[d]){mine.push([d,m]);have[d]=1;n++}}
- try{if(t.charAt(0)==='{'){var o=JSON.parse(t);(o.mine||[]).forEach(function(w){add(w[0],w[1])});if(o.fav){fav=o.fav;save('vt_fav',fav)}if(o.wrong){wrong=o.wrong;save('vt_wrong',wrong)}if(o.mast){mast=o.mast;save('vt_mast',mast)}if(o.stats){stats=o.stats;save('vt_stats',stats)}if(o.days){days=o.days;save('vt_days',days)}}
- else t.split(/\r?\n/).forEach(function(l){var m=l.match(/^(.*?)\s*(?:;|=|\t| - | – )\s*(.*)$/);if(m)add(m[1],m[2])});
- save('vt_mine',mine);$('bkmsg').textContent='Importiert · Увезено: '+n+' neue Wörter · нови зборови'}catch(e){$('bkmsg').textContent='Fehler im Text · Грешка во текстот'}};
+$('bkimp').onclick=function(){
+  var t=$('bk').value.trim(),n=0,have={};
+  function key(s){return norm(String(s||''))}
+  mine.forEach(function(w){if(Array.isArray(w)&&w.length>=2)have[key(w[0])]=1});
+  function add(d,m){
+    if(typeof d!=='string'||typeof m!=='string')return;
+    d=d.trim();m=m.trim();
+    if(d&&m&&d.length<=160&&m.length<=160&&!have[key(d)]){
+      mine.push([d,m]);have[key(d)]=1;n++;
+    }
+  }
+  try{
+    if(t.charAt(0)==='{'){
+      var o=JSON.parse(t);
+      if(!o||typeof o!=='object'||Array.isArray(o))throw new Error('Invalid backup');
+      if(o.mine!==undefined&&!Array.isArray(o.mine))throw new Error('Invalid word list');
+      (o.mine||[]).slice(0,5000).forEach(function(w){if(Array.isArray(w))add(w[0],w[1])});
+      if(o.fav&&typeof o.fav==='object'&&!Array.isArray(o.fav)){fav=o.fav;save('vt_fav',fav)}
+      if(o.wrong&&typeof o.wrong==='object'&&!Array.isArray(o.wrong)){wrong=o.wrong;save('vt_wrong',wrong)}
+      if(o.mast&&typeof o.mast==='object'&&!Array.isArray(o.mast)){mast=o.mast;save('vt_mast',mast)}
+      if(o.stats&&typeof o.stats==='object'&&Array.isArray(o.stats.all)&&o.stats.cats&&typeof o.stats.cats==='object'){stats=o.stats;save('vt_stats',stats)}
+      if(o.days&&typeof o.days==='object'){days=o.days;save('vt_days',days)}
+    }else{
+      t.split(/\r?\n/).slice(0,5000).forEach(function(l){
+        var m=l.match(/^(.*?)\s*(?:;|=|\t| - | – )\s*(.*)$/);
+        if(m)add(m[1],m[2]);
+      });
+    }
+    save('vt_mine',mine);
+    $('bkmsg').textContent='Importiert · Увезено: '+n+' neue Wörter · нови зборови';
+    refreshMenu();renderList();
+  }catch(e){
+    $('bkmsg').textContent='Ungültige Sicherung oder fehlerhafter Text · Неважечка копија или текст';
+  }
+};
 refreshMenu();refreshTools();
-if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&$('modal').classList.contains('on')){$('modal').classList.remove('on');return}
+  if(e.key==='Escape'&&screenHistory.length){goBack()}
+});
+if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})})}
 </script>
 </body>
 </html>
