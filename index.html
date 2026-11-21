@@ -143,6 +143,41 @@ input,textarea{scroll-margin-block:24px}
 .exit-card p{margin:0 0 18px;color:var(--mute)}
 .exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .exit-actions button{min-width:0;width:100%;margin:0;box-sizing:border-box}
+
+/* Responsive safety net: controls must wrap instead of colliding on narrow screens */
+html,body{overflow-x:hidden}
+.screen,.screen>*{min-width:0;max-width:100%}
+.screen{overflow-wrap:anywhere}
+button, input, textarea, select{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.25}
+button{height:auto;flex:0 1 auto}
+button small{white-space:normal;overflow-wrap:anywhere}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;max-width:100%}
+.bar>*{min-width:0;max-width:100%}
+.bar>span{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+#menu{gap:clamp(8px,2.2vh,14px)}
+#menu button{width:100%;max-width:100%;margin:0;padding:clamp(10px,3vw,16px);font-size:clamp(.94rem,4vw,1.12rem);line-height:1.25}
+#menu .home-start{min-height:clamp(58px,10vh,76px);font-size:clamp(1.05rem,4.5vw,1.3rem)}
+#menu .home-exit{min-height:44px}
+#menu .home-head>div{min-width:0;max-width:100%;flex:1 1 180px}
+#menu .home-head h1{font-size:clamp(1.8rem,8vw,3rem);overflow-wrap:anywhere}
+#menu .streak-pill{flex:0 1 auto;max-width:100%}
+.exit-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(6px,2vw,10px)}
+.exit-card{max-height:calc(100dvh - 32px);overflow:auto}
+@media(max-width:340px){
+  .screen{padding-inline:10px}
+  .exit-actions{grid-template-columns:minmax(0,1fr)}
+  .voice-actions{grid-template-columns:minmax(0,1fr)}
+  .voice-actions button:last-child{grid-column:auto;max-width:100%}
+  #cardRating{grid-template-columns:minmax(0,1fr)}
+  .bar{gap:6px}
+  .bar button.small{padding:8px;font-size:.88rem}
+}
+@media(orientation:landscape) and (max-height:500px){
+  .screen{padding-block:10px}
+  #menu .home-head{margin:0 0 6px}
+  #menu{gap:7px}
+  #menu .home-start{min-height:48px}
+}
 </style>
 </head>
 <body>
@@ -475,10 +510,13 @@ function openExitDialog(){
   }
 }
 window.addEventListener('popstate',function(){
-  // The home screen is a protected landing page: system Back must never
-  // navigate out of the installed PWA or close it without confirmation.
+  // Restore a guard immediately. On the home screen, Back opens confirmation
+  // and must not leave the app. Replenish two entries to tolerate rapid taps.
   if(currentScreen()==='menu'){
-    try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
+    try{
+      history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
+      history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
+    }catch(e){}
     openExitDialog();
     return;
   }
@@ -487,16 +525,21 @@ window.addEventListener('popstate',function(){
     historyNavigation=true;
     show(previous,{noHistory:true});
     if(previous==='menu'){
-      try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
+      try{
+        history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
+        history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
+      }catch(e){}
     }
   }else{
     try{history.pushState({vokabelScreen:currentScreen(),guard:true},'',location.href)}catch(e){}
   }
 });
-// Create a history guard on first launch as well. Without this entry,
-// Android Chrome may close the standalone PWA before popstate can run.
+// Seed multiple same-document entries on launch. This gives mobile browsers
+// a recoverable Back event even when the PWA was opened from its home icon.
 try{
   history.replaceState({vokabelScreen:currentScreen()||'menu',base:true},'',location.href);
+  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
+  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
   history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
 }catch(e){}
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
