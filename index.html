@@ -96,6 +96,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,#card:focus-visi
   .bar{gap:8px}
   .bar button.small{padding:9px}
 }
+
+/* Small usability and accessibility refinements */
+html{scroll-behavior:smooth}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.screen{overscroll-behavior-y:contain}
+input,textarea{scroll-margin-block:24px}
+@media(hover:none){button:hover{filter:none;box-shadow:0 2px 5px rgba(42,24,18,.05)}}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
@@ -346,7 +355,7 @@ window.addEventListener('popstate',function(){
     historyNavigation=true;
     show(previous,{noHistory:true});
   }else{
-    // Keep the installed app on its first screen instead of allowing an accidental exit.
+    // Keep the app on its current screen if the browser reaches its first entry.
     try{history.pushState({vokabelScreen:currentScreen()},'',location.href)}catch(e){}
   }
 });
@@ -401,7 +410,7 @@ function refreshMenu(){$('streak').textContent=days.n?'🔥 '+days.n+' Tage · �
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 function speakAll(a){try{speechSynthesis.cancel();a.forEach(function(t){var u=new SpeechSynthesisUtterance(t);u.lang=isMk(t)?'mk-MK':'de-DE';speechSynthesis.speak(u)})}catch(e){}}
-var _show=show;show=function(id){_show(id);if(id==='menu')refreshMenu();refreshTools()};
+var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
 var _tap=tap;tap=function(){touchDay();_tap()};$('card').onclick=tap;
 var _go=go;go=function(k){_go(k);refreshTools()};
