@@ -131,6 +131,14 @@ input,textarea{scroll-margin-block:24px}
 .voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem}
 @media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
 
+/* Exit confirmation dialog */
+.exit-confirm{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.48);box-sizing:border-box}
+.exit-confirm.open{display:flex}
+.exit-card{width:min(100%,360px);box-sizing:border-box;padding:22px;border-radius:20px;background:var(--card);color:var(--text);box-shadow:0 16px 48px rgba(0,0,0,.25);text-align:center}
+.exit-card h2{margin:0 0 10px;font-size:1.3rem}
+.exit-card p{margin:0 0 18px;color:var(--mute)}
+.exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exit-actions button{min-width:0;width:100%;margin:0;box-sizing:border-box}
 </style>
 </head>
 <body>
@@ -253,6 +261,16 @@ input,textarea{scroll-margin-block:24px}
   <p class="sub">Du kannst den Tab jetzt schliessen.</p>
   <button id="again">Zurück zum Menü<small>Назад кон менито</small></button>
 </section>
+<div class="exit-confirm" id="exitConfirm" role="dialog" aria-modal="true" aria-labelledby="exitQuestion" aria-hidden="true">
+  <div class="exit-card">
+    <h2 id="exitQuestion">Sind Sie sicher?</h2>
+    <p>Möchten Sie den Vokabeltrainer beenden?</p>
+    <div class="exit-actions">
+      <button id="exitNo" type="button">Nein</button>
+      <button id="exitYes" type="button" class="main">Ja</button>
+    </div>
+  </div>
+</div>
 
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
@@ -416,7 +434,19 @@ function renderList(){
 $('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
-$("exitHome").onclick=function(){show("bye")};
+$("exitHome").onclick=function(){
+  var dialog=$("exitConfirm");dialog.classList.add("open");dialog.setAttribute("aria-hidden","false");$("exitNo").focus();
+};
+function closeExitDialog(){var dialog=$("exitConfirm");dialog.classList.remove("open");dialog.setAttribute("aria-hidden","true")}
+$("exitNo").onclick=closeExitDialog;
+$("exitYes").onclick=function(){
+  closeExitDialog();show("bye");
+  // Browser security can block closing a window that was not opened by script.
+  try{window.close()}catch(e){}
+  setTimeout(function(){if(!document.hidden){var note=document.querySelector("#bye .sub");if(note)note.textContent="Bitte schliesse die App über die App-Übersicht deines Handys."}},300);
+};
+$("exitConfirm").addEventListener("click",function(e){if(e.target===$("exitConfirm"))closeExitDialog()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("exitConfirm").classList.contains("open"))closeExitDialog()});
 $("again").onclick=function(){goBack("menu")};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
