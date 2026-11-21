@@ -178,6 +178,15 @@ button small{white-space:normal;overflow-wrap:anywhere}
   #menu{gap:7px}
   #menu .home-start{min-height:48px}
 }
+
+/* V18: reliable narrow-screen layout for the speech controls.
+   A single-column flex stack avoids grid intrinsic-width overflow in Android WebView/PWA. */
+#speechMenu{display:block;width:100%;min-width:0;max-width:100%;}
+#speechMenu .voice-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;width:100%;min-width:0;max-width:100%;padding:4px 0 14px;margin:0;}
+#speechMenu .voice-actions button,
+#speechMenu .voice-actions button:last-child{display:block;flex:0 1 auto;width:100%;min-width:0;max-width:100%;margin:0;justify-self:stretch;box-sizing:border-box;padding:10px 12px;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-align:center;}
+#speechMenu .voice-actions button small{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;}
+#speechMenu .voice-note,#speechMenu .voice-help{min-width:0;max-width:100%;overflow-wrap:anywhere;}
 </style>
 </head>
 <body>
@@ -490,6 +499,7 @@ function show(id,opts){
     try{history.pushState({vokabelScreen:id},'',location.href)}catch(e){}
   }
   historyNavigation=false;
+  if(id==='menu')seedMenuBackBuffer(12);
   window.scrollTo(0,0);
 }
 function goBack(fallback){
@@ -534,14 +544,20 @@ window.addEventListener('popstate',function(){
     try{history.pushState({vokabelScreen:currentScreen(),guard:true},'',location.href)}catch(e){}
   }
 });
-// Seed multiple same-document entries on launch. This gives mobile browsers
-// a recoverable Back event even when the PWA was opened from its home icon.
+// Keep a buffer of same-document history entries while the home menu is open.
+// Android Chrome can otherwise close an installed PWA on the first system Back.
+function seedMenuBackBuffer(count){
+  if(currentScreen()!=='menu')return;
+  try{
+    for(var i=0;i<(count||12);i++)history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
+  }catch(e){}
+}
 try{
   history.replaceState({vokabelScreen:currentScreen()||'menu',base:true},'',location.href);
-  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
-  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
-  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
+  seedMenuBackBuffer(20);
 }catch(e){}
+window.addEventListener('pageshow',function(){seedMenuBackBuffer(12)});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)seedMenuBackBuffer(12)});
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
 function next(){
