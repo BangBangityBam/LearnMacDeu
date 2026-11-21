@@ -123,9 +123,11 @@ input,textarea{scroll-margin-block:24px}
 .more-menu summary::-webkit-details-marker{display:none}
 .more-menu summary:after{content:'＋';font-size:1.2rem;color:var(--mute)}
 .more-menu[open] summary:after{content:'−'}
-.more-actions{padding:0 12px 4px}
-.more-actions button{margin:8px 0;font-size:1.05rem;min-height:48px;padding:11px 14px}
-.voice-note{margin:8px 16px 14px;color:var(--mute);font-size:.88rem}
+.more-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:4px 12px 14px;min-width:0}
+.more-actions>*{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+.more-actions button{display:block;white-space:normal;overflow-wrap:anywhere}
+.more-actions button{margin:0;font-size:1.05rem;min-height:48px;padding:11px 14px}
+.voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem}
 @media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
 
 </style>
@@ -138,16 +140,16 @@ input,textarea{scroll-margin-block:24px}
     <p class="streak-pill" id="streak" aria-live="polite"></p>
   </header>
   <button class="main home-start" id="start">Lernen starten<small>Започни со учење</small></button>
-  <button class="dir" id="dir"></button>
   <details class="more-menu">
     <summary>Weitere Funktionen · Други функции</summary>
     <div class="more-actions">
+      <button class="dir" id="dir"></button>
       <button id="btnstats">Statistik<small>Статистика</small></button>
       <button id="bsearch">Suche<small>Пребарување</small></button>
       <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
       <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
     </div>
-    <p class="voice-note" id="voiceStatus" aria-live="polite">Geräte-Stimmen werden geprüft …</p>
+    <p class="voice-note" id="voiceStatus" aria-live="polite">Geräte-Stimmen: Status wird ermittelt …</p>
   </details>
 </section>
 
@@ -165,12 +167,12 @@ input,textarea{scroll-margin-block:24px}
   <button class="main" id="mmc">Auswahl · 4 Antworten<small>Избор · 4 одговори</small></button>
   <button class="main" id="mwrong">Fehler wiederholen<small>Повтори грешки</small></button>
   <button id="rlen"></button>
+  <button id="exit" class="small">Beenden · Излез</button>
   <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
-  <button class="dir" id="dir2"></button>
 </section>
 
 <section id="type" class="screen">
-  <div class="bar"><button class="small" id="back4">Kategorien · Категории</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="tcount"></span></span></div>
+  <div class="bar"><button class="small" id="back4">Menü · Мени</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="tcount"></span></span></div>
   <div id="tcard">
     <div id="tlang"></div>
     <div id="tword"></div>
@@ -226,7 +228,7 @@ input,textarea{scroll-margin-block:24px}
 </section>
 
 <section id="learn" class="screen">
-  <div class="bar"><button class="small" id="back1">Kategorien · Категории</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="count"></span></span></div>
+  <div class="bar"><button class="small" id="back1">Menü · Мени</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="count"></span></span></div>
   <div id="card" role="button" tabindex="0" aria-label="Tippen für die nächste Anzeige">
     <div id="lang"></div>
     <div id="word"></div>
@@ -318,7 +320,7 @@ function showStats(){
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
 $('tin').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();checkType()}};
 $('type').addEventListener('click',function(e){if(e.target.closest&&(e.target.closest('#back4')||e.target.closest('.tl')))return;if(tstate==='shown'&&Date.now()-tAt>300)nextType()});
-$('back4').onclick=function(){goBack('cats')};
+$('back4').onclick=function(){show('menu')};
 $('mlearn').onclick=function(){curMode='learn';buildCats();show('cats')};
 $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
 $('back5').onclick=function(){goBack('menu')};
@@ -385,7 +387,7 @@ window.addEventListener('popstate',function(){
   }
 });
 function shuffle(){order=words.map(function(_,i){return i});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
-function dirLabel(){var h='Richtung: '+DIRS[dirIx]+'<small>Насока</small>';$('dir').innerHTML=h;$('dir2').innerHTML=h}
+function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
 function next(){
   if(!words.length){$("lang").textContent="";$("word").textContent="Noch keine Wörter";$("answer").textContent="";$("hint").textContent="Füge zuerst Wörter hinzu.";return}
   if(pos>=order.length)shuffle();
@@ -412,10 +414,10 @@ function renderList(){
 }
 $('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
-$("dir").onclick=$("dir2").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
-$("exit").onclick=function(){show("menu")};
+$("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
+$("exit").onclick=function(){show("bye")};
 $("again").onclick=function(){goBack("menu")};
-$('back1').onclick=function(){goBack('cats')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
+$('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
 $("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}};
 $("add").onclick=function(){
@@ -435,10 +437,23 @@ function refreshMenu(){$('streak').textContent=days.n?'🔥 '+days.n+' Tage · �
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 var deviceVoices=[];
-function refreshDeviceVoices(){if(!('speechSynthesis' in window)){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return}deviceVoices=speechSynthesis.getVoices()||[];var de=deviceVoices.some(function(v){return /^de(-|$)/i.test(v.lang)}),mk=deviceVoices.some(function(v){return /^mk(-|$)/i.test(v.lang)});$('voiceStatus').textContent='Geräte-Stimmen: Deutsch '+(de?'✓':'nicht gefunden')+' · Mazedonisch '+(mk?'✓':'nicht gefunden')+'. Verfügbare Stimmen hängen vom Gerät ab.';}
-function voiceFor(lang){var exact=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()});if(exact.length)return exact[0];var prefix=lang.slice(0,2).toLowerCase();return deviceVoices.find(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix})||null;}
-function speakAll(a){if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){if($('voiceStatus'))$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return}speechSynthesis.cancel();a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang);if(!voice){if($('voiceStatus'))$('voiceStatus').textContent=(lang==='mk-MK'?'Keine mazedonische':'Keine deutsche')+' Geräte-Stimme gefunden. Bitte in den Geräte-Einstellungen installieren.';return}var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.voice=voice;speechSynthesis.speak(u)})}
-if('speechSynthesis' in window){refreshDeviceVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,300)});} 
+function refreshDeviceVoices(){
+  if(!$('voiceStatus'))return;
+  if(!('speechSynthesis' in window)){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;}
+  deviceVoices=speechSynthesis.getVoices()||[];
+  if(!deviceVoices.length){$('voiceStatus').textContent='Keine Stimmen gemeldet. Prüfe die Sprachstimmen-Einstellungen deines Geräts; tippe später erneut auf 🔊.';return;}
+  var de=deviceVoices.some(function(v){return /^de(-|$)/i.test(v.lang||'')});
+  var mk=deviceVoices.some(function(v){return /^mk(-|$)/i.test(v.lang||'')});
+  $('voiceStatus').textContent='Geräte-Stimmen: Deutsch '+(de?'✓':'nicht verfügbar')+' · Mazedonisch '+(mk?'✓':'nicht verfügbar')+'.';
+}
+function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
+function speakAll(a){
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;}
+  deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();var missing=[];
+  a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang);if(!voice){missing.push(lang==='mk-MK'?'Mazedonisch':'Deutsch');return;}var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.voice=voice;speechSynthesis.speak(u);});
+  if(missing.length)$('voiceStatus').textContent='Keine passende Geräte-Stimme für '+Array.from(new Set(missing)).join(' und ')+'. Bitte die Stimme im Geräte-/Browser-System installieren.';
+}
+if('speechSynthesis' in window){refreshDeviceVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,1200)});setTimeout(refreshDeviceVoices,1800);}
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
 var _tap=tap;tap=function(){touchDay();_tap()};$('card').onclick=tap;
