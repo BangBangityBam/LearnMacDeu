@@ -197,7 +197,6 @@ button small{white-space:normal;overflow-wrap:anywhere}
     <p class="streak-pill" id="streak" aria-live="polite"></p>
   </header>
   <button class="main home-start" id="start">Lernen starten<small>Започни со учење</small></button>
-  <button class="home-exit" id="exitHome">Beenden · Излез</button>
   <details class="more-menu">
     <summary>Weitere Funktionen · Други функции</summary>
     <div class="more-actions">
@@ -366,21 +365,6 @@ button small{white-space:normal;overflow-wrap:anywhere}
   <ul id="list"></ul>
 </section>
 
-<section id="bye" class="screen">
-  <h1>Bis bald!<br>До наскоро!</h1>
-  <p class="sub">Du kannst den Tab jetzt schliessen.</p>
-  <button id="again">Zurück zum Menü<small>Назад кон менито</small></button>
-</section>
-<div class="exit-confirm" id="exitConfirm" role="dialog" aria-modal="true" aria-labelledby="exitQuestion" aria-hidden="true">
-  <div class="exit-card">
-    <h2 id="exitQuestion">Sind Sie sicher?</h2>
-    <p>Möchten Sie den Vokabeltrainer beenden?</p>
-    <div class="exit-actions">
-      <button id="exitNo" type="button">Nein</button>
-      <button id="exitYes" type="button" class="main">Ja</button>
-    </div>
-  </div>
-</div>
 
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
@@ -487,14 +471,11 @@ function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}ca
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function $(id){return document.getElementById(id)}
 var screenHistory=[];
-var historyNavigation=false;
-var exitApproved=false;
 var isInstalledApp=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
 function currentScreen(){var active=document.querySelector('.screen.on');return active?active.id:null}
 function ensureBackGuard(){
-  if(!isInstalledApp||exitApproved)return;
+  if(!isInstalledApp)return;
   try{
-    // Keep exactly one app-owned history entry above the launch entry.
     if(!history.state||history.state.vokabelAppGuard!==true){
       history.pushState({vokabelAppGuard:true},'',location.href);
     }
@@ -506,7 +487,6 @@ function show(id,opts){
   if(previous===id)return;
   document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on',s.id===id)});
   if(previous&&!opts.noHistory)screenHistory.push(previous);
-  historyNavigation=false;
   window.scrollTo(0,0);
 }
 function goBack(fallback){
@@ -517,40 +497,18 @@ function goBack(fallback){
   }
   if(fallback)show(fallback,{noHistory:true});
 }
-function openExitDialog(){
-  var dialog=$('exitConfirm');
-  if(!dialog.classList.contains('open')){
-    dialog.classList.add('open');
-    dialog.setAttribute('aria-hidden','false');
-    $('exitNo').focus();
-  }
-}
-// Only installed PWAs handle Android's system Back button. Browser tabs keep
-// their normal browser history. Internal screens use screenHistory, not URL history.
+// Only the installed app handles Android's system Back button. Each press
+// returns one internal screen. At the main menu the OS handles Back normally.
 if(isInstalledApp){
   ensureBackGuard();
   window.addEventListener('popstate',function(){
-    if(exitApproved)return;
-    // Re-arm immediately so a second Back press is handled by the app too.
-    ensureBackGuard();
-    if($('exitConfirm').classList.contains('open')){
-      closeExitDialog();
-      return;
-    }
-    if(currentScreen()==='menu'){
-      openExitDialog();
-      return;
-    }
     if(screenHistory.length){
+      ensureBackGuard();
       var previous=screenHistory.pop();
       show(previous,{noHistory:true});
-    }else{
-      openExitDialog();
     }
   });
   window.addEventListener('pageshow',ensureBackGuard);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)ensureBackGuard()});
-  window.addEventListener('focus',ensureBackGuard);
 }
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
@@ -590,23 +548,6 @@ function renderList(){
 $('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
-$("exitHome").onclick=function(){
-  var dialog=$("exitConfirm");dialog.classList.add("open");dialog.setAttribute("aria-hidden","false");$("exitNo").focus();
-};
-function closeExitDialog(){var dialog=$("exitConfirm");dialog.classList.remove("open");dialog.setAttribute("aria-hidden","true")}
-$("exitNo").onclick=closeExitDialog;
-$("exitYes").onclick=function(){
-  closeExitDialog();
-  if(isInstalledApp){
-    // A PWA cannot reliably call window.close(). Returning to the launch
-    // entry is the platform-supported way to leave the standalone window.
-    exitApproved=true;
-    try{history.back()}catch(e){exitApproved=false;ensureBackGuard()}
-  }
-};
-$("exitConfirm").addEventListener("click",function(e){if(e.target===$("exitConfirm"))closeExitDialog()});
-document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("exitConfirm").classList.contains("open"))closeExitDialog()});
-$("again").onclick=function(){goBack("menu")};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
 $("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}};
