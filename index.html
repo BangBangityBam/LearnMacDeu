@@ -26,7 +26,7 @@ h1{font-size:2.1rem;line-height:1.15;margin:8vh 0 8px}
 button{font:inherit;font-size:1.25rem;border:2px solid var(--ink);background:var(--card);color:var(--ink);padding:18px;border-radius:14px;width:100%;margin-bottom:14px;cursor:pointer}
 button.main{background:var(--red);border-color:var(--red);color:#fff;font-weight:bold}
 button.small{font-size:1rem;padding:12px;width:auto;margin:0}
-button small{display:block;font-size:.8em;font-weight:normal;opacity:.8;margin-top:4px}
+button small{display:block;font-size:.8em;font-weight:normal;opacity:.8;margin-top:4px;line-height:1.25}
 :root{--okbg:#2e7d32;--badbg:#c62828}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
 .modal.on{display:flex}
@@ -132,7 +132,7 @@ input,textarea{scroll-margin-block:24px}
 .more-actions>*{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
 .more-actions button{display:block;white-space:normal;overflow-wrap:anywhere}
 .more-actions button{margin:0;font-size:1.05rem;min-height:48px;padding:11px 14px}
-.voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem;line-height:1.45}.voice-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 12px 12px}.voice-actions button{margin:0;min-width:0;width:100%;white-space:normal}.voice-help{padding:0 16px 14px;margin:0;color:var(--mute);font-size:.88rem;line-height:1.45}
+.voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem;line-height:1.45}.voice-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:4px 12px 12px}.voice-actions button{margin:0;min-width:0;width:100%;white-space:normal;font-size:.88rem;line-height:1.25;min-height:42px;padding:8px 9px;border-radius:12px;box-shadow:none}.voice-actions button:last-child{grid-column:1/-1;max-width:calc(50% - 4px);justify-self:center}.voice-actions button small{font-size:.78em;margin-top:2px}.voice-help{padding:0 16px 14px;margin:0;color:var(--mute);font-size:.88rem;line-height:1.45}
 @media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
 
 /* Exit confirmation dialog */
@@ -181,13 +181,13 @@ input,textarea{scroll-margin-block:24px}
   </details>
   <details class="more-menu" id="speechMenu">
     <summary>Aussprache & Sprachstimmen · Изговор и гласови</summary>
-    <p class="voice-note" id="voiceStatus" aria-live="polite">Sprachstimmen werden gesucht …</p>
+    <p class="voice-note" id="voiceStatus" aria-live="polite">Sprachstimmen werden gesucht …<br>Се бараат гласовите …</p>
     <div class="voice-actions">
-      <button type="button" id="voiceRefresh">Stimmen erneut prüfen</button>
-      <button type="button" id="voiceTestDe">Deutsch testen 🔊</button>
-      <button type="button" id="voiceTestMk">Mazedonisch testen 🔊</button>
+      <button type="button" id="voiceRefresh">Stimmen erneut prüfen<small>Повторно провери ги гласовите</small></button>
+      <button type="button" id="voiceTestDe">Deutsch testen 🔊<small>Тестирај германски</small></button>
+      <button type="button" id="voiceTestMk">Mazedonisch testen 🔊<small>Тестирај македонски</small></button>
     </div>
-    <p class="voice-help">Die App verwendet nur die Sprachstimmen deines Geräts bzw. Browsers. Fehlende Stimmen kann sie nicht selbst installieren. Falls eine Sprache fehlt, installiere sie in den Sprach- oder Text-in-Sprache-Einstellungen deines Geräts und prüfe danach erneut.</p>
+    <p class="voice-help">Die App verwendet nur die Sprachstimmen deines Geräts bzw. Browsers. Fehlende Stimmen kann sie nicht selbst installieren. Falls eine Sprache fehlt, installiere sie in den Sprach- oder Text-in-Sprache-Einstellungen deines Geräts und prüfe danach erneut.<br><br>Апликацијата ги користи само гласовите на уредот или прелистувачот. Не може сама да инсталира гласови. Ако недостасува јазик, инсталирај го во поставките за јазик или текст-во-говор на уредот, а потоа провери повторно.</p>
   </details>
 </section>
 
@@ -559,7 +559,7 @@ function isMk(s){return /[а-џ]/i.test(s)}
 function deOf(x){return isMk(x.q)?x.a:x.q}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function touchDay(){var t=new Date(),k=dayKey(t);if(days.last!==k){var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}if(daily.date!==k){daily.date=k;daily.done=0}daily.done++;save('vt_daily',daily);refreshMenu()}
-function refreshMenu(){var today=dayKey(new Date()),done=daily.date===today?(daily.done||0):0;$('streak').textContent=(days.n?'🔥 '+days.n+' Tage · дена':'')+'  🎯 '+done+'/'+(daily.goal||10);$('goalBtn').textContent='Tagesziel: '+(daily.goal||10)+' Wörter';$('resumeBtn').style.display=session?'':'none'}
+function refreshMenu(){var today=dayKey(new Date()),done=daily.date===today?(daily.done||0):0;$('streak').textContent=(days.n?'🔥 '+days.n+' Tage · дена':'')+'  🎯 '+done+'/'+(daily.goal||10);$('goalBtn').innerHTML='Tagesziel: '+(daily.goal||10)+' Wörter<small>Дневна цел: '+(daily.goal||10)+' зборови</small>'; $('resumeBtn').style.display=session?'':'none'}
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 var deviceVoices=[];
@@ -599,10 +599,10 @@ $('voiceTestMk').onclick=function(){testVoice('Добар ден. Како си?
 if('speechSynthesis' in window){refreshDeviceVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
 // Lernziel, Fortsetzen und Farbschema
 $('goalBtn').onclick=function(){daily.goal=(daily.goal||10)===10?20:(daily.goal||10)===20?30:10;save('vt_daily',daily);refreshMenu()};
-function updateDifficulty(){var labels={easy:'Leicht',medium:'Mittel',hard:'Schwer'};$('difficultyBtn').textContent='Schwierigkeit: '+labels[difficulty];}
+function updateDifficulty(){var labels={easy:['Leicht','Лесно'],medium:['Mittel','Средно'],hard:['Schwer','Тешко']};$('difficultyBtn').innerHTML='Schwierigkeit: '+labels[difficulty][0]+'<small>Тежина: '+labels[difficulty][1]+'</small>';}
 $('difficultyBtn').onclick=function(){difficulty=difficulty==='easy'?'medium':difficulty==='medium'?'hard':'easy';save('vt_difficulty',difficulty);updateDifficulty()};updateDifficulty();
-$('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').textContent=next==='dark'?'Hellmodus einschalten':'Dunkelmodus einschalten'};
-var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').textContent=savedTheme==='dark'?'Hellmodus einschalten':'Dunkelmodus einschalten'}
+$('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').innerHTML=next==='dark'?'Hellmodus einschalten<small>Вклучи светол режим</small>':'Dunkelmodus einschalten<small>Вклучи темен режим</small>'};
+var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').innerHTML=savedTheme==='dark'?'Hellmodus einschalten<small>Вклучи светол режим</small>':'Dunkelmodus einschalten<small>Вклучи темен режим</small>'}
 $('resumeBtn').onclick=function(){if(!session)return;curMode=session.mode||'learn';activeCategory=session.category||'*';words=pool(activeCategory);shuffle();var skip=Math.min(+session.pos||0,Math.max(0,order.length-1));pos=skip;if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}};
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
@@ -717,6 +717,51 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&screenHistory.length){goBack()}
 });
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})})}
+
+// Bilingual labels for the main navigation and common actions
+(function addMacedonianLabels(){
+  var labels={
+    bhelp:'Помош и упатство', bprivacy:'Приватност и зачувување', bexam:'Тест режим · 20 зборови', bdayword:'Прикажи го зборот на денот', bupdate:'Провери ажурирање',
+    bsearch:'Пребарување', words:'Додај зборови', bbackup:'Резервна копија и увоз',
+    bresume:'Продолжи со учење', backInfo:'Мени', backInfo2:'Назад во менито', welcomeOk:'Да започнеме',
+    backDay:'Мени', daySpeak:'🔊 Прочитај наглас · Прочитај на глас',
+    back3:'Мени', back5:'Мени', backLearn:'Мени', backType:'Мени'
+  };
+  Object.keys(labels).forEach(function(id){var el=document.getElementById(id);if(!el)return;var sm=document.createElement('small');sm.textContent=labels[id];el.appendChild(sm);});
+  var paragraphs=[
+    ['So funktioniert die App','Како работи апликацијата'],
+    ['Dein persönlicher Lernstand','Твојот личен напредок во учењето'],
+    ['Installation auf dem Handy','Инсталација на мобилен телефон'],
+    ['Offline & Updates','Без интернет и ажурирања'],
+    ['Datenschutz','Приватност'],
+    ['Wichtig','Важно']
+  ];
+  document.querySelectorAll('#info h3').forEach(function(h){var pair=paragraphs.find(function(x){return h.textContent.trim()===x[0]});if(pair){var sm=document.createElement('small');sm.style.display='block';sm.style.fontWeight='500';sm.textContent=pair[1];h.appendChild(sm);}});
+  var info=document.querySelector('#info');if(info){var ps=info.querySelectorAll('p');var translations=[
+    'Избери категорија и режим на учење. Кај картичките прво размисли, потоа откриј го одговорот и избери „Знаев“ или „Не знаев“. Можеш да додаваш сопствени зборови и да ги извезуваш преку „Резервна копија и увоз“.',
+    'Апликацијата ги зачувува напредокот, омилените и сопствените зборови локално во прелистувачот на овој уред. Пријателите што ја инсталираат на свои уреди имаат независен напредок. Нема регистрација и автоматска синхронизација.',
+    'Апликацијата не го испраќа твојот напредок на сервер. При бришење на податоците од прелистувачот или отстранување на апликацијата, локалните податоци може да се изгубат. Редовно прави резервна копија и чувај ја JSON-датотеката безбедно. Не ја споделувај јавно.',
+    'Android/Chrome: отвори го менито (три точки) и избери „Инсталирај апликација“ или „Додај на почетниот екран“. iPhone/Safari: отвори „Сподели“ и избери „На почетниот екран“. Името може да се разликува според уредот и прелистувачот.',
+    'По првото успешно вчитување, датотеките на апликацијата може да бидат достапни и без интернет. За првата инсталација и ажурирањата е потребен интернет. Отвори „Провери ажурирање“ за да провериш нова верзија. По ажурирање можеби ќе треба повторно да ја вчиташ апликацијата.',
+    'Изговорот ги користи гласовите на уредот или прелистувачот. Апликацијата не може сама да инсталира гласови. Ова е алатка за учење; преводите и резултатите може да содржат грешки.'
+  ];
+  ps.forEach(function(p,i){if(translations[i]){var m=document.createElement('p');m.textContent=translations[i];m.lang='mk';m.style.color='var(--mute)';m.style.marginTop='-8px';p.after(m);}});}
+})();
+// Keep voice status messages bilingual, including live browser updates.
+(function localizeVoiceStatus(){
+  var el=document.getElementById('voiceStatus');if(!el)return;
+  var translations=[
+    [/Sprachausgabe wird von diesem Browser nicht unterstützt\./,'Овој прелистувач не поддржува говорно читање.'],
+    [/Der Browser meldet noch keine Stimmen\. Bitte erneut prüfen oder die Sprachstimmen-Einstellungen des Geräts kontrollieren\./,'Прелистувачот сè уште не прикажува гласови. Провери повторно или провери ги поставките за глас на уредот.'],
+    [/Gefundene Stimmen: Deutsch (✓|nicht gefunden) · Mazedonisch (✓|nicht gefunden)\./,'Пронајдени гласови: германски $1 · македонски $2.'],
+    [/Dieser Browser unterstützt keine Sprachausgabe\./,'Овој прелистувач не поддржува говорно читање.'],
+    [/Die Sprachausgabe konnte nicht gestartet werden\. Prüfe die Gerätestimmen\./,'Говорното читање не може да започне. Провери ги гласовите на уредот.'],
+    [/Stimme gefunden\./,'Гласот е пронајден.'],
+    [/Keine passende Stimme gefunden; das Gerät versucht die Standardsprache\./,'Не е пронајден соодветен глас; уредот ќе ја проба стандардната јазична поставка.']
+  ];
+  var last='';function apply(){var t=el.textContent.trim();if(!t||t===last)return;last=t;var mk='';translations.some(function(pair){var m=t.match(pair[0]);if(m){mk=pair[1].replace('$1',m[1]||'').replace('$2',m[2]||'');return true;}return false;});if(mk&&!el.querySelector('[data-mk-status]')){var br=document.createElement('br'),span=document.createElement('span');span.dataset.mkStatus='1';span.textContent=mk;el.append(br,span);}}
+  new MutationObserver(function(){last='';apply();}).observe(el,{childList:true,characterData:true,subtree:true});apply();
+})();
 </script>
 </body>
 </html>
