@@ -488,6 +488,8 @@ function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function $(id){return document.getElementById(id)}
 var screenHistory=[];
 var historyNavigation=false;
+var exitApproved=false;
+try{history.scrollRestoration='manual'}catch(e){}
 function currentScreen(){var active=document.querySelector('.screen.on');return active?active.id:null}
 function show(id,opts){
   opts=opts||{};
@@ -520,13 +522,17 @@ function openExitDialog(){
   }
 }
 window.addEventListener('popstate',function(){
-  // Restore a guard immediately. On the home screen, Back opens confirmation
-  // and must not leave the app. Replenish two entries to tolerate rapid taps.
+  // Once the user confirms exit, do not rebuild the history buffer.
+  if(exitApproved)return;
+  // A Back press while the confirmation is already open must not leave the app.
+  if($('exitConfirm').classList.contains('open')){
+    try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
+    return;
+  }
   if(currentScreen()==='menu'){
-    try{
-      history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
-      history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
-    }catch(e){}
+    // Re-arm the guard before showing the dialog so the first Back press
+    // on a freshly launched standalone app is handled inside the app.
+    try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
     openExitDialog();
     return;
   }
@@ -534,12 +540,7 @@ window.addEventListener('popstate',function(){
     var previous=screenHistory.pop();
     historyNavigation=true;
     show(previous,{noHistory:true});
-    if(previous==='menu'){
-      try{
-        history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
-        history.pushState({vokabelScreen:'menu',guard:true},'',location.href);
-      }catch(e){}
-    }
+    if(previous==='menu')seedMenuBackBuffer(20);
   }else{
     try{history.pushState({vokabelScreen:currentScreen(),guard:true},'',location.href)}catch(e){}
   }
@@ -556,8 +557,9 @@ try{
   history.replaceState({vokabelScreen:currentScreen()||'menu',base:true},'',location.href);
   seedMenuBackBuffer(20);
 }catch(e){}
-window.addEventListener('pageshow',function(){seedMenuBackBuffer(12)});
-document.addEventListener('visibilitychange',function(){if(!document.hidden)seedMenuBackBuffer(12)});
+window.addEventListener('pageshow',function(){seedMenuBackBuffer(30)});
+window.addEventListener('load',function(){seedMenuBackBuffer(30)});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)seedMenuBackBuffer(30)});
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
 function next(){
@@ -602,10 +604,13 @@ $("exitHome").onclick=function(){
 function closeExitDialog(){var dialog=$("exitConfirm");dialog.classList.remove("open");dialog.setAttribute("aria-hidden","true")}
 $("exitNo").onclick=closeExitDialog;
 $("exitYes").onclick=function(){
-  closeExitDialog();show("bye");
-  // Browser security can block closing a window that was not opened by script.
+  closeExitDialog();
+  exitApproved=true;
+  // Try to close the installed app without showing an intermediate screen.
+  // If the browser blocks window.close(), leave the app on the menu rather
+  // than displaying a redundant 'Bis bald' page.
   try{window.close()}catch(e){}
-  setTimeout(function(){if(!document.hidden){var note=document.querySelector("#bye .sub");if(note)note.textContent="Bitte schliesse die App über die App-Übersicht deines Handys."}},300);
+  try{history.go(-100)}catch(e){}
 };
 $("exitConfirm").addEventListener("click",function(e){if(e.target===$("exitConfirm"))closeExitDialog()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("exitConfirm").classList.contains("open"))closeExitDialog()});
