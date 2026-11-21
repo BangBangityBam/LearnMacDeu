@@ -491,26 +491,31 @@ var historyNavigation=false;
 var exitApproved=false;
 var isInstalledApp=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
 function currentScreen(){var active=document.querySelector('.screen.on');return active?active.id:null}
+function ensureBackGuard(){
+  if(!isInstalledApp||exitApproved)return;
+  try{
+    // Keep exactly one app-owned history entry above the launch entry.
+    if(!history.state||history.state.vokabelAppGuard!==true){
+      history.pushState({vokabelAppGuard:true},'',location.href);
+    }
+  }catch(e){}
+}
 function show(id,opts){
   opts=opts||{};
   var previous=currentScreen();
   if(previous===id)return;
   document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('on',s.id===id)});
   if(previous&&!opts.noHistory)screenHistory.push(previous);
-  if(isInstalledApp&&!historyNavigation&&!opts.noHistory){
-    try{history.pushState({vokabelScreen:id},'',location.href)}catch(e){}
-  }
   historyNavigation=false;
   window.scrollTo(0,0);
 }
 function goBack(fallback){
   if(screenHistory.length){
-    if(isInstalledApp){try{history.back();return}catch(e){}}
     var previous=screenHistory.pop();
     show(previous,{noHistory:true});
     return;
   }
-  if(fallback)show(fallback);
+  if(fallback)show(fallback,{noHistory:true});
 }
 function openExitDialog(){
   var dialog=$('exitConfirm');
@@ -520,28 +525,32 @@ function openExitDialog(){
     $('exitNo').focus();
   }
 }
-// Only the installed PWA intercepts Android's system Back button.
-// The normal browser keeps its native navigation behaviour.
+// Only installed PWAs handle Android's system Back button. Browser tabs keep
+// their normal browser history. Internal screens use screenHistory, not URL history.
 if(isInstalledApp){
-  try{history.replaceState({vokabelApp:true,guard:true},'',location.href);history.pushState({vokabelApp:true,guard:true},'',location.href)}catch(e){}
+  ensureBackGuard();
   window.addEventListener('popstate',function(){
     if(exitApproved)return;
+    // Re-arm immediately so a second Back press is handled by the app too.
+    ensureBackGuard();
     if($('exitConfirm').classList.contains('open')){
-      try{history.pushState({vokabelApp:true,guard:true},'',location.href)}catch(e){}
+      closeExitDialog();
       return;
     }
     if(currentScreen()==='menu'){
-      try{history.pushState({vokabelApp:true,guard:true},'',location.href)}catch(e){}
       openExitDialog();
       return;
     }
     if(screenHistory.length){
       var previous=screenHistory.pop();
-      historyNavigation=true;
       show(previous,{noHistory:true});
+    }else{
+      openExitDialog();
     }
-    try{history.pushState({vokabelApp:true,guard:true},'',location.href)}catch(e){}
   });
+  window.addEventListener('pageshow',ensureBackGuard);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)ensureBackGuard()});
+  window.addEventListener('focus',ensureBackGuard);
 }
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
@@ -588,13 +597,12 @@ function closeExitDialog(){var dialog=$("exitConfirm");dialog.classList.remove("
 $("exitNo").onclick=closeExitDialog;
 $("exitYes").onclick=function(){
   closeExitDialog();
-  exitApproved=true;
-  // Try to close the installed app without showing an intermediate screen.
-  // If the browser blocks window.close(), leave the app on the menu rather
-  // than displaying a redundant 'Bis bald' page.
-  try{window.close()}catch(e){}
-  // Android/Chrome may block closing an installed PWA from script.
-  // Never navigate backwards through the site's history as a fallback.
+  if(isInstalledApp){
+    // A PWA cannot reliably call window.close(). Returning to the launch
+    // entry is the platform-supported way to leave the standalone window.
+    exitApproved=true;
+    try{history.back()}catch(e){exitApproved=false;ensureBackGuard()}
+  }
 };
 $("exitConfirm").addEventListener("click",function(e){if(e.target===$("exitConfirm"))closeExitDialog()});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("exitConfirm").classList.contains("open"))closeExitDialog()});
