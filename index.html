@@ -109,21 +109,46 @@ input,textarea{scroll-margin-block:24px}
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
 
+
+/* Simplified home screen */
+#menu{justify-content:flex-start;gap:14px}
+.home-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:clamp(28px,9vh,88px) 0 12px}
+#menu .home-head h1{margin:0 0 8px;font-size:clamp(2.2rem,7vw,3rem)}
+#menu .home-head .sub{margin:0;font-size:.98rem}
+.streak-pill{margin:4px 0 0;padding:7px 10px;border-radius:999px;background:var(--card);color:var(--mute);font-size:.86rem;white-space:nowrap}
+#menu .home-start{margin-top:10px;min-height:76px;font-size:1.35rem}
+#menu .dir{margin-top:0}
+.more-menu{margin-top:4px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.more-menu summary{padding:15px 17px;cursor:pointer;font-weight:650;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.more-menu summary::-webkit-details-marker{display:none}
+.more-menu summary:after{content:'＋';font-size:1.2rem;color:var(--mute)}
+.more-menu[open] summary:after{content:'−'}
+.more-actions{padding:0 12px 4px}
+.more-actions button{margin:8px 0;font-size:1.05rem;min-height:48px;padding:11px 14px}
+.voice-note{margin:8px 16px 14px;color:var(--mute);font-size:.88rem}
+@media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
+
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen on">
-  <h1>Vokabeltrainer</h1>
-  <p class="sub">Deutsch ⇄ Mazedonisch<br>Германски ⇄ Македонски</p>
-  <p class="sub" id="streak" style="margin:-24px 0 24px"></p>
-  <button class="main" id="start">Start<small>Старт</small></button>
-  <button id="btnstats">Statistik<small>Статистика</small></button>
-  <button id="bsearch">Suche<small>Пребарување</small></button>
-  <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
-  <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
+  <header class="home-head">
+    <div><h1>Vokabeltrainer</h1><p class="sub">Deutsch ⇄ Mazedonisch<br>Германски ⇄ Македонски</p></div>
+    <p class="streak-pill" id="streak" aria-live="polite"></p>
+  </header>
+  <button class="main home-start" id="start">Lernen starten<small>Започни со учење</small></button>
   <button class="dir" id="dir"></button>
-  <button id="exit">Exit<small>Излез</small></button>
+  <details class="more-menu">
+    <summary>Weitere Funktionen · Други функции</summary>
+    <div class="more-actions">
+      <button id="btnstats">Statistik<small>Статистика</small></button>
+      <button id="bsearch">Suche<small>Пребарување</small></button>
+      <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
+      <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
+    </div>
+    <p class="voice-note" id="voiceStatus" aria-live="polite">Geräte-Stimmen werden geprüft …</p>
+  </details>
 </section>
 
 <section id="cats" class="screen">
@@ -409,7 +434,11 @@ function touchDay(){var t=new Date(),k=dayKey(t);if(days.last===k)return;var y=n
 function refreshMenu(){$('streak').textContent=days.n?'🔥 '+days.n+' Tage · дена':''}
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
-function speakAll(a){try{speechSynthesis.cancel();a.forEach(function(t){var u=new SpeechSynthesisUtterance(t);u.lang=isMk(t)?'mk-MK':'de-DE';speechSynthesis.speak(u)})}catch(e){}}
+var deviceVoices=[];
+function refreshDeviceVoices(){if(!('speechSynthesis' in window)){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return}deviceVoices=speechSynthesis.getVoices()||[];var de=deviceVoices.some(function(v){return /^de(-|$)/i.test(v.lang)}),mk=deviceVoices.some(function(v){return /^mk(-|$)/i.test(v.lang)});$('voiceStatus').textContent='Geräte-Stimmen: Deutsch '+(de?'✓':'nicht gefunden')+' · Mazedonisch '+(mk?'✓':'nicht gefunden')+'. Verfügbare Stimmen hängen vom Gerät ab.';}
+function voiceFor(lang){var exact=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()});if(exact.length)return exact[0];var prefix=lang.slice(0,2).toLowerCase();return deviceVoices.find(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix})||null;}
+function speakAll(a){if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){if($('voiceStatus'))$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return}speechSynthesis.cancel();a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang);if(!voice){if($('voiceStatus'))$('voiceStatus').textContent=(lang==='mk-MK'?'Keine mazedonische':'Keine deutsche')+' Geräte-Stimme gefunden. Bitte in den Geräte-Einstellungen installieren.';return}var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.voice=voice;speechSynthesis.speak(u)})}
+if('speechSynthesis' in window){refreshDeviceVoices();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,300)});} 
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
 var _tap=tap;tap=function(){touchDay();_tap()};$('card').onclick=tap;
