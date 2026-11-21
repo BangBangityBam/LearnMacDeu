@@ -121,7 +121,6 @@ input,textarea{scroll-margin-block:24px}
 #menu .home-head .sub{margin:0;font-size:.98rem}
 .streak-pill{margin:4px 0 0 auto;padding:7px 10px;border-radius:999px;background:var(--card);color:var(--mute);font-size:.86rem;white-space:normal;overflow-wrap:anywhere;max-width:100%;text-align:right;min-width:0}
 #menu .home-start{margin-top:10px;min-height:76px;font-size:1.35rem}
-#menu .home-exit{margin-top:0;min-height:48px;font-size:1rem;border-style:solid}
 #menu .dir{margin-top:0}
 .more-menu{margin-top:4px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
 .more-menu summary{padding:15px 17px;cursor:pointer;font-weight:650;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -134,15 +133,6 @@ input,textarea{scroll-margin-block:24px}
 .more-actions button{margin:0;font-size:1.05rem;min-height:48px;padding:11px 14px}
 .voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem;line-height:1.45}.voice-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:4px 12px 12px}.voice-actions button{margin:0;min-width:0;width:100%;white-space:normal;font-size:.88rem;line-height:1.25;min-height:42px;padding:8px 9px;border-radius:12px;box-shadow:none}.voice-actions button:last-child{grid-column:1/-1;max-width:calc(50% - 4px);justify-self:center}.voice-actions button small{font-size:.78em;margin-top:2px}.voice-help{padding:0 16px 14px;margin:0;color:var(--mute);font-size:.88rem;line-height:1.45}
 @media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
-
-/* Exit confirmation dialog */
-.exit-confirm{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.48);box-sizing:border-box}
-.exit-confirm.open{display:flex}
-.exit-card{width:min(100%,360px);box-sizing:border-box;padding:22px;border-radius:20px;background:var(--card);color:var(--ink);box-shadow:0 16px 48px rgba(0,0,0,.25);text-align:center}
-.exit-card h2{margin:0 0 10px;font-size:1.3rem}
-.exit-card p{margin:0 0 18px;color:var(--mute)}
-.exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.exit-actions button{min-width:0;width:100%;margin:0;box-sizing:border-box}
 
 /* Responsive safety net: controls must wrap instead of colliding on narrow screens */
 html,body{overflow-x:hidden}
@@ -157,15 +147,11 @@ button small{white-space:normal;overflow-wrap:anywhere}
 #menu{gap:clamp(8px,2.2vh,14px)}
 #menu button{width:100%;max-width:100%;margin:0;padding:clamp(10px,3vw,16px);font-size:clamp(.94rem,4vw,1.12rem);line-height:1.25}
 #menu .home-start{min-height:clamp(58px,10vh,76px);font-size:clamp(1.05rem,4.5vw,1.3rem)}
-#menu .home-exit{min-height:44px}
 #menu .home-head>div{min-width:0;max-width:100%;flex:1 1 180px}
 #menu .home-head h1{font-size:clamp(1.8rem,8vw,3rem);overflow-wrap:anywhere}
 #menu .streak-pill{flex:0 1 auto;max-width:100%}
-.exit-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(6px,2vw,10px)}
-.exit-card{max-height:calc(100dvh - 32px);overflow:auto}
 @media(max-width:340px){
   .screen{padding-inline:10px}
-  .exit-actions{grid-template-columns:minmax(0,1fr)}
   .voice-actions{grid-template-columns:minmax(0,1fr)}
   .voice-actions button:last-child{grid-column:auto;max-width:100%}
   #cardRating{grid-template-columns:minmax(0,1fr)}
