@@ -475,22 +475,30 @@ function openExitDialog(){
   }
 }
 window.addEventListener('popstate',function(){
+  // The home screen is a protected landing page: system Back must never
+  // navigate out of the installed PWA or close it without confirmation.
+  if(currentScreen()==='menu'){
+    try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
+    openExitDialog();
+    return;
+  }
   if(screenHistory.length){
     var previous=screenHistory.pop();
     historyNavigation=true;
     show(previous,{noHistory:true});
-    // On the main menu, the next system/browser Back action must ask first.
     if(previous==='menu'){
-      try{history.pushState({vokabelScreen:'menu'},'',location.href)}catch(e){}
+      try{history.pushState({vokabelScreen:'menu',guard:true},'',location.href)}catch(e){}
     }
-  }else if(currentScreen()==='menu'){
-    // Intercept Android/iOS/browser Back while on the home screen.
-    try{history.pushState({vokabelScreen:'menu'},'',location.href)}catch(e){}
-    openExitDialog();
   }else{
-    try{history.pushState({vokabelScreen:currentScreen()},'',location.href)}catch(e){}
+    try{history.pushState({vokabelScreen:currentScreen(),guard:true},'',location.href)}catch(e){}
   }
 });
+// Create a history guard on first launch as well. Without this entry,
+// Android Chrome may close the standalone PWA before popstate can run.
+try{
+  history.replaceState({vokabelScreen:currentScreen()||'menu',base:true},'',location.href);
+  history.pushState({vokabelScreen:currentScreen()||'menu',guard:true},'',location.href);
+}catch(e){}
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
 function next(){
