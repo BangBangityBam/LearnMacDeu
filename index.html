@@ -16,10 +16,10 @@ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bott
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1d1410;--ink:#fff1d0;--card:#2a1d17;--mute:#c4ab8a;--line:#4a3528;--red:#ff5a5f}}
 :root[data-theme="dark"]{--paper:#1d1410;--ink:#fff1d0;--card:#2a1d17;--mute:#c4ab8a;--line:#4a3528;--red:#ff5a5f}
 *,*::before,*::after{box-sizing:inherit}
-html,body{height:100%;margin:0}
+html,body{min-height:100%;height:100%;width:100%;margin:0;max-width:100%;overflow-x:hidden}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;-webkit-tap-highlight-color:transparent}
-.screen{display:none;min-height:100%;padding:24px 20px;flex-direction:column}
+body{min-height:100vh;min-height:100dvh;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;-webkit-tap-highlight-color:transparent}
+.screen{display:none;min-height:100vh;min-height:100dvh;width:100%;min-width:0;padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(18px + env(safe-area-inset-bottom,0px));flex-direction:column}
 .screen.on{display:flex}
 h1{font-size:2.1rem;line-height:1.15;margin:8vh 0 8px}
 .sub{color:var(--mute);margin:0 0 36px;font-size:1.05rem}
@@ -65,7 +65,7 @@ li button{width:auto;margin:0;padding:6px 12px;font-size:1rem;border-width:1px}
 /* Vokabeltrainer refinement */
 :root{--radius:18px;--shadow:0 8px 24px rgba(42,24,18,.08)}
 body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
-.screen{width:100%;max-width:760px;margin-inline:auto;padding:clamp(18px,4vw,32px);padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.screen{width:100%;max-width:760px;min-width:0;margin-inline:auto;padding:clamp(14px,4vw,32px);padding-top:calc(clamp(14px,4vw,32px) + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
 h1{letter-spacing:-.035em;font-weight:800}
 .sub{line-height:1.55}
 button{min-height:52px;border-radius:var(--radius);border-width:1px;box-shadow:0 2px 5px rgba(42,24,18,.05);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
@@ -112,11 +112,12 @@ input,textarea{scroll-margin-block:24px}
 
 /* Simplified home screen */
 #menu{justify-content:flex-start;gap:14px}
-.home-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:clamp(28px,9vh,88px) 0 12px}
+.home-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 12px;margin:clamp(16px,5vh,48px) 0 12px;min-width:0;width:100%}
 #menu .home-head h1{margin:0 0 8px;font-size:clamp(2.2rem,7vw,3rem)}
 #menu .home-head .sub{margin:0;font-size:.98rem}
-.streak-pill{margin:4px 0 0;padding:7px 10px;border-radius:999px;background:var(--card);color:var(--mute);font-size:.86rem;white-space:nowrap}
+.streak-pill{margin:4px 0 0 auto;padding:7px 10px;border-radius:999px;background:var(--card);color:var(--mute);font-size:.86rem;white-space:normal;overflow-wrap:anywhere;max-width:100%;text-align:right;min-width:0}
 #menu .home-start{margin-top:10px;min-height:76px;font-size:1.35rem}
+#menu .home-exit{margin-top:0;min-height:48px;font-size:1rem;border-style:solid}
 #menu .dir{margin-top:0}
 .more-menu{margin-top:4px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden}
 .more-menu summary{padding:15px 17px;cursor:pointer;font-weight:650;list-style:none;display:flex;justify-content:space-between;align-items:center}
@@ -140,6 +141,7 @@ input,textarea{scroll-margin-block:24px}
     <p class="streak-pill" id="streak" aria-live="polite"></p>
   </header>
   <button class="main home-start" id="start">Lernen starten<small>Започни со учење</small></button>
+  <button class="home-exit" id="exitHome">Beenden · Излез</button>
   <details class="more-menu">
     <summary>Weitere Funktionen · Други функции</summary>
     <div class="more-actions">
@@ -167,7 +169,6 @@ input,textarea{scroll-margin-block:24px}
   <button class="main" id="mmc">Auswahl · 4 Antworten<small>Избор · 4 одговори</small></button>
   <button class="main" id="mwrong">Fehler wiederholen<small>Повтори грешки</small></button>
   <button id="rlen"></button>
-  <button id="exit" class="small">Beenden · Излез</button>
   <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
 </section>
 
@@ -415,7 +416,7 @@ function renderList(){
 $('start').onclick=function(){rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
-$("exit").onclick=function(){show("bye")};
+$("exitHome").onclick=function(){show("bye")};
 $("again").onclick=function(){goBack("menu")};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
