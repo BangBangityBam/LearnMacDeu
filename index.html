@@ -53,6 +53,10 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--sun);outline-of
 #lang{color:var(--mute);font-size:1rem;margin-bottom:12px}
 #word{font-size:2.6rem;line-height:1.2;word-break:break-word}
 #answer{font-size:2.2rem;color:var(--red);margin-top:28px;min-height:2.8rem;word-break:break-word}
+#cardRating{display:none;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:440px;margin-top:22px}
+#cardRating button{margin:0;min-width:0;padding:12px 8px;font-size:1rem;min-height:50px}
+#cardRating #cardKnown{background:var(--okbg);border-color:var(--okbg);color:#fff}
+#cardRating #cardMissed{background:var(--badbg);border-color:var(--badbg);color:#fff}
 #hint{color:var(--mute);font-size:.95rem;margin-top:24px}
 .bar{display:flex;justify-content:space-between;align-items:center}
 input{font:inherit;font-size:1.15rem;width:100%;padding:14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);margin-bottom:12px}
@@ -128,13 +132,13 @@ input,textarea{scroll-margin-block:24px}
 .more-actions>*{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
 .more-actions button{display:block;white-space:normal;overflow-wrap:anywhere}
 .more-actions button{margin:0;font-size:1.05rem;min-height:48px;padding:11px 14px}
-.voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem}
+.voice-note{margin:0 16px 14px;color:var(--mute);font-size:.88rem;line-height:1.45}.voice-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 12px 12px}.voice-actions button{margin:0;min-width:0;width:100%;white-space:normal}.voice-help{padding:0 16px 14px;margin:0;color:var(--mute);font-size:.88rem;line-height:1.45}
 @media(min-width:600px){#menu{justify-content:flex-start}#menu .home-head{margin-top:clamp(36px,10vh,100px)}}
 
 /* Exit confirmation dialog */
 .exit-confirm{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.48);box-sizing:border-box}
 .exit-confirm.open{display:flex}
-.exit-card{width:min(100%,360px);box-sizing:border-box;padding:22px;border-radius:20px;background:var(--card);color:var(--text);box-shadow:0 16px 48px rgba(0,0,0,.25);text-align:center}
+.exit-card{width:min(100%,360px);box-sizing:border-box;padding:22px;border-radius:20px;background:var(--card);color:var(--ink);box-shadow:0 16px 48px rgba(0,0,0,.25);text-align:center}
 .exit-card h2{margin:0 0 10px;font-size:1.3rem}
 .exit-card p{margin:0 0 18px;color:var(--mute)}
 .exit-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -155,12 +159,68 @@ input,textarea{scroll-margin-block:24px}
     <div class="more-actions">
       <button class="dir" id="dir"></button>
       <button id="btnstats">Statistik<small>Статистика</small></button>
+      <button id="goalBtn">Tagesziel: 10 Wörter</button>
+      <button id="difficultyBtn">Schwierigkeit: Mittel</button>
+      <button id="themeBtn">Dunkelmodus umschalten</button>
+      <button id="resumeBtn" style="display:none">Lernen fortsetzen</button>
       <button id="bsearch">Suche<small>Пребарување</small></button>
       <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
       <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
     </div>
-    <p class="voice-note" id="voiceStatus" aria-live="polite">Geräte-Stimmen: Status wird ermittelt …</p>
   </details>
+  <details class="more-menu" id="infoMenu">
+    <summary>Hilfe, Datenschutz & Prüfung · Помош и приватност</summary>
+    <div class="more-actions">
+      <button id="bhelp">Hilfe & Anleitung</button>
+      <button id="bprivacy">Datenschutz & Speicherung</button>
+      <button id="bexam">Prüfungsmodus · 20 Wörter</button>
+      <button id="bdayword">Wort des Tages anzeigen</button>
+      <button id="bupdate">App-Update prüfen</button>
+    </div>
+    <p class="voice-help" id="appStatus" aria-live="polite">App-Status wird geprüft …</p>
+  </details>
+  <details class="more-menu" id="speechMenu">
+    <summary>Aussprache & Sprachstimmen · Изговор и гласови</summary>
+    <p class="voice-note" id="voiceStatus" aria-live="polite">Sprachstimmen werden gesucht …</p>
+    <div class="voice-actions">
+      <button type="button" id="voiceRefresh">Stimmen erneut prüfen</button>
+      <button type="button" id="voiceTestDe">Deutsch testen 🔊</button>
+      <button type="button" id="voiceTestMk">Mazedonisch testen 🔊</button>
+    </div>
+    <p class="voice-help">Die App verwendet nur die Sprachstimmen deines Geräts bzw. Browsers. Fehlende Stimmen kann sie nicht selbst installieren. Falls eine Sprache fehlt, installiere sie in den Sprach- oder Text-in-Sprache-Einstellungen deines Geräts und prüfe danach erneut.</p>
+  </details>
+</section>
+
+<section id="info" class="screen">
+  <div class="bar"><button class="small" id="backInfo">Menü</button></div>
+  <h1 style="margin-top:20px">Hilfe & Datenschutz</h1>
+  <h3>So funktioniert die App</h3>
+  <p>Wähle eine Kategorie und einen Lernmodus. Bei Karteikarten zuerst überlegen, dann aufdecken und mit „Gewusst“ oder „Nicht gewusst“ bewerten. Eigene Wörter kannst du hinzufügen und jederzeit über „Sicherung & Import“ exportieren.</p>
+  <h3>Dein persönlicher Lernstand</h3>
+  <p>Die App speichert Lernstand, Favoriten und eigene Wörter lokal im Browser auf diesem Gerät. Wenn deine Freunde die App auf ihren eigenen Geräten installieren, haben sie dort einen unabhängigen Lernstand. Es gibt keine Anmeldung und keine automatische Synchronisierung zwischen Geräten.</p>
+  <h3>Datenschutz</h3>
+  <p>Die App überträgt deinen Lernstand nicht an einen Server. Beim Löschen der Browserdaten oder beim Entfernen der App können lokale Daten verloren gehen. Erstelle deshalb regelmäßig ein Backup und bewahre die JSON-Datei sicher auf. Ein Backup enthält persönliche Lerninformationen und sollte nicht öffentlich geteilt werden.</p>
+  <h3>Installation auf dem Handy</h3><p>Android/Chrome: Menü (drei Punkte) öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen. iPhone/Safari: Teilen-Symbol öffnen und „Zum Home-Bildschirm“ wählen. Die genaue Bezeichnung kann je nach Gerät und Browser variieren.</p>
+  <h3>Offline & Updates</h3>
+  <p>Nach dem ersten erfolgreichen Laden können die gespeicherten App-Dateien offline verfügbar sein. Für die erste Installation und Updates wird Internet benötigt. Öffne „App-Update prüfen“, um nach einer neuen Version zu suchen. Nach einem Update kann ein Neuladen nötig sein.</p>
+  <h3>Wichtig</h3>
+  <p>Die Aussprache verwendet die Sprachstimmen des Geräts bzw. Browsers. Fehlende Stimmen kann die App nicht selbst installieren. Die App ist ein Lernwerkzeug; Übersetzungen und Lernresultate können Fehler enthalten.</p>
+  <button class="main" id="backInfo2">Zurück zum Menü</button>
+</section>
+<section id="wordday" class="screen">
+  <div class="bar"><button class="small" id="backDay">Menü</button></div>
+  <h1 style="margin-top:20px">Wort des Tages</h1>
+  <p class="sub" id="dayDate"></p>
+  <div id="dayGerman" style="font-size:2rem;font-weight:800;margin:24px 0 8px"></div>
+  <div id="dayMacedonian" style="font-size:1.7rem;color:var(--red);margin-bottom:24px"></div>
+  <button id="daySpeak">🔊 Vorlesen</button>
+</section>
+<section id="welcome" class="screen">
+  <h1 style="margin-top:20px">Willkommen!</h1>
+  <p class="sub">Dein Deutsch–Mazedonisch-Vokabeltrainer</p>
+  <p>Dein Lernstand wird auf diesem Gerät im Browser gespeichert. Wenn du die App mit Freunden teilst, lernt jeder auf seinem eigenen Gerät unabhängig. Es ist keine Registrierung nötig.</p>
+  <p>Wichtig: Erstelle regelmäßig ein Backup unter „Weitere Funktionen → Sicherung & Import“, damit dein Lernstand bei Gerätewechsel oder gelöschten Browserdaten nicht verloren geht.</p>
+  <button class="main" id="welcomeOk">Los geht's</button>
 </section>
 
 <section id="cats" class="screen">
@@ -205,10 +265,14 @@ input,textarea{scroll-margin-block:24px}
 <section id="backup" class="screen">
   <div class="bar"><button class="small" id="back9">Menü · Мени</button></div>
   <h1 style="margin-top:20px">Sicherung & Import<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Резервна копија и увоз</small></h1>
-  <p class="sub" style="margin:0 0 12px">Import: eine Zeile pro Wort, z. B. Haus;Куќа<br>Увоз: еден ред по збор</p>
+  <p class="sub" style="margin:0 0 12px">Sichere deinen Lernstand regelmäßig als JSON-Datei. Die Datei enthält eigene Wörter, Favoriten und Lernfortschritt. Beim Wiederherstellen wird der gespeicherte App-Stand auf diesem Gerät ersetzt.
+<br><br>Textimport: eine Zeile pro Wort, z. B. Haus;Куќа</p>
   <textarea id="bk" rows="8" style="width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)"></textarea>
-  <button id="bkexp" style="margin-top:12px">Exportieren<small>Извези</small></button>
-  <button class="main" id="bkimp">Importieren<small>Увези</small></button>
+  <button id="bkexp" style="margin-top:12px">Exportieren / Kopieren<small>Извези / Копирај</small></button>
+  <button id="bkdownload">Backup-Datei herunterladen ⬇</button>
+  <label for="bkfile" style="margin:8px 0 6px">Backup-Datei wiederherstellen</label>
+  <input id="bkfile" type="file" accept=".json,application/json" style="font-size:16px;margin-bottom:10px">
+  <button class="main" id="bkimp">Text importieren<small>Увези текст</small></button>
   <p id="bkmsg" class="sub"></p>
 </section>
 
@@ -219,6 +283,7 @@ input,textarea{scroll-margin-block:24px}
   <div id="statbox"></div>
   <p id="statempty" class="sub"></p>
   <div id="learned"></div>
+  <div id="wordProgress"></div>
   <button id="reset" style="margin-top:24px;border-color:var(--red);color:var(--red)">Zurücksetzen<small>Ресетирај</small></button>
 </section>
 
@@ -242,6 +307,7 @@ input,textarea{scroll-margin-block:24px}
     <div id="lang"></div>
     <div id="word"></div>
     <div id="answer"></div>
+    <div id="cardRating" aria-label="Lernstand bewerten"><button id="cardKnown" type="button">✓ Gewusst</button><button id="cardMissed" type="button">✗ Nicht gewusst</button></div>
     <div id="hint">Tippen: Übersetzung zeigen</div>
   </div>
 </section>
@@ -284,6 +350,7 @@ var EXTRA7=('Schneidwerkzeug|алат за сечење;Fräskopf|глава з�
 var EXTRA8=('#Grundwortschatz|x;Sehr gut|Многу добро;Nicht schlecht|Не е лошо;Ich auch|И јас;Ich nicht|Јас не;Du auch|И ти;Genau|Токму така;Sicher|Сигурно;Okay|Добро;Nein danke|Не, благодарам;Ja bitte|Да, молам;Wie bitte?|Како?;Was ist das?|Што е ова?;Wer ist das?|Кој е тоа?;Wo bist du?|Каде си?;Wie heisst das?|Како се вика тоа?;Wie geht es Ihnen?|Како сте?;Mir geht es gut|Добро сум;Es geht so|Така-така;Und dir?|А ти?;Freut mich|Мило ми е;Bis später|До подоцна;Schönes Wochenende|Убав викенд;Schönen Abend|Убава вечер;Das ist mein Freund|Ова е мојот пријател;Das ist meine Frau|Ова е мојата жена;Das ist mein Sohn|Ова е мојот син;Das ist meine Tochter|Ова е мојата ќерка;Ich bin verheiratet|Оженет сум;Ich habe zwei Kinder|Имам две деца;Ich bin zu Hause|Дома сум;Ich bin unterwegs|Сум на пат;Ich bin hier|Тука сум;Ich komme gleich|Доаѓам веднаш;Moment|Момент;Warte kurz|Почекај малку;Los geht’s|Одиме;Komm mit|Дојди со мене;Gehen wir|Да одиме;Das ist gut|Тоа е добро;Das ist schlecht|Тоа е лошо;Das ist wichtig|Тоа е важно;Das ist teuer|Тоа е скапо;Das ist billig|Тоа е евтино;Das ist neu|Тоа е ново;Das ist alt|Тоа е старо;Das ist weit|Тоа е далеку;Das ist nah|Тоа е блиску;Das weiss ich|Тоа го знам;Das weiss ich nicht|Тоа не го знам;Ich habe keine Ahnung|Немам поим;Ich glaube schon|Мислам дека да;Ich glaube nicht|Мислам дека не;Mach dir keine Sorgen|Не грижи се;Alles klar|Јасно;Verstanden|Разбрав;Gute Idee|Добра идеја;#Verben|x;ich schaue fern|гледам телевизија;ich höre Musik|слушам музика;ich gehe einkaufen|одам на пазар;ich gehe schlafen|одам да спијам;ich stehe früh auf|станувам рано;ich frühstücke|појадувам;ich esse zu Mittag|ручам;ich esse zu Abend|вечерам;ich koche Kaffee|варам кафе;ich trinke Wasser|пијам вода;ich putze die Zähne|ги чистам забите;ich wasche die Hände|ги мијам рацете;ich fahre Auto|возам автомобил;ich fahre Fahrrad|возам велосипед;ich nehme den Bus|земам автобус;ich warte auf den Zug|чекам воз;ich steige um|се префрлам;ich laufe zur Arbeit|одам пеш до работа;ich rufe an|се јавувам;ich schreibe eine Nachricht|пишувам порака;ich lese ein Buch|читам книга;ich lerne Deutsch|учам германски;ich übe Aussprache|вежбам изговор;ich spreche leise|зборувам тивко;ich spreche laut|зборувам гласно;ich zähle bis zehn|броам до десет;ich öffne die Tür|ја отворам вратата;ich schliesse das Fenster|го затворам прозорецот;ich schalte das Licht ein|го палам светлото;ich schalte das Licht aus|го гасам светлото;ich räume auf|средувам;ich putze die Wohnung|ја чистам станот;ich wasche Wäsche|перам алишта;ich koche Essen|готвам храна;ich decke den Tisch|ја поставувам масата;ich zahle die Rechnung|ја плаќам сметката;ich bezahle mit Karte|плаќам со картичка;ich hebe Geld ab|подигам пари;ich spare Geld|штедам пари;ich gebe Geld aus|трошам пари;ich leihe|позајмувам;ich schulde|должам;ich miete|изнајмувам;ich vermiete|давам под кирија;ich ziehe um|се селам;ich packe|спакувам;ich komme zurück|се враќам;ich besuche Freunde|посетувам пријатели;ich treffe|се среќавам;ich lade Gäste ein|поканувам гости;ich feiere|славам;ich gratuliere|честитам;ich schenke|подарувам;ich bedanke mich|се заблагодарувам;ich lächle|се насмевнувам;ich schlafe ein|заспивам;#Natur & Tiere|x;Hirsch|елен;Reh|срна;Dachs|јазовец;Igel|еж;Eichhörnchen|верверица;Kröte|крастава жаба;Eidechse|гуштер;Schildkröte|желка;Krokodil|крокодил;Giraffe|жирафа;Zebra|зебра;Kamel|камила;Nashorn|носорог;Känguru|кенгур;Pinguin|пингвин;Eule|бувка;Rabe|гавран;Krähe|врана;Storch|штркел;Schwan|лабуд;Möwe|галеб;Papagei|папагал;Kuckuck|кукавица;Specht|клукајдрвец;Wespe|оса;Hummel|бумбар;Libelle|вилин коњиц;Käfer|буба;Grille|штурец;Heuschrecke|скакулец;Floh|болва;Laus|вошка;Zecke|крлеж;Muschel|школка;Seestern|морска ѕвезда;Qualle|медуза;Tintenfisch|октопод;Eiche|даб;Buche|бука;Kiefer|бор;Tanne|ела;Birke|бреза;Weide|врба;Pappel|топола;Moos|мов;Farn|папрат;Kaktus|кактус;Gänseblümchen|маргаритка;Sonnenblume|сончоглед;Lilie|крин;Nelke|каранфил;Klee|детелина;Erdbeben|земјотрес;Überschwemmung|поплава;Dürre|суша;Lawine|лавина;Vulkan|вулкан;Gletscher|глечер;Nordpol|Северен пол;Südpol|Јужен пол;Milchstrasse|Млечен пат;Planet|планета;Dunst|измаглица;Tau|роса;Reif|слана;Hagel|град;Glatteis|поледица;Schneesturm|мразна бура;Windstoss|налет на ветер;#Gefühle & Alltag|x;Freundschaft|пријателство;Hass|омраза;Mitleid|сочувство;Trauer|жалост;Zorn|гнев;Ärger|лутина;Langeweile|досада;Neugier|љубопитство;Zweifel|сомнеж;Sehnsucht|копнеж;Ehrlichkeit|искреност;Treue|верност;Gerechtigkeit|правда;Würde|достоинство;Ehre|чест;Bildung|образование;Wissen|знаење;Wahl|избор;Zufall|случајност;Schicksal|судбина;Verstand|ум;Gedanke|мисла;Absicht|намера;Wirkung|ефект;Beispiel|пример;Unterschied|разлика;Ähnlichkeit|сличност;Vorteil|предност;Nachteil|недостаток;Möglichkeit|можност;Gelegenheit|прилика;Tradition|традиција;Kultur|култура;Religion|религија;Glaube|вера;Brauch|обичај;Sprichwort|поговорка;Witz|шега;Märchen|бајка;#Haus & Kleidung|x;Dachboden|таван;Flur|ходник;Esszimmer|трпезарија;Kinderzimmer|детска соба;Arbeitszimmer|работна соба;Gästezimmer|соба за гости;Garage|гаража;Terrasse|тераса;Schornstein|оџак;Kamin|камин;Ofen|печка;Gefrierschrank|замрзнувач;Bügelbrett|даска за пеглање;Nähmaschine|машина за шиење;Kleiderschrank|гардероба;Kommode|комода;Nachttisch|ноќно ормарче;Fussmatte|подлога за нозе;Kopfkissen|перница;Wecker|будилник;Regenmantel|дождовник;Handschuh|ракавица;Turnschuhe|патики;Badeanzug|костум за капење;Badehose|гаќи за капење;Sonnenbrille|очила за сонце;Ohrring|обетка;Armband|нараквица;Ring|прстен;#Körper & Arzt|x;Gaumen|непце;Kinn|брадичка;Augenbraue|веѓа;Wimper|трепавица;Schläfe|слепоочница;Handfläche|дланка;Ferse|петица;Zehe|прст на нога;Sohle|табан;Bauchnabel|папок;Rippe|ребро;Schädel|череп;Speichel|плунка;Schweiss|пот;#Zahlen & Zeit|x;einundzwanzig|дваесет и еден;zweihundert|двесте;dreihundert|триста;vierhundert|четиристотини;fünfhundert|петстотини;sechshundert|шестотини;siebenhundert|седумстотини;achthundert|осумстотини;neunhundert|деветстотини;zweitausend|две илјади;zehntausend|десет илјади;hunderttausend|сто илјади;Milliarde|милијарда;Drittel|третина;doppelt|двојно;dreifach|тројно;einmal|еднаш;zweimal|двапати;dreimal|трипати;selten|ретко;jedes Mal|секој пат;am Montag|во понеделник;am Wochenende|за викенд;im Sommer|во лето;im Winter|во зима;im Frühling|напролет;im Herbst|наесен;am Morgen|наутро;am Abend|навечер;in der Nacht|ноќе;um drei Uhr|во три часот;Viertel vor|без петнаесет;Viertel nach|и петнаесет;halb drei|два и пол;gestern Abend|синоќа;morgen früh|утре наутро;vor einer Woche|пред една седмица;in einer Woche|за една седмица;seit gestern|од вчера;#Orte & Sport|x;Fussballspiel|фудбалски натпревар;Tischtennis|стоно тенис;Badminton|бадминтон;Golf|голф;Rugby|рагби;Eishockey|хокеј на мраз;Turnen|гимнастика;Leichtathletik|атлетика;Gewichtheben|кревање тегови;Radrennen|велосипедска трка;Pokal|пехар;Medaille|медал;Rekord|рекорд;Stadtmauer|градски ѕид;Fussgängerzone|пешачка зона;Unterführung|подвоз;#Adjektive & Kleinwörter|x;blind|слеп;taub|глув;stumm|нем;nackt|гол;barfuss|бос;gestreift|на пруги;kariert|карирано;eckig|аголест;quadratisch|квадратен;flach|рамен;steil|стрмен;glänzend|сјаен;matt|мат;durchsichtig|проѕирен;dicht|густ;locker|лабав;fest|цврст;eng|тесен;nützlich|корисен;nutzlos|бескорисен;leicht|лесен;typisch|типичен;echt|вистински;#Arbeit & Bewerbung|x;Nebenjob|споредна работа;Ferienjob|летна работа;Selbstständigkeit|самостојна дејност;Gründer|основач;Geschäftsidee|бизнис идеја;Kundenstamm|клиентска база;Preisliste|ценовник;Mahngebühr|такса за опомена;Betriebsferien|колективен годишен одмор;Arbeitsgenehmigung|дозвола за работа;Einstellungsgespräch|разговор за вработување;Berufsausbildung|стручно образование;Studium|студии;Stipendium|стипендија').split(';').map(function(s){return s.split('|')});
 var DIRS=["DE → MK","MK → DE","Gemischt"];
 var words=[], dirIx=+load('vt_dir',0)||0;
+var difficulty=load('vt_difficulty','medium');
 var CATS=[['Grundwortschatz','Основни зборови'],['Zahlen & Zeit','Броеви и време'],['Einkaufen & Restaurant','Купување и ресторан'],['Unterwegs & Reisen','Патување и насоки'],['Ämter & Internet','Институции и интернет'],['Körper & Arzt','Тело и лекар'],['Familie & Berufe','Семејство и занимања'],['Küche & Essen','Кујна и храна'],['Haus & Kleidung','Дом и облека'],['Verben','Глаголи'],['Adjektive & Kleinwörter','Придавки и мали зборови'],['Orte & Sport','Места и спорт'],['Natur & Tiere','Природа и животни'],['Gefühle & Alltag','Чувства и секојдневие'],['Masse & Technik','Мерки и техника'],['Arbeit & Bewerbung','Работа и интервју']];
 var ALL=[],seen={};
 function addList(list,cat){list.forEach(function(w){if(w[0].charAt(0)==='#'){cat=w[0].slice(1);return}if(!w[1]||seen[w[0]])return;seen[w[0]]=1;ALL.push([w[0],w[1],cat])})}
@@ -291,10 +358,13 @@ addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXT
 var mine=load('vt_mine',null);
 if(mine===null){mine=[];(load('vt_words',[])||[]).forEach(function(w){if(!seen[w[0]])mine.push([w[0],w[1]])});save('vt_mine',mine)}
 function pool(k){var m=mine.map(function(w){return [w[0],w[1],'Eigene Wörter']});if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.filter(function(w){return w[2]===k})}
-function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(de));var s=document.createElement('small');s.textContent=mk+' · '+n;b.appendChild(s);b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n)btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
+function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(de));var s=document.createElement('small');var p=pool(k),known=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;s.textContent=mk+' · '+n+' Wörter · '+known+' gelernt';b.appendChild(s);b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n)btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
 var curMode='learn',tcur=null,tstate='ask',tAt=0;
-function go(k){words=pool(k);shuffle();if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}}
+function go(k){activeCategory=k;words=pool(k);shuffle();session={category:k,mode:curMode,pos:0};save('vt_session',session);if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}}
+var activeCategory='*';
 var stats=load('vt_stats',null)||{all:[0,0],cats:{}};
+var daily=load('vt_daily',{date:'',done:0,goal:10});
+var session=load('vt_session',null);
 function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[cat]=[0,0];stats.cats[cat][i]++;save('vt_stats',stats)}
 function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^a-z0-9а-џ\s]/g,' ').replace(/\s+/g,' ').trim()}
 function nextType(){
@@ -302,7 +372,7 @@ function nextType(){
   var inp=$('tin');
   if(!words.length){$('tlang').textContent='';$('tword').textContent='Noch keine Wörter · Сè уште нема зборови';inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
   if(pos>=order.length)shuffle();
-  var w=words[order[pos++]];
+  var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode=curMode;save('vt_session',session)}
   var d2m=dirIx===0||(dirIx===2&&Math.random()<.5);
   tcur={q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
   $('tlang').textContent=d2m?'Nach Mazedonisch · На македонски':'Nach Deutsch · На германски';
@@ -334,6 +404,7 @@ function showStats(){
   $('statempty').textContent=tot?'':'Noch keine Ergebnisse. Spiele den Tipp-Modus! · Сè уште нема резултати. Играј го режимот на пишување!';
   if(tot){row('Alle Wörter','Сите зборови',stats.all);CATS.concat([['Eigene Wörter','Мои зборови']]).forEach(function(c){var a=stats.cats[c[0]];if(a&&a[0]+a[1])row(c[0],c[1],a)})}
   var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent='Gelernt (3× richtig in Folge) · Научени: '+m3+' / '+al.length;L.appendChild(h);CATS.forEach(function(c){var p=pool(c[0]),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=c[0]+' · '+c[1]+': '+n+' / '+p.length;L.appendChild(d)}});
+  var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent='Wortfortschritt · Напредок на зборовите';wp.appendChild(title);var mastered=al.filter(function(w){return (mast[w[0]]||0)>=3});var difficult=al.filter(function(w){return wrong[w[0]]});var p=document.createElement('p');p.className='sub';p.textContent='Gut gelernt: '+mastered.length+' · Noch schwierig: '+difficult.length;wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · Wiederholen';wp.appendChild(d)});
   show('statsview');
 }
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
@@ -354,7 +425,7 @@ $('mno').onclick=function(){$('modal').classList.remove('on')};
 $('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
 $('modal').onclick=function(e){if(e.target===$('modal'))$('modal').classList.remove('on')};
 if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXTRA.concat(EXTRA2,EXTRA3).forEach(function(w){if(!have[w[0].toLowerCase()]){words.push(w);have[w[0].toLowerCase()]=1}});save("vt_words",words);save("vt_ver",4)}
-var order=[],pos=0,shown=false,cur=null;
+var order=[],pos=0,shown=false,cur=null,cardRated=false;
 var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
 function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){$('rlen').innerHTML='Runde: '+(rlen?rlen+' Wörter':'Endlos')+'<small>Рунда: '+(rlen?rlen+' зборови':'бесконечно')+'</small>';$('mwrong').innerHTML='Fehler wiederholen ('+Object.keys(wrong).length+')<small>Повтори грешки</small>';$('mmsg').textContent=''}
@@ -395,33 +466,57 @@ function goBack(fallback){
   }
   if(fallback)show(fallback);
 }
+function openExitDialog(){
+  var dialog=$('exitConfirm');
+  if(!dialog.classList.contains('open')){
+    dialog.classList.add('open');
+    dialog.setAttribute('aria-hidden','false');
+    $('exitNo').focus();
+  }
+}
 window.addEventListener('popstate',function(){
   if(screenHistory.length){
     var previous=screenHistory.pop();
     historyNavigation=true;
     show(previous,{noHistory:true});
+    // On the main menu, the next system/browser Back action must ask first.
+    if(previous==='menu'){
+      try{history.pushState({vokabelScreen:'menu'},'',location.href)}catch(e){}
+    }
+  }else if(currentScreen()==='menu'){
+    // Intercept Android/iOS/browser Back while on the home screen.
+    try{history.pushState({vokabelScreen:'menu'},'',location.href)}catch(e){}
+    openExitDialog();
   }else{
-    // Keep the app on its current screen if the browser reaches its first entry.
     try{history.pushState({vokabelScreen:currentScreen()},'',location.href)}catch(e){}
   }
 });
-function shuffle(){order=words.map(function(_,i){return i});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
+function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
 function next(){
   if(!words.length){$("lang").textContent="";$("word").textContent="Noch keine Wörter";$("answer").textContent="";$("hint").textContent="Füge zuerst Wörter hinzu.";return}
   if(pos>=order.length)shuffle();
-  var w=words[order[pos++]];
+  var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode='learn';save('vt_session',session)}
   var de2mk=dirIx===0||(dirIx===2&&Math.random()<.5);
-  cur={q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:de2mk?"Deutsch":"Mazedonisch"};
+  cur={q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:de2mk?"Deutsch":"Mazedonisch",cat:w[2]||"Eigene Wörter",w:w};
   $("lang").textContent=cur.l;$("word").textContent=cur.q;$("answer").textContent="";
-  $("hint").textContent="Tippen: Übersetzung zeigen";shown=false;
+  $("hint").textContent="Tippen: Übersetzung zeigen";shown=false;cardRated=false;$("cardRating").style.display="none";
   $("count").textContent=Math.min(pos,order.length)+" / "+order.length;
 }
 function tap(){
   if(!words.length)return;
-  if(!shown){$("answer").textContent=cur.a;$("hint").textContent="Tippen: nächstes Wort";shown=true}
-  else next();
+  if(!shown){$("answer").textContent=cur.a;$("hint").textContent="Wie gut kanntest du das Wort?";shown=true;$("cardRating").style.display="grid"}
+  else if(cardRated)next();
 }
+function rateCard(ok){
+  if(!cur||!shown||cardRated)return;
+  var key=cur.w[0];
+  if(ok){mast[key]=(mast[key]||0)+1;delete wrong[key]}else{mast[key]=0;wrong[key]=1}
+  save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);cardRated=true;
+  $('cardRating').style.display='none';$('hint').textContent='Bewertet · Tippen für das nächste Wort';
+}
+$('cardKnown').onclick=function(e){e.stopPropagation();rateCard(true)};
+$('cardMissed').onclick=function(e){e.stopPropagation();rateCard(false)};
 function renderList(){
   var ul=$("list");ul.innerHTML="";
   mine.forEach(function(w,i){
@@ -463,38 +558,89 @@ var fav=load('vt_fav',{}),days=load('vt_days',{n:0,last:''}),editIx=-1;
 function isMk(s){return /[а-џ]/i.test(s)}
 function deOf(x){return isMk(x.q)?x.a:x.q}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function touchDay(){var t=new Date(),k=dayKey(t);if(days.last===k)return;var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}
-function refreshMenu(){$('streak').textContent=days.n?'🔥 '+days.n+' Tage · дена':''}
+function touchDay(){var t=new Date(),k=dayKey(t);if(days.last!==k){var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}if(daily.date!==k){daily.date=k;daily.done=0}daily.done++;save('vt_daily',daily);refreshMenu()}
+function refreshMenu(){var today=dayKey(new Date()),done=daily.date===today?(daily.done||0):0;$('streak').textContent=(days.n?'🔥 '+days.n+' Tage · дена':'')+'  🎯 '+done+'/'+(daily.goal||10);$('goalBtn').textContent='Tagesziel: '+(daily.goal||10)+' Wörter';$('resumeBtn').style.display=session?'':'none'}
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 var deviceVoices=[];
+var voiceCheckTimer=null;
 function refreshDeviceVoices(){
   if(!$('voiceStatus'))return;
-  if(!('speechSynthesis' in window)){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;}
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
+    $('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;
+  }
   deviceVoices=speechSynthesis.getVoices()||[];
-  if(!deviceVoices.length){$('voiceStatus').textContent='Keine Stimmen gemeldet. Prüfe die Sprachstimmen-Einstellungen deines Geräts; tippe später erneut auf 🔊.';return;}
-  var de=deviceVoices.some(function(v){return /^de(-|$)/i.test(v.lang||'')});
-  var mk=deviceVoices.some(function(v){return /^mk(-|$)/i.test(v.lang||'')});
-  $('voiceStatus').textContent='Geräte-Stimmen: Deutsch '+(de?'✓':'nicht verfügbar')+' · Mazedonisch '+(mk?'✓':'nicht verfügbar')+'.';
+  var de=deviceVoices.filter(function(v){return /^de(-|$)/i.test(v.lang||'')});
+  var mk=deviceVoices.filter(function(v){return /^mk(-|$)/i.test(v.lang||'')});
+  if(!deviceVoices.length){$('voiceStatus').textContent='Der Browser meldet noch keine Stimmen. Bitte erneut prüfen oder die Sprachstimmen-Einstellungen des Geräts kontrollieren.';return;}
+  $('voiceStatus').textContent='Gefundene Stimmen: Deutsch '+(de.length?'✓':'nicht gefunden')+' · Mazedonisch '+(mk.length?'✓':'nicht gefunden')+'.';
 }
 function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
+function testVoice(text,lang){
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
+    $('voiceStatus').textContent='Dieser Browser unterstützt keine Sprachausgabe.';return;
+  }
+  refreshDeviceVoices();
+  var u=new SpeechSynthesisUtterance(text),v=voiceFor(lang);
+  u.lang=lang;
+  if(v)u.voice=v;
+  u.onerror=function(){$('voiceStatus').textContent='Die Sprachausgabe konnte nicht gestartet werden. Prüfe die Gerätestimmen.'};
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+  $('voiceStatus').textContent=(v?'Stimme gefunden.':'Keine passende Stimme gefunden; das Gerät versucht die Standardsprache.')+' Wenn du nichts hörst, prüfe Lautstärke und Sprachstimmen-Einstellungen.';
+}
 function speakAll(a){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;}
-  deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();var missing=[];
-  a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang);if(!voice){missing.push(lang==='mk-MK'?'Mazedonisch':'Deutsch');return;}var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.voice=voice;speechSynthesis.speak(u);});
-  if(missing.length)$('voiceStatus').textContent='Keine passende Geräte-Stimme für '+Array.from(new Set(missing)).join(' und ')+'. Bitte die Stimme im Geräte-/Browser-System installieren.';
+  deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();
+  a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang),u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;speechSynthesis.speak(u);});
 }
-if('speechSynthesis' in window){refreshDeviceVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,1200)});setTimeout(refreshDeviceVoices,1800);}
+$('voiceRefresh').onclick=function(){refreshDeviceVoices();if('speechSynthesis' in window&&speechSynthesis.getVoices().length===0){setTimeout(refreshDeviceVoices,700);setTimeout(refreshDeviceVoices,1800)}};
+$('voiceTestDe').onclick=function(){testVoice('Guten Tag. Wie geht es dir?','de-DE')};
+$('voiceTestMk').onclick=function(){testVoice('Добар ден. Како си?','mk-MK')};
+if('speechSynthesis' in window){refreshDeviceVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
+// Lernziel, Fortsetzen und Farbschema
+$('goalBtn').onclick=function(){daily.goal=(daily.goal||10)===10?20:(daily.goal||10)===20?30:10;save('vt_daily',daily);refreshMenu()};
+function updateDifficulty(){var labels={easy:'Leicht',medium:'Mittel',hard:'Schwer'};$('difficultyBtn').textContent='Schwierigkeit: '+labels[difficulty];}
+$('difficultyBtn').onclick=function(){difficulty=difficulty==='easy'?'medium':difficulty==='medium'?'hard':'easy';save('vt_difficulty',difficulty);updateDifficulty()};updateDifficulty();
+$('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').textContent=next==='dark'?'Hellmodus einschalten':'Dunkelmodus einschalten'};
+var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').textContent=savedTheme==='dark'?'Hellmodus einschalten':'Dunkelmodus einschalten'}
+$('resumeBtn').onclick=function(){if(!session)return;curMode=session.mode||'learn';activeCategory=session.category||'*';words=pool(activeCategory);shuffle();var skip=Math.min(+session.pos||0,Math.max(0,order.length-1));pos=skip;if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}};
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
-var _tap=tap;tap=function(){touchDay();_tap()};$('card').onclick=tap;
+var _tap=tap;tap=function(){_tap()};$('card').onclick=tap;
 var _go=go;go=function(k){_go(k);refreshTools()};
 var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode('Favoriten'));s.textContent='Омилени · '+n;b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tl');if(b){var c=curItem();if(c.it){var d=deOf(c.it);if(b.dataset.t==='fav'){if(fav[d])delete fav[d];else fav[d]=1;save('vt_fav',fav)}else speakAll(c.sh?[c.it.q,c.it.a]:[c.it.q])}}setTimeout(refreshTools,30)});
 function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(q.length<2)return;var pl=ALL.concat(mine),n=0;for(var i=0;i<pl.length&&n<40;i++){var w=pl[i];if(norm(w[0]).indexOf(q)>=0||norm(w[1]).indexOf(q)>=0){var li=document.createElement('li');li.textContent=w[0]+' – '+w[1];box.appendChild(li);n++}}if(!n){var l=document.createElement('li');l.textContent='—';box.appendChild(l)}}
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
-$('bkexp').onclick=function(){$('bk').value=JSON.stringify({mine:mine,fav:fav,wrong:wrong,mast:mast,stats:stats,days:days});try{$('bk').select()}catch(e){}$('bkmsg').textContent='Alles markieren und kopieren · Означи и копирај'};
+function makeBackup(){
+  var data={};
+  for(var i=0;i<localStorage.length;i++){
+    var k=localStorage.key(i);
+    if(k&&k.indexOf('vt_')===0){try{data[k]=JSON.parse(localStorage.getItem(k))}catch(e){data[k]=localStorage.getItem(k)}}
+  }
+  return {format:'vokabeltrainer-backup',version:1,createdAt:new Date().toISOString(),data:data};
+}
+$('bkexp').onclick=function(){
+  $('bk').value=JSON.stringify(makeBackup(),null,2);
+  try{$('bk').focus();$('bk').select()}catch(e){}
+  $('bkmsg').textContent='Backup erstellt. Du kannst den Text kopieren oder die Datei herunterladen.';
+};
+$('bkdownload').onclick=function(){
+  try{
+    var blob=new Blob([JSON.stringify(makeBackup(),null,2)],{type:'application/json'});
+    var url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='vokabeltrainer-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+    $('bkmsg').textContent='Backup-Datei wurde zum Herunterladen bereitgestellt.';
+  }catch(e){$('bkmsg').textContent='Download nicht möglich. Bitte Exportieren / Kopieren verwenden.';}
+};
+$('bkfile').onchange=function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  if(f.size>5*1024*1024){$('bkmsg').textContent='Datei zu groß (maximal 5 MB).';this.value='';return;}
+  var reader=new FileReader();reader.onload=function(){ $('bk').value=String(reader.result||''); $('bkimp').click(); };
+  reader.onerror=function(){$('bkmsg').textContent='Datei konnte nicht gelesen werden.';};reader.readAsText(f);
+};
 $('bkimp').onclick=function(){
   var t=$('bk').value.trim(),n=0,have={};
   function key(s){return norm(String(s||''))}
@@ -510,6 +656,14 @@ $('bkimp').onclick=function(){
     if(t.charAt(0)==='{'){
       var o=JSON.parse(t);
       if(!o||typeof o!=='object'||Array.isArray(o))throw new Error('Invalid backup');
+      if(o.format==='vokabeltrainer-backup'&&o.data&&typeof o.data==='object'&&!Array.isArray(o.data)){
+        if(!window.confirm('Gesicherten Lernstand wiederherstellen? Der aktuelle App-Stand auf diesem Gerät wird ersetzt.'))return;
+        var removeKeys=[];for(var ri=0;ri<localStorage.length;ri++){var rk=localStorage.key(ri);if(rk&&rk.indexOf('vt_')===0)removeKeys.push(rk);}
+        removeKeys.forEach(function(k){localStorage.removeItem(k);});
+        Object.keys(o.data).forEach(function(k){if(k.indexOf('vt_')===0){localStorage.setItem(k,JSON.stringify(o.data[k]));}});
+        $('bkmsg').textContent='Backup wiederhergestellt. Die App wird neu geladen …';
+        setTimeout(function(){location.reload()},350);return;
+      }
       if(o.mine!==undefined&&!Array.isArray(o.mine))throw new Error('Invalid word list');
       (o.mine||[]).slice(0,5000).forEach(function(w){if(Array.isArray(w))add(w[0],w[1])});
       if(o.fav&&typeof o.fav==='object'&&!Array.isArray(o.fav)){fav=o.fav;save('vt_fav',fav)}
@@ -530,6 +684,33 @@ $('bkimp').onclick=function(){
     $('bkmsg').textContent='Ungültige Sicherung oder fehlerhafter Text · Неважечка копија или текст';
   }
 };
+// Zusätzliche Funktionen für die Weitergabe an Freunde
+var onboardingKey='vt_welcome_seen';
+if(!load(onboardingKey,false)){show('welcome',{noHistory:true});}
+$('welcomeOk').onclick=function(){save(onboardingKey,true);show('menu',{noHistory:true});};
+$('bhelp').onclick=function(){show('info')};
+$('bprivacy').onclick=function(){show('info')};
+$('backInfo').onclick=$('backInfo2').onclick=function(){show('menu')};
+$('bdayword').onclick=function(){
+  var d=new Date(),stamp=d.getFullYear()*1000+Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/86400000);
+  var w=ALL.length?ALL[stamp%ALL.length]:['—','—'];
+  $('dayDate').textContent=d.toLocaleDateString();$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
+};
+$('backDay').onclick=function(){show('menu')};
+$('daySpeak').onclick=function(){var w=$('dayGerman').textContent+' . '+$('dayMacedonian').textContent;speakAll([w])};
+$('bexam').onclick=function(){curMode='type';rlen=20;save('vt_rlen',rlen);rlabel();buildCats();show('cats');$('mmsg').textContent='Prüfungsmodus: 20 Wörter, Antworten eintippen.'};
+function updateAppStatus(){
+  var parts=[];parts.push(navigator.onLine?'Online':'Offline');
+  if(navigator.storage&&navigator.storage.persisted){navigator.storage.persisted().then(function(ok){parts.push(ok?'Lokaler Speicher geschützt':'Speicher-Schutz nicht bestätigt');$('appStatus').textContent='Status: '+parts.join(' · ');});}
+  else{$('appStatus').textContent='Status: '+parts.join(' · ')+' · Speicher-Schutz wird vom Browser nicht angeboten';}
+}
+$('bupdate').onclick=function(){
+  var status=$('appStatus');status.textContent='Suche nach App-Updates …';
+  if(!('serviceWorker' in navigator)){status.textContent='Dieser Browser unterstützt keine App-Updateprüfung.';return;}
+  navigator.serviceWorker.getRegistration().then(function(reg){if(!reg){status.textContent='Kein Offline-App-Dienst gefunden. Bitte App mit Internetverbindung neu öffnen.';return;}return reg.update().then(function(){status.textContent=reg.waiting?'Update gefunden. Bitte App schließen und erneut öffnen.':'Updateprüfung abgeschlossen. Falls eine neue Version veröffentlicht wurde, lade die App nach kurzer Zeit neu.';}).catch(function(){status.textContent='Updateprüfung nicht möglich. Prüfe deine Internetverbindung.';});});
+};
+if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){});}
+window.addEventListener('online',updateAppStatus);window.addEventListener('offline',updateAppStatus);updateAppStatus();
 refreshMenu();refreshTools();
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&$('modal').classList.contains('on')){$('modal').classList.remove('on');return}
