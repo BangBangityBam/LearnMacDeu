@@ -1,9 +1,26 @@
+const hasEllipsis=text=>/…|\.{3}/u.test(text);
+const isQuestion=text=>/[?？]/u.test(text);
+function choiceFilter(card){
+  const question=isQuestion(card.a)||isQuestion(card.q);
+  const ellipsis=hasEllipsis(card.a)||hasEllipsis(card.q);
+  return text=>question===isQuestion(text)&&ellipsis===hasEllipsis(text);
+}
+
+// The built-in courses have only two questions with an ellipsis.
+// These answer-language examples fill the remaining slots where needed.
+const extraGapQuestions={
+  mk:['Кога почнува …?','Колку чини …?','Кој го нарача …?','Колку долго трае …?','Каде можам да купам …?'],
+  de:['Wann beginnt …?','Was kostet …?','Wer hat … bestellt?','Wie lange dauert …?','Wo kann ich … kaufen?'],
+  en:['When does … start?','How much is …?','Who ordered …?','How long does … take?','Where can I buy …?'],
+  it:['Quando inizia …?','Quanto costa …?','Chi ha ordinato …?','Quanto dura …?','Dove posso comprare …?'],
+  fr:['Quand commence … ?','Combien coûte … ?','Qui a commandé … ?','Combien de temps dure … ?','Où puis-je acheter … ?']
+};
 // Match alternatives in the answer language. Never offer another translation
 // of the same prompt, including an explicitly accepted synonym, as a mistake.
 function matchingOptions(card){
   const source=card.forward?0:1, dest=1-source, all=pool('*');
-  const question=s=>/[?？]/.test(s);
-  const asQuestion=question(card.a)||question(card.q);
+  const matches=choiceFilter(card);
+  const gapCard=hasEllipsis(card.q)||hasEllipsis(card.a);
   const shape=s=>{
     const tokens=s.match(/[\p{L}\p{M}\p{N}]+(?:['’\-][\p{L}\p{M}\p{N}]+)*/gu)||[];
     return [tokens.length,(s.match(/\p{L}/gu)||[]).length];
@@ -12,14 +29,19 @@ function matchingOptions(card){
   all.forEach(w=>{if(norm(w[source])===prompt)excluded.add(norm(w[dest]))});
   const [length,letters]=shape(card.a);
   const candidates=new Map();
-  for(const w of all){
-    const answer=w[dest],key=norm(answer);
-    if(!key||excluded.has(key)||question(answer)!==asQuestion)continue;
+  function consider(answer,category){
+    if(!matches(answer))return;
+    const key=norm(answer);
+    if(!key||excluded.has(key))return;
     const [wc,lc]=shape(answer);
-    const score=Math.abs(wc-length)*4+Math.abs(lc-letters)/Math.max(2,letters/4)+(w[2]===card.cat&&wc===length&&Math.abs(lc-letters)<=Math.max(3,letters/3)?-5:0)+Math.random();
-    if(!candidates.has(key)||score<candidates.get(key).score)candidates.set(key,{answer,score});
+    const score=Math.abs(wc-length)*4+Math.abs(lc-letters)/Math.max(2,letters/4)+(category===card.cat&&wc===length&&Math.abs(lc-letters)<=Math.max(3,letters/3)?-5:0)+Math.random();
+    if(!candidates.has(key)||score<candidates.get(key).score)candidates.set(key,{answer,score,wordGap:Math.abs(wc-length),letterGap:Math.abs(lc-letters)});
   }
-  const result=Array.from(candidates.values()).sort((a,b)=>a.score-b.score).slice(0,3).map(x=>x.answer);
+  for(const w of all)consider(w[dest],w[2]);
+  if(candidates.size<3 && matches('…?')){
+    for(const answer of extraGapQuestions[codes[dest]])consider(answer,null);
+  }
+  const result=Array.from(candidates.values()).sort((a,b)=>gapCard?(a.wordGap-b.wordGap||a.letterGap-b.letterGap||a.score-b.score):a.score-b.score).slice(0,3).map(x=>x.answer);
   result.splice(Math.floor(Math.random()*(result.length+1)),0,card.a);
   return result;
 }
@@ -35,7 +57,7 @@ function rememberCard(){
   session.pos=pos;session.forward=item.forward;
   session.revealed=curMode==='learn'&&shown;
   session.round=rnd;
-  session.choices=curMode==='mc'?Array.from($('topts').children,b=>b.textContent):[];
+  session.choices=curMode==='mc'?Array.from($('topts').children,b=>b.dataset.answer??b.textContent):[];
   save('vt_session',session);
 }
 
