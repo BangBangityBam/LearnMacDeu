@@ -1,4 +1,9 @@
-const appVersion=45;
+// Keep monotonically increasing build numbers for older installations and the worker.
+const appVersion=46;
+function releaseName(build){
+  const sequence=build-45;
+  return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
+}
 const alphabetSort=new Intl.Collator(menuLocale,{sensitivity:'base',numeric:true}).compare;
 const sections={
   basics:'Grundwortschatz|Zahlen & Zeit|Verben|Adjektive & Kleinwörter|Handlungen|Eigenschaften|Gespräche|Sprachen|Uhren|Maßeinheiten',
@@ -59,13 +64,16 @@ function scheduleAnswer(key,ok){
 }
 function isDue(w,day){return !!schedule[w[0]]&&schedule[w[0]][1]<=day}
 function setupAlphabet(){
-  const box=$('alphabetKeys'),letters='абвгдѓежзѕијклљмнњопрстќуфхцчџш';
-  for(const letter of letters){
+  const box=$('alphabetKeys');
+  ['љњертѕуиопшѓ','асдфгхјклчќ','зџцвбнмж'].forEach((row,index)=>{
+  Array.from(row).forEach((letter,col)=>{
     const b=document.createElement('button');b.type='button';b.textContent=letter;
+    b.style.gridRow=String(index+1);b.style.gridColumn=(13-row.length+2*col)+' / span 2';
     b.onmousedown=e=>e.preventDefault();
     b.onclick=()=>{const input=$('tin');input.setRangeText(letter,input.selectionStart,input.selectionEnd,'end');input.focus();saveTypedProgress()};
     box.appendChild(b);
-  }
+  });
+  });
   $('alphabetToggle').onclick=()=>{
     box.hidden=!box.hidden;$('alphabetToggle').setAttribute('aria-expanded',String(!box.hidden));
   };
@@ -84,8 +92,7 @@ function readyWorkerVersion(worker){
     worker.postMessage({type:'release-version'},[channel.port2]);
   });
 }
-async function checkRelease(){
-  const button=$('bupdate'),msg=$('releaseStatus'),reload=$('reloadRelease');
+async function checkRelease(button=$('bupdate'),msg=$('releaseStatus'),reload=$('reloadRelease')){
   button.disabled=true;reload.hidden=true;msg.textContent=ui('checking');
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
   try{
@@ -94,8 +101,8 @@ async function checkRelease(){
     if(!response.ok)throw Error();
     const {version}=await response.json();
     if(!Number.isSafeInteger(version)||version<appVersion)throw Error();
-    if(version===appVersion){msg.textContent=ui('currentRelease',version);return}
-    msg.textContent=ui('newRelease',version);
+    if(version===appVersion){msg.textContent=ui('currentRelease',releaseName(version));return}
+    msg.textContent=ui('newRelease',releaseName(version));
     const reg=await navigator.serviceWorker?.getRegistration();
     if(reg){
       await reg.update();
@@ -128,10 +135,54 @@ Object.assign(uiMessages,{
   listen:['Listen','Слушни','Anhören','Ascolta','Écouter'],
   noVoice:['No voice available','Нема достапен глас','Keine Stimme verfügbar','Nessuna voce disponibile','Aucune voix disponible'],
   recheck:['Check voices again','Провери ги гласовите повторно','Stimmen erneut prüfen','Ricontrolla le voci','Vérifier à nouveau les voix'],
-  currentRelease:['You are up to date (v{0}).','Ја имаш последната верзија (v{0}).','Du bist auf dem neuesten Stand (v{0}).','Hai la versione più recente (v{0}).','Votre application est à jour (v{0}).'],
-  newRelease:['A new version is available (v{0}).','Достапна е нова верзија (v{0}).','Eine neue Version ist verfügbar (v{0}).','È disponibile una nuova versione (v{0}).','Une nouvelle version est disponible (v{0}).'],
+  currentRelease:['You are up to date ({0}).','Ја имаш последната верзија ({0}).','Du bist auf dem neuesten Stand ({0}).','Hai la versione più recente ({0}).','Votre application est à jour ({0}).'],
+  newRelease:['A new version is available ({0}).','Достапна е нова верзија ({0}).','Eine neue Version ist verfügbar ({0}).','È disponibile una nuova versione ({0}).','Une nouvelle version est disponible ({0}).'],
   updateOffline:['Cannot check for updates. No internet connection.','Не може да се провери ажурирањето. Нема интернет-врска.','Updateprüfung nicht möglich. Keine Internet Verbindung.','Impossibile verificare gli aggiornamenti. Nessuna connessione Internet.','Vérification impossible. Aucune connexion Internet.'],
   updateFailed:['Cannot check for updates. Please try again later.','Не може да се провери ажурирањето. Обиди се подоцна.','Updateprüfung nicht möglich. Bitte später erneut versuchen.','Impossibile verificare gli aggiornamenti. Riprova più tardi.','Vérification impossible. Réessayez plus tard.'],
   reloadRelease:['Reload now','Вчитај повторно','Jetzt neu laden','Ricarica ora','Recharger maintenant'],
   alphabet:['Macedonian keyboard','Македонска тастатура','Mazedonische Tastatur','Tastiera macedone','Clavier macédonien']
 });
+
+Object.assign(uiMessages,{
+  dailyTitle:['Check for updates?','Да проверам дали има ажурирања?','Nach Updates suchen?','Verificare gli aggiornamenti?','Rechercher des mises à jour ?'],
+  skipToday:['Skip today','Прескокни денес','Heute überspringen','Salta per oggi','Ignorer pour aujourd’hui'],
+  remindLater:['Remind me later','Потсети ме подоцна','Später erinnern','Ricordamelo più tardi','Me le rappeler plus tard'],
+  continueDaily:['Continue','Продолжи','Weiter','Continua','Continuer']
+});
+const reminderKey='ucenje.daily-update';
+let reminderTime=0;
+function setNextReminder(later,now=new Date()){
+  const tomorrow=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  reminderTime=later?now.getTime()+6*60*60*1000:tomorrow.getTime();
+  try{localStorage.setItem(reminderKey,String(reminderTime))}catch{}
+}
+function maybeDailyUpdate(){
+  const dialog=$('dailyUpdate');
+  if(document.hidden||dialog.open||currentScreen()!=='menu'||!load('vt_welcome_seen',false))return;
+  try{const saved=localStorage.getItem(reminderKey);if(saved!==null)reminderTime=Number(saved)||0}catch{}
+  if(Date.now()<reminderTime)return;
+  $('dailyVersion').textContent=releaseName(appVersion);
+  $('dailyStatus').textContent='';
+  for(const id of ['dailyCheck','dailySkip','dailyLater'])$(id).hidden=false;
+  $('dailyDone').hidden=$('dailyReload').hidden=true;
+  if(typeof dialog.showModal==='function'){dialog.showModal();setNextReminder(false)}
+}
+function setupDailyUpdate(){
+  const dialog=$('dailyUpdate');
+  const close=later=>{setNextReminder(later);dialog.close()};
+  $('dailyLater').onclick=()=>close(true);
+  $('dailySkip').onclick=()=>close(false);
+  dialog.addEventListener('cancel',e=>{e.preventDefault();if(!$('dailyCheck').hidden)close(true);else dialog.close()});
+  $('dailyCheck').onclick=async()=>{
+    setNextReminder(false);
+    for(const id of ['dailyCheck','dailySkip','dailyLater'])$(id).hidden=true;
+    $('dailyDone').textContent=ui('continueDaily');$('dailyDone').hidden=false;$('dailyDone').focus();
+    await checkRelease($('dailyCheck'),$('dailyStatus'),$('dailyReload'));
+    if(!$('dailyReload').hidden)$('dailyDone').textContent=ui('voiceLater');
+  };
+  $('dailyDone').onclick=()=>dialog.close();
+  $('dailyReload').onclick=()=>location.reload();
+  window.addEventListener('pageshow',maybeDailyUpdate);
+  document.addEventListener('visibilitychange',maybeDailyUpdate);
+  maybeDailyUpdate();
+}
