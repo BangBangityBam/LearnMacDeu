@@ -31,7 +31,7 @@ var uiMessages = {
   "mode": ["Practice mode", "Начин на вежбање", "Lernmodus", "Modalità di studio", "Mode d’entraînement"],
   "learn": ["Flashcards", "Картички", "Karteikarten", "Schede", "Cartes mémoire"],
   "type": ["Type the answer", "Напиши го одговорот", "Antwort eintippen", "Digita la risposta", "Saisir la réponse"],
-  "mc": ["Multiple choice", "Избери одговор", "Auswahlfragen", "Scelta multipla", "Choix multiple"],
+  "mc": ["Multiple choice", "Избери одговор", "Multiple Choice", "Scelta multipla", "Choix multiple"],
   "check": ["Check answer", "Провери го одговорот", "Antwort prüfen", "Verifica la risposta", "Vérifier la réponse"],
   "answer": ["Answer", "Одговор", "Antwort", "Risposta", "Réponse"],
   "word": ["Word", "Збор", "Wort", "Parola", "Mot"],

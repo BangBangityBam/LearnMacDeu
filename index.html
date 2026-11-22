@@ -283,6 +283,14 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
 </section>
 
+<section id="reviewModes" class="screen">
+  <div class="bar"><button class="small" id="reviewBack" data-ui="back">Назад</button></div>
+  <h1 id="reviewTitle"></h1>
+  <button class="main" id="reviewType" data-ui="type">Напиши го одговорот</button>
+  <button class="main" id="reviewChoice" data-ui="mc">Избери одговор</button>
+  <button class="main" id="reviewCards" data-ui="learn">Картички</button>
+</section>
+
 <section id="type" class="screen">
   <div class="bar"><button class="small" id="back4" data-ui="menu">Мени</button><span><button class="small tl" data-t="fav" data-ui-label="toggleFav" aria-label="Додај или отстрани од омилени">☆</button> <button class="small tl" data-t="spk" data-ui-label="speak" aria-label="Прочитај наглас">🔊</button> <span id="tcount"></span></span></div>
   <div id="tcard">
@@ -386,7 +394,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js"></script>
-<script src="./interface.js?v=36"></script>
+<script src="./interface.js?v=37"></script>
 <script src="./practice.js"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
@@ -539,6 +547,7 @@ function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[
 function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^\p{L}\p{M}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
 function nextType(){
   $('type').className='screen on';if(rlen&&rnd.n>=rlen){showResult();return}
+  if(!prepareReview())return;
   var inp=$('tin');
   if(!words.length){$('tlang').textContent='';$('tword').textContent=ui('empty');inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
   if(pos>=order.length)shuffle();
@@ -585,7 +594,36 @@ $('mlearn').onclick=function(){curMode='learn';buildCats();show('cats')};
 $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
 $('back5').onclick=function(){goBack('menu')};
 $('mmc').onclick=function(){curMode='mc';buildCats();show('cats')};
-$('mwrong').onclick=function(){if(!Object.keys(wrong).length){$('mmsg').textContent=ui('noMistakes');return}curMode='type';go('!')};
+$('mwrong').onclick=function(){
+  var count=pool('!').length;
+  if(!count){$('mmsg').textContent=ui('noMistakes');return}
+  $('reviewTitle').textContent=ui('repeat',count);
+  show('reviewModes');
+};
+$('reviewBack').onclick=function(){goBack('modes')};
+$('reviewType').onclick=function(){startReview('type')};
+$('reviewChoice').onclick=function(){startReview('mc')};
+$('reviewCards').onclick=function(){startReview('learn')};
+function startReview(mode){
+  curMode=mode;
+  go('!');
+}
+// Keep the current queue until a word leaves the mistake list.
+function prepareReview(){
+  if(activeCategory!=='!')return true;
+  if(words.some(function(w){return !wrong[w[0]]})){
+    words=words.filter(function(w){return wrong[w[0]]});
+    shuffle();
+  }
+  if(words.length)return true;
+  cur=tcur=null;tstate='none';shown=false;
+  session=null;save('vt_session',null);
+  rlabel();show('modes',{noHistory:true});
+  screenHistory=['menu'];
+  $('mmsg').textContent=ui('noMistakes');
+  $('mwrong').focus();
+  return false;
+}
 $('rlen').onclick=function(){rlen=rlen===0?10:rlen===10?20:0;save('vt_rlen',rlen);rlabel()};
 $('rback').onclick=function(){goBack('menu')};
 $('btnstats').onclick=showStats;
@@ -600,13 +638,13 @@ var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0
 function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){
   $('rlen').textContent=ui('round',rlen||ui('endless'));
-  $('mwrong').textContent=ui('repeat',Object.keys(wrong).length);
+  $('mwrong').textContent=ui('repeat',pool('!').length);
   $('mmsg').textContent='';
 }
 function showResult(){$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
 function buildOpts(){
   var box=$('topts');box.innerHTML='';
-  var answer=tcur.a, source=words.length?words:ALL, isDe=tcur.forward;
+  var answer=tcur.a, source=activeCategory==='!'?pool('*'):(words.length?words:ALL), isDe=tcur.forward;
   var accepted=acceptedAnswers(tcur);
   var candidates=source.map(function(w){return isDe?w[1]:w[0]}).filter(function(x){return x&&!accepted.has(norm(x))});
   var unique=Array.from(new Set(candidates)),o=[answer];
@@ -672,6 +710,7 @@ function setupDirection(){
   };
 }
 function next(previousWord){
+  if(!prepareReview())return;
   if(!words.length){$("lang").textContent="";$("word").textContent=ui('empty');$("answer").textContent="";$("hint").textContent=ui('addFirst');return}
   if(pos>=order.length)shuffle();
   if(previousWord && words[order[pos]]===previousWord){
@@ -697,7 +736,7 @@ function rateCard(ok){
   save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);
   next(cur.w);
   refreshTools();
-  $('card').focus();
+  if(cur)$('card').focus();
 }
 $('cardKnown').onclick=function(e){e.stopPropagation();rateCard(true)};
 $('cardMissed').onclick=function(e){e.stopPropagation();rateCard(false)};
