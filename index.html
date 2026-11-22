@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Зборник · Zbornik</title>
-<meta name="application-name" content="Зборник">
-<meta name="apple-mobile-web-app-title" content="Зборник">
+<title>Učenje jazici - Учење јазици</title>
+<meta name="application-name" content="Učenje jazici - Учење јазици">
+<meta name="apple-mobile-web-app-title" content="Učenje jazici - Учење јазици">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#c8202b">
 <meta name="description" content="Учи германски, англиски, италијански и француски со македонски картички и вежби.">
@@ -191,7 +191,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 <section id="menu" class="screen on">
   <header class="home-head">
-    <div><h1 data-ui="app">Зборник</h1></div>
+    <div><h1 data-ui="app">Učenje jazici - Учење јазици</h1></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
     <button id="settingsOpen" type="button" data-ui-label="settings">⚙</button>
   </header>
@@ -426,12 +426,12 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js?v=41"></script>
-<script src="./interface.js?v=38"></script>
-<script src="./practice.js?v=40"></script>
+<script src="./interface.js?v=42"></script>
+<script src="./practice.js?v=42"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./trades.js"></script>
-<script src="./study.js"></script>
+<script src="./study.js?v=42"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -888,14 +888,14 @@ $('reportEmail').onclick=function(){
   var message=$('reportText').value.trim();
   if(!message){$('reportText').focus();return}
   var topic=$('reportKind').value==='correction'?ui('correction'):ui('feedbackIdea');
-  location.href='mailto:'+feedbackAddress+'?subject='+encodeURIComponent('Zbornik · '+topic)+'&body='+encodeURIComponent(message.replace(/\r?\n/g,'\r\n'));
+  location.href='mailto:'+feedbackAddress+'?subject='+encodeURIComponent('Učenje jazici - Учење јазици · '+topic)+'&body='+encodeURIComponent(message.replace(/\r?\n/g,'\r\n'));
 };
 $('learnReport').onclick=function(){if(words.length)openWordReport(cur)};
 $('typeReport').onclick=function(e){e.stopPropagation();if(words.length)openWordReport(tcur)};
 $('reportBack').onclick=function(){goBack('menu')};
 $('reportDownload').onclick=function(){
   var url=URL.createObjectURL(new Blob([$('reportText').value],{type:'text/plain;charset=utf-8'}));
-  var link=document.createElement('a');link.href=url;link.download='zbornik-word-report.txt';
+  var link=document.createElement('a');link.href=url;link.download='ucenje-jazici-word-report.txt';
   document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
 };
 function makeBackup(){
@@ -911,7 +911,7 @@ $('bkdownload').onclick=function(){
   try{
     var blob=new Blob([JSON.stringify(makeBackup(),null,2)],{type:'application/json'});
     var url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download='zbornik-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.href=url;a.download='ucenje-jazici-backup-'+new Date().toISOString().slice(0,10)+'.json';
     document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
     $('bkmsg').textContent=ui('downloaded');
   }catch(e){$('bkmsg').textContent=ui('downloadError');}

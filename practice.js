@@ -54,7 +54,7 @@ async function sendFeedback(){
   if(navigator.onLine===false){status.textContent=ui('feedbackOffline');return}
   const payload={
     access_key:'8b24181a-bd15-423c-8957-2f16bcf586f1',
-    subject:'Zbornik · '+ui($('reportKind').value==='correction'?'correction':'feedbackIdea'),
+    subject:'Učenje jazici - Учење јазици · '+ui($('reportKind').value==='correction'?'correction':'feedbackIdea'),
     message:text.value.trim()
   };
   if(reply.value.trim())payload.email=reply.value.trim();
@@ -94,7 +94,7 @@ function openWordReport(card) {
   report.value='';
   if(card){
     const source=card.forward?0:1;
-    report.value='Zbornik · '+languageName(codes[source])+' → '+languageName(codes[1-source])+'\n'+card.q+' → '+card.a+'\n'+categoryName(card.cat)+'\n\n'+ui('correction')+' ';
+    report.value='Učenje jazici - Учење јазици · '+languageName(codes[source])+' → '+languageName(codes[1-source])+'\n'+card.q+' → '+card.a+'\n'+categoryName(card.cat)+'\n\n'+ui('correction')+' ';
   }
   try{
     const draft=JSON.parse(localStorage.getItem(feedbackDraftKey));

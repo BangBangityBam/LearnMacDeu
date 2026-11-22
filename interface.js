@@ -1,5 +1,5 @@
 var uiMessages = {
-  "app": ["Zbornik", "Зборник", "Zbornik", "Zbornik", "Zbornik"],
+  "app": ["Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици"],
   "interface": ["Menu language", "Јазик на менито", "Menüsprache", "Lingua dei menu", "Langue des menus"],
   "course": ["Learning language", "Јазик за учење", "Lernsprache", "Lingua da imparare", "Langue à apprendre"],
   "start": ["Start learning", "Започни со учење", "Lernen starten", "Inizia a imparare", "Commencer"],
