@@ -1,10 +1,10 @@
-const CACHE_NAME = 'vt-app-v42';
-const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js?v=41', './study.js?v=42', './trades.js', './interface.js?v=42', './practice.js?v=42', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'vt-app-v43';
+const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js?v=41', './study.js?v=42', './trades.js', './interface.js?v=42', './practice.js?v=42', './manifest.webmanifest', './icon-192.png?v=43', './icon-512.png?v=43'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
+      .then(cache => cache.addAll(APP_SHELL.map(path => new Request(new URL(path, self.location.href), { cache: 'reload' }))))
       .then(() => self.skipWaiting())
   );
 });
