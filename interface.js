@@ -63,7 +63,7 @@ var uiMessages = {
   "repeat": ["Review mistakes ({0})", "Повтори ги грешките ({0})", "Fehler wiederholen ({0})", "Ripassa gli errori ({0})", "Revoir les erreurs ({0})"],
   "round": ["Round length: {0}", "Должина на рунда: {0}", "Rundenlänge: {0}", "Lunghezza del turno: {0}", "Longueur de la série : {0}"],
   "endless": ["Unlimited", "Без ограничување", "Endlos", "Illimitata", "Illimitée"],
-  "direction": ["Direction: {0}", "Насока: {0}", "Lernrichtung: {0}", "Direzione: {0}", "Sens : {0}"],
+  "direction": ["Learning direction", "Насока на учење", "Lernrichtung", "Direzione di studio", "Sens de traduction"],
   "mixed": ["Mixed", "Мешано", "Gemischt", "Mista", "Mixte"],
   "difficulty": ["Difficulty: {0}", "Тежина: {0}", "Schwierigkeit: {0}", "Difficoltà: {0}", "Difficulté : {0}"],
   "easy": ["Easy", "Лесно", "Leicht", "Facile", "Facile"],

@@ -194,11 +194,11 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   </header>
   <div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
   <select id="pairList"></select>
+  <div class="language-setting"><label for="dir" data-ui="direction">Насока</label><select id="dir"></select></div>
   <button class="main home-start" id="start" data-ui="start">Започни со учење</button>
   <details class="more-menu">
     <summary data-ui="more">Други опции</summary>
     <div class="more-actions">
-      <button class="dir" id="dir"></button>
       <button id="btnstats" data-ui="stats">Статистика</button>
       <button id="goalBtn"></button>
       <button id="difficultyBtn"></button>
@@ -386,7 +386,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js"></script>
-<script src="./interface.js?v=34"></script>
+<script src="./interface.js?v=36"></script>
 <script src="./practice.js"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
@@ -421,7 +421,6 @@ var pairId = load('vt_pair',defaultPair);
 if(!pairList.includes(pairId)) pairId=defaultPair;
 var codes=pairId.split('-'), first=languages[codes[0]], second=languages[codes[1]];
 var target=codes[0]==='mk'?codes[1]:codes[0];
-var DIRS=[codes.join(' → ').toUpperCase(),codes.slice().reverse().join(' → ').toUpperCase(),ui('mixed')];
 function switchPair(id){
   if(!pairList.includes(id))return;
   if(trainingStorage.retry() && save('vt_pair',id))location.reload();
@@ -659,7 +658,19 @@ if(isInstalledApp){
   window.addEventListener('pageshow',ensureBackGuard);
 }
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
-function dirLabel(){$('dir').textContent=ui('direction',DIRS[dirIx])}
+function setupDirection(){
+  var select=$('dir'), mkIndex=codes.indexOf('mk');
+  [mkIndex,1-mkIndex].forEach(function(source){
+    var label=languageName(codes[source])+' → '+languageName(codes[1-source]);
+    select.add(new Option(label,String(source)));
+  });
+  select.add(new Option(ui('mixed'),'2'));
+  select.value=String(dirIx);
+  select.onchange=function(){
+    dirIx=Number(select.value);
+    save('vt_dir',dirIx);
+  };
+}
 function next(previousWord){
   if(!words.length){$("lang").textContent="";$("word").textContent=ui('empty');$("answer").textContent="";$("hint").textContent=ui('addFirst');return}
   if(pos>=order.length)shuffle();
@@ -701,7 +712,6 @@ function renderList(){
 }
 $('start').onclick=function(){if(!pool('*').length){$('words').click();return}rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
-$("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
 $("card").onkeydown=function(e){if(e.target===this&&(e.key==="Enter"||e.key===" ")){e.preventDefault();tap()}};
@@ -713,7 +723,7 @@ $("add").onclick=function(){
   $("de").value="";$("mk").value="";$("msg").textContent=stored?ui('saved',de+' – '+mk):ui('saveFailed');
   renderList();$("de").focus();
 };
-dirLabel();
+setupDirection();
 var fav=load('vt_fav',{}),days=load('vt_days',{n:0,last:''}),editIx=-1;
 function deOf(x){return x.w[0]}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
