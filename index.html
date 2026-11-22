@@ -183,6 +183,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 #edit details{margin-bottom:16px} #edit details summary{cursor:pointer;padding:8px 0}
 .language-setting{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:0 0 12px}
 .language-setting label{font-size:.9rem;margin:0}.language-setting select{width:auto;max-width:100%;margin:0;padding:6px 10px;min-height:40px}
+#menu #settingsOpen{width:44px;min-height:44px;flex:none;padding:4px;font-size:1.5rem}
+#soundSettings label{display:flex;align-items:center;gap:.6rem}#soundSettings input{width:auto}
 </style>
 </head>
 <body>
@@ -191,19 +193,20 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <header class="home-head">
     <div><h1 data-ui="app">Зборник</h1></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
+    <button id="settingsOpen" type="button" data-ui-label="settings">⚙</button>
   </header>
   <div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
   <select id="pairList"></select>
   <div class="language-setting"><label for="dir" data-ui="direction">Насока</label><select id="dir"></select></div>
+  <button id="difficultyBtn"></button>
   <button class="main home-start" id="start" data-ui="start">Започни со учење</button>
+<button id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button>
   <details class="more-menu">
     <summary data-ui="more">Други опции</summary>
     <div class="more-actions">
       <button id="btnstats" data-ui="stats">Статистика</button>
       <button id="goalBtn"></button>
-      <button id="difficultyBtn"></button>
       <button id="themeBtn" data-ui="theme">Смени тема</button>
-      <button id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button>
       <button id="bsearch" data-ui="search">Пребарување</button>
       <button id="words" data-ui="words">Додај или измени зборови</button>
       <button id="bbackup" data-ui="backup">Резервна копија и увоз</button>
@@ -228,6 +231,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
       <button type="button" id="voiceTestDe"></button>
       <button type="button" id="voiceTestMk"></button>
     </div>
+    <details><summary data-ui="voiceGuide"></summary><p data-ui="androidGuide"></p><p data-ui="iosGuide"></p><a href="https://support.google.com/accessibility/android/answer/6006983" target="_blank" rel="noopener noreferrer">Android · Google Support</a> · <a href="https://support.apple.com/guide/iphone/iph96b214f0/ios" target="_blank" rel="noopener noreferrer">iPhone · Apple Support</a></details>
     <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
   </details>
   <button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>
@@ -235,6 +239,18 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 </section>
 
 
+<section id="soundSettings" class="screen">
+  <button id="settingsBack" class="small" data-ui="back"></button>
+  <h1 data-ui="settings"></h1>
+  <label><input type="checkbox" id="soundToggle"><span data-ui="sounds"></span></label>
+  <label><input type="checkbox" id="vibToggle"><span data-ui="vibration"></span></label>
+  <p id="vibHint" class="sub"></p>
+  <button id="previewRight" data-ui="previewRight"></button><button id="previewWrong" data-ui="previewWrong"></button>
+</section>
+<section id="voiceIntro" class="screen">
+  <h1 data-ui="voiceIntro"></h1><p data-ui="voiceIntroText"></p>
+  <button id="voiceNow" class="main" data-ui="voiceNow"></button><button id="voiceLater" data-ui="voiceLater"></button>
+</section>
 <section id="info" class="screen">
   <div class="bar"><button class="small" id="backInfo" data-ui="menu">Мени</button></div>
   <h1 style="margin-top:20px" data-ui="info">Помош и приватност</h1>
@@ -409,11 +425,13 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 
-<script src="./storage.js"></script>
+<script src="./storage.js?v=41"></script>
 <script src="./interface.js?v=38"></script>
 <script src="./practice.js?v=40"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
+<script src="./trades.js"></script>
+<script src="./study.js"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -464,7 +482,7 @@ if(codes[1]==='mk'){
   fields.append(document.querySelector('label[for="de"]'),$('de'));
 }
 function storageKey(key){
-  if(!pairId || pairId===defaultPair || ['vt_pair','vt_pairs','vt_theme','vt_welcome_seen','vt_ui_language'].includes(key))return key;
+  if(!pairId || pairId===defaultPair || ['vt_pair','vt_pairs','vt_theme','vt_welcome_seen','vt_ui_language','vt_sound','vt_vibration','vt_voice_prompt'].includes(key))return key;
   return 'vt_pair_'+pairId+'_'+key.slice(3);
 }
 var words=[], dirIx=+load('vt_dir',codes.indexOf('mk'));
@@ -513,6 +531,11 @@ if(pairId===defaultPair){
     });
   });
 }
+Object.entries(tradeVocabulary).forEach(function([category,rows]){
+  CATS.push([category,uiCategoryNames[category][1]]);
+  const col={de:0,en:2,it:3,fr:4}[target];
+  rows.forEach(row=>ALL.push(codes[0]==='mk'?[row[1],row[col],category]:[row[col],row[1],category]));
+});
 var savedCategories=load('vt_categories',[]);
 var customCategories=Array.isArray(savedCategories)?savedCategories.filter(function(name){return typeof name==='string' && name.trim() && !(name in Object.prototype)}):[];
 function renderCategories(){
@@ -561,29 +584,38 @@ if(pairId!==defaultPair){
 }
 function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[cat]=[0,0];stats.cats[cat][i]++;save('vt_stats',stats)}
 function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^\p{L}\p{M}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
-function nextType(){
-  $('type').className='screen on';if(rlen&&rnd.n>=rlen){showResult();return}
-  if(!prepareReview())return;
+function nextType(restored){
+  $('type').className='screen on';if(!restored&&rlen&&rnd.n>=rlen){showResult();return}
+  if(!restored&&!prepareReview())return;
   var inp=$('tin');
   if(!words.length){$('tlang').textContent='';$('tword').textContent=ui('empty');inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
   if(pos>=order.length)shuffle();
-  var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode=curMode;save('vt_session',session)}
-  var d2m=dirIx===0||(dirIx===2&&Math.random()<.5);
+  var w=words[order[pos++]];
+  var d2m=restored?restored.forward:dirIx===0||(dirIx===2&&Math.random()<.5);
   tcur={forward:d2m,q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
   $('tlang').textContent=ui('into',languageName(codes[d2m?1:0]));
   $('tword').textContent=tcur.q;
-  inp.style.display='';inp.value='';inp.disabled=false;
+  inp.style.display='';inp.value=restored&&typeof restored.typed==='string'?restored.typed:'';inp.disabled=false;
   $('tcheck').style.display='';
   $('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';
   $('tcount').textContent=Math.min(pos,order.length)+' / '+order.length;
   tstate='ask';
-  if(curMode==='mc'){inp.style.display='none';$('tcheck').style.display='none';buildOpts()}else{$('topts').innerHTML='';setTimeout(function(){try{inp.focus()}catch(e){}},60)}
+  if(session&&!restored){delete session.feedback;delete session.typed}
+  if(restored && restored.feedback){
+    displayGrade(restored.feedback.ok,restored.feedback.input);
+  }else if(curMode==='mc'){inp.style.display='none';$('tcheck').style.display='none';buildOpts(restored && restored.choices)}else{$('topts').innerHTML='';setTimeout(function(){try{inp.focus()}catch(e){}},60)}
+  rememberCard();
 }
 function checkType(v){
   if(tstate!=='ask'||!tcur)return;
   var inp=$('tin'),u=(typeof v==='string')?v:inp.value,a=tcur.a;
   var ok=acceptedAnswers(tcur).has(norm(u.normalize('NFC')));
   rec(tcur.cat,ok);track(ok);
+  if(session)session.feedback={ok:ok,input:u};
+  displayGrade(ok,u);rememberCard();
+}
+function displayGrade(ok,u){
+  var inp=$('tin');
   $('type').className='screen on '+(ok?'ok':'bad');
   $('tfb').textContent=ok?ui('correct'):ui('wrong');
   $('tans').textContent=tcur.a;
@@ -603,6 +635,14 @@ function showStats(){
   show('statsview');
 }
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
+function saveTypedProgress(){
+  if(session && session.mode==='type' && curMode==='type' && tstate==='ask' && $('tin').value!==session.typed){
+    session.typed=$('tin').value;save('vt_session',session);
+  }
+}
+$('tin').onchange=saveTypedProgress;
+window.addEventListener('pagehide',saveTypedProgress);
+document.addEventListener('visibilitychange',function(){if(document.hidden)saveTypedProgress()});
 $('tin').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();checkType()}};
 $('type').addEventListener('click',function(e){if(e.target.closest&&(e.target.closest('#back4')||e.target.closest('.tl')))return;if(tstate==='shown'&&Date.now()-tAt>300)nextType()});
 $('back4').onclick=function(){show('menu')};
@@ -657,15 +697,10 @@ function rlabel(){
   $('mwrong').textContent=ui('repeat',pool('!').length);
   $('mmsg').textContent='';
 }
-function showResult(){$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
-function buildOpts(){
+function showResult(){session=null;save('vt_session',null);$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
+function buildOpts(saved){
   var box=$('topts');box.innerHTML='';
-  var answer=tcur.a, source=activeCategory==='!'?pool('*'):(words.length?words:ALL), isDe=tcur.forward;
-  var accepted=acceptedAnswers(tcur);
-  var candidates=source.map(function(w){return isDe?w[1]:w[0]}).filter(function(x){return x&&!accepted.has(norm(x))});
-  var unique=Array.from(new Set(candidates)),o=[answer];
-  for(var i=unique.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=unique[i];unique[i]=unique[j];unique[j]=tmp}
-  o=o.concat(unique.slice(0,3));o.sort(function(){return Math.random()-.5});
+  var o=Array.isArray(saved)&&saved.includes(tcur.a)?saved:matchingOptions(tcur);
   o.forEach(function(t){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(e){e.stopPropagation();checkType(t)};box.appendChild(b)});
 }
 function load(k,d){try{return trainingStorage.read(storageKey(k)) ?? d}catch(e){return d}}
@@ -725,24 +760,25 @@ function setupDirection(){
     save('vt_dir',dirIx);
   };
 }
-function next(previousWord){
-  if(!prepareReview())return;
+function next(previousWord,restored){
+  if(!restored&&!prepareReview())return;
   if(!words.length){$("lang").textContent="";$("word").textContent=ui('empty');$("answer").textContent="";$("hint").textContent=ui('addFirst');return}
   if(pos>=order.length)shuffle();
   if(previousWord && words[order[pos]]===previousWord){
     var other=order.findIndex(function(index,i){return i>pos && words[index]!==previousWord});
     if(other!==-1)[order[pos],order[other]]=[order[other],order[pos]];
   }
-  var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode='learn';save('vt_session',session)}
-  var de2mk=dirIx===0||(dirIx===2&&Math.random()<.5);
+  var w=words[order[pos++]];
+  var de2mk=restored?restored.forward:dirIx===0||(dirIx===2&&Math.random()<.5);
   cur={forward:de2mk,q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:languageName(codes[de2mk?0:1]),cat:w[2]||"Eigene Wörter",w:w};
   $("lang").textContent=cur.l;$("word").textContent=cur.q;$("answer").textContent="";
   $("hint").textContent=ui('reveal');shown=false;$("cardRating").style.display="none";
   $("count").textContent=Math.min(pos,order.length)+" / "+order.length;
+  rememberCard();
 }
 function tap(){
   if(!words.length)return;
-  if(!shown){$("answer").textContent=cur.a;$("hint").textContent=ui('rate');shown=true;$("cardRating").style.display="grid"}
+  if(!shown){$("answer").textContent=cur.a;$("hint").textContent=ui('rate');shown=true;$("cardRating").style.display="grid";rememberCard()}
 }
 function rateCard(ok){
   if(!cur||!shown)return;
@@ -765,7 +801,8 @@ function renderList(){
     var e=document.createElement('button');e.textContent=ui('edit');e.onclick=function(){$('de').value=w[0];$('mk').value=w[1];editIx=i;$('wordCategory').value=w[2]||'';$('msg').textContent=ui('editing');$('de').focus()};li.appendChild(sp);li.appendChild(e);li.appendChild(b);ul.appendChild(li);
   });
 }
-$('start').onclick=function(){if(!pool('*').length){$('words').click();return}rlabel();show('modes')};
+$('start').onclick=function(){if(!pool('*').length){$('words').click();return}if(!load('vt_voice_prompt',false)){show('voiceIntro');return}
+  rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
@@ -800,7 +837,7 @@ function refreshDeviceVoices(){
   }
   deviceVoices=speechSynthesis.getVoices()||[];
   if(!deviceVoices.length){$('voiceStatus').textContent=ui('voiceEmpty');return;}
-  $('voiceStatus').textContent=[first,second].map(function(lang,i){return languageName(codes[i])+' '+(voiceFor(lang[2])?'✓':ui('missing'))}).join(' · ')+'.';
+  $('voiceStatus').textContent=[first,second].map(function(lang,i){return voiceFor(lang[2])?languageName(codes[i])+' ✓':ui('voiceUnavailable',languageName(codes[i]))}).join(' · ')+'.';
 }
 function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
 function testVoice(text,lang){
@@ -808,7 +845,8 @@ function testVoice(text,lang){
     $('voiceStatus').textContent=ui('voiceNone');return;
   }
   refreshDeviceVoices();
-  var u=new SpeechSynthesisUtterance(text),v=voiceFor(lang);
+  var v=voiceFor(lang);if(!v){$('voiceStatus').textContent=ui('voiceUnavailable',languageName(lang.slice(0,2)));return}
+  var u=new SpeechSynthesisUtterance(text);
   u.lang=lang;
   if(v)u.voice=v;
   u.onerror=function(){$('voiceStatus').textContent=ui('voiceError')};
@@ -831,9 +869,9 @@ function updateDifficulty(){$('difficultyBtn').textContent=ui('difficulty',ui(di
 $('difficultyBtn').onclick=function(){difficulty=difficulty==='easy'?'medium':difficulty==='medium'?'hard':'easy';save('vt_difficulty',difficulty);updateDifficulty()};updateDifficulty();
 $('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').textContent=next==='dark'?ui('light'):ui('dark')};
 var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').textContent=savedTheme==='dark'?ui('light'):ui('dark')}
-$('resumeBtn').onclick=function(){if(!session)return;curMode=session.mode||'learn';activeCategory=session.category||'*';words=pool(activeCategory);shuffle();var skip=Math.min(+session.pos||0,Math.max(0,order.length-1));pos=skip;if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}};
+$('resumeBtn').onclick=resumeStudy;
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
-var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
+var _rec=rec;rec=function(c,o){_rec(c,o);signalAnswer(o);touchDay()};
 var _tap=tap;tap=function(){_tap()};$('card').onclick=tap;
 var _go=go;go=function(k){_go(k);refreshTools()};
 var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode(ui('fav')));s.textContent=String(n);b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
@@ -931,6 +969,19 @@ $('bkimp').onclick=function(){
   }
 };
 // Zusätzliche Funktionen für die Weitergabe an Freunde
+$('voiceLater').onclick=function(){save('vt_voice_prompt',true);rlabel();show('modes')};
+$('voiceNow').onclick=function(){save('vt_voice_prompt',true);show('menu');$('speechMenu').open=true;$('voiceRefresh').onclick();$('voiceRefresh').focus()};
+$('settingsOpen').onclick=function(){
+  $('soundToggle').checked=load('vt_sound',false);$('vibToggle').checked=load('vt_vibration',false);
+  $('vibToggle').disabled=typeof navigator.vibrate!=='function';
+  $('vibHint').textContent=$('vibToggle').disabled?ui('vibUnsupported'):'';
+  show('soundSettings');
+};
+$('settingsBack').onclick=function(){goBack('menu')};
+$('soundToggle').onchange=function(){save('vt_sound',this.checked)};
+$('vibToggle').onchange=function(){save('vt_vibration',this.checked)};
+$('previewRight').onclick=function(){signalAnswer(true)};
+$('previewWrong').onclick=function(){signalAnswer(false)};
 var onboardingKey='vt_welcome_seen';
 if(!load(onboardingKey,false)){show('welcome',{noHistory:true});}
 $('welcomeOk').onclick=function(){save(onboardingKey,true);show('menu',{noHistory:true});};

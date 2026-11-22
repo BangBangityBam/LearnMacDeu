@@ -9,6 +9,7 @@ var trainingStorage = (function () {
   const checks = {
     pair, pairs: x => Array.isArray(x) && x.every(pair),
     ui_language: x => ['mk','de','en','fr','it'].includes(x),
+    sound: x=>typeof x==='boolean', vibration: x=>typeof x==='boolean', voice_prompt: x=>typeof x==='boolean',
     welcome_seen: x => typeof x === 'boolean', theme: x => ['dark','light',''].includes(x),
     categories: x => Array.isArray(x) && x.every(string),
     words: x => Array.isArray(x) && x.every(w => Array.isArray(w) && [2,3].includes(w.length) && w.every(string)),
@@ -18,7 +19,14 @@ var trainingStorage = (function () {
     stats: x => record(x) && tally(x.all) && record(x.cats) && Object.values(x.cats).every(tally),
     daily: x => record(x) && typeof x.date === 'string' && count(x.done) && count(x.goal),
     days: x => record(x) && typeof x.last === 'string' && count(x.n),
-    session: x => x === null || (record(x) && string(x.category) && ['mc','type','learn'].includes(x.mode) && count(x.pos))
+    session: x => x === null || (record(x) && string(x.category) && ['mc','type','learn'].includes(x.mode) && count(x.pos)
+      && (x.deck===undefined || (Array.isArray(x.deck) && x.deck.every(string)
+        && Array.isArray(x.order) && x.order.every(i=>count(i)&&i<x.deck.length)
+        && x.pos<=x.order.length && typeof x.forward==='boolean'
+        && Array.isArray(x.choices) && x.choices.every(string)
+        && record(x.round) && count(x.round.n) && count(x.round.ok)
+        && Array.isArray(x.round.miss) && x.round.miss.every(string)
+        && (x.feedback===undefined || (record(x.feedback)&&typeof x.feedback.ok==='boolean'&&typeof x.feedback.input==='string')))))
   };
   checks.mine=checks.words; checks.wrong=checks.fav=checks.mast;
   function validate(data) {
