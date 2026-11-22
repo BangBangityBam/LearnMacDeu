@@ -1,0 +1,9 @@
+Vocabulary sources
+
+The vocabulary.js file contains the editable glossary. Each row gives Macedonian, English, German, Italian and French, in that order. The group names are in German and Macedonian. The original German deck and earlier starter words are in index.html.
+
+The practical vocabulary groups include original words and phrases aligned for this release. Many concrete nouns use short localized Unicode character names distributed in the GTK emoji data, with Macedonian equivalents added for this app. Source: Unicode CLDR (https://cldr.unicode.org/) and GTK (https://www.gtk.org/).
+
+Country, territory, language, currency, unit, month and weekday names are localized display names from ICU/CLDR via the ECMAScript Internationalization API. The digital and graphic-design groups include terminology aligned from localization catalogs of GIMP, GTK, AT-SPI, GtkSourceView, KDE Frameworks and libwnck. Some labels have been adapted for use as vocabulary. Original package copyright notices and license texts accompany this glossary in vocabulary-licenses/.
+
+Version 32 includes learning-courses.js, the editable English, Italian and French course lists. Each category contains rows in Macedonian, English, Italian and French order. A null answer omits that row only in that course. These lists preserve the earlier vocabulary and add translations of the German deck's Macedonian prompts and additional topical vocabulary.

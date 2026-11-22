@@ -1,15 +1,15 @@
 {
   "id": "./",
-  "name": "Vokabeltrainer Deutsch – Mazedonisch",
-  "short_name": "Vokabeln",
-  "description": "Deutsch und Mazedonisch lernen mit Karteikarten und Übungen.",
+  "name": "Зборник · Zbornik",
+  "short_name": "Зборник",
+  "description": "Учи германски, англиски, италијански и француски со македонски картички и вежби.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff4cf",
   "theme_color": "#c8202b",
-  "lang": "de",
+  "lang": "mk",
   "icons": [
     {
       "src": "icon-192.png",

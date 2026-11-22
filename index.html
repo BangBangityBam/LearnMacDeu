@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="mk">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vokabeltrainer Deutsch – Mazedonisch</title>
+<title>Зборник · Zbornik</title>
+<meta name="application-name" content="Зборник">
+<meta name="apple-mobile-web-app-title" content="Зборник">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#c8202b">
-<meta name="description" content="Lerne Deutsch und Mazedonisch mit Karteikarten, Übungen, Kategorien und persönlichem Lernfortschritt.">
+<meta name="description" content="Учи германски, англиски, италијански и француски со македонски картички и вежби.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -178,186 +180,217 @@ button small{white-space:normal;overflow-wrap:anywhere}
    above the device navigation area. Reserve space so it never covers content. */
 #menu{position:relative;padding-bottom:calc(42px + env(safe-area-inset-bottom,0px))}
 #menu .made-by{position:absolute;right:clamp(14px,4vw,32px);bottom:calc(8px + env(safe-area-inset-bottom,0px));margin:0;padding:0;font-family:Arial,sans-serif;font-size:10px;line-height:1.2;letter-spacing:.02em;color:#fff;opacity:.9;text-align:right;user-select:none;z-index:2}
+select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px}
+#edit details{margin-bottom:16px} #edit details summary{cursor:pointer;padding:8px 0}
+.language-setting{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin:0 0 12px}
+.language-setting label{font-size:.9rem;margin:0}.language-setting select{width:auto;max-width:100%;margin:0;padding:6px 10px;min-height:40px}
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen on">
   <header class="home-head">
-    <div><h1>Vokabeltrainer</h1><p class="sub">Deutsch ⇄ Mazedonisch<br>Германски ⇄ Македонски</p></div>
+    <div><h1 data-ui="app">Зборник</h1><p class="sub">Македонски ⇄ Германски</p></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
   </header>
-  <button class="main home-start" id="start">Lernen starten<small>Започни со учење</small></button>
+  <div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
+  <select id="pairList"></select>
+  <button class="main home-start" id="start" data-ui="start">Започни со учење</button>
   <details class="more-menu">
-    <summary>Weitere Funktionen · Други функции</summary>
+    <summary data-ui="more">Други опции</summary>
     <div class="more-actions">
       <button class="dir" id="dir"></button>
-      <button id="btnstats">Statistik<small>Статистика</small></button>
-      <button id="goalBtn">Tagesziel: 10 Wörter</button>
-      <button id="difficultyBtn">Schwierigkeit: Mittel</button>
-      <button id="themeBtn">Dunkelmodus umschalten</button>
-      <button id="resumeBtn" style="display:none">Lernen fortsetzen</button>
-      <button id="bsearch">Suche<small>Пребарување</small></button>
-      <button id="words">Wörter hinzufügen<small>Додај зборови</small></button>
-      <button id="bbackup">Sicherung & Import<small>Резервна копија и увоз</small></button>
+      <button id="btnstats" data-ui="stats">Статистика</button>
+      <button id="goalBtn"></button>
+      <button id="difficultyBtn"></button>
+      <button id="themeBtn" data-ui="theme">Смени тема</button>
+      <button id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button>
+      <button id="bsearch" data-ui="search">Пребарување</button>
+      <button id="words" data-ui="words">Додај или измени зборови</button>
+      <button id="bbackup" data-ui="backup">Резервна копија и увоз</button>
     </div>
   </details>
   <details class="more-menu" id="infoMenu">
-    <summary>Hilfe, Datenschutz & Prüfung · Помош и приватност</summary>
+    <summary data-ui="helpMenu">Помош, приватност и тест</summary>
     <div class="more-actions">
-      <button id="bhelp">Hilfe & Anleitung</button>
-      <button id="bprivacy">Datenschutz & Speicherung</button>
-      <button id="bexam">Prüfungsmodus · 20 Wörter</button>
-      <button id="bdayword">Wort des Tages anzeigen</button>
-      <button id="bupdate">App-Update prüfen</button>
+      <button id="bhelp" data-ui="help">Помош и упатство</button>
+      <button id="bprivacy" data-ui="privacy">Приватност и зачувување</button>
+      <button id="bexam" data-ui="exam">Тест · 20 зборови</button>
+      <button id="bdayword" data-ui="day">Збор на денот</button>
+      <button id="bupdate" data-ui="update">Провери за ажурирања</button>
     </div>
-    <p class="voice-help" id="appStatus" aria-live="polite">App-Status wird geprüft …</p>
+    <p class="voice-help" id="appStatus" aria-live="polite"></p>
   </details>
   <details class="more-menu" id="speechMenu">
-    <summary>Aussprache & Sprachstimmen · Изговор и гласови</summary>
-    <p class="voice-note" id="voiceStatus" aria-live="polite">Sprachstimmen werden gesucht …<br>Се бараат гласовите …</p>
+    <summary data-ui="speechMenu">Изговор и гласови</summary>
+    <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
     <div class="voice-actions">
-      <button type="button" id="voiceRefresh">Stimmen erneut prüfen<small>Повторно провери ги гласовите</small></button>
+      <button type="button" id="voiceRefresh" data-ui="voices">Провери ги гласовите</button>
       <button type="button" id="voiceTestDe">Deutsch testen 🔊<small>Тестирај германски</small></button>
       <button type="button" id="voiceTestMk">Mazedonisch testen 🔊<small>Тестирај македонски</small></button>
     </div>
-    <p class="voice-help">Die App verwendet nur die Sprachstimmen deines Geräts bzw. Browsers. Fehlende Stimmen kann sie nicht selbst installieren. Falls eine Sprache fehlt, installiere sie in den Sprach- oder Text-in-Sprache-Einstellungen deines Geräts und prüfe danach erneut.<br><br>Апликацијата ги користи само гласовите на уредот или прелистувачот. Не може сама да инсталира гласови. Ако недостасува јазик, инсталирај го во поставките за јазик или текст-во-говор на уредот, а потоа провери повторно.</p>
+    <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
   </details>
   <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
 </section>
 
+
 <section id="info" class="screen">
-  <div class="bar"><button class="small" id="backInfo">Menü</button></div>
-  <h1 style="margin-top:20px">Hilfe & Datenschutz</h1>
-  <h3>So funktioniert die App</h3>
-  <p>Wähle eine Kategorie und einen Lernmodus. Bei Karteikarten zuerst überlegen, dann aufdecken und mit „Gewusst“ oder „Nicht gewusst“ bewerten. Eigene Wörter kannst du hinzufügen und jederzeit über „Sicherung & Import“ exportieren.</p>
-  <h3>Dein persönlicher Lernstand</h3>
-  <p>Die App speichert Lernstand, Favoriten und eigene Wörter lokal im Browser auf diesem Gerät. Wenn deine Freunde die App auf ihren eigenen Geräten installieren, haben sie dort einen unabhängigen Lernstand. Es gibt keine Anmeldung und keine automatische Synchronisierung zwischen Geräten.</p>
-  <h3>Datenschutz</h3>
-  <p>Die App überträgt deinen Lernstand nicht an einen Server. Beim Löschen der Browserdaten oder beim Entfernen der App können lokale Daten verloren gehen. Erstelle deshalb regelmäßig ein Backup und bewahre die JSON-Datei sicher auf. Ein Backup enthält persönliche Lerninformationen und sollte nicht öffentlich geteilt werden.</p>
-  <h3>Installation auf dem Handy</h3><p>Android/Chrome: Menü (drei Punkte) öffnen und „App installieren“ oder „Zum Startbildschirm hinzufügen“ wählen. iPhone/Safari: Teilen-Symbol öffnen und „Zum Home-Bildschirm“ wählen. Die genaue Bezeichnung kann je nach Gerät und Browser variieren.</p>
-  <h3>Offline & Updates</h3>
-  <p>Nach dem ersten erfolgreichen Laden können die gespeicherten App-Dateien offline verfügbar sein. Für die erste Installation und Updates wird Internet benötigt. Öffne „App-Update prüfen“, um nach einer neuen Version zu suchen. Nach einem Update kann ein Neuladen nötig sein.</p>
-  <h3>Wichtig</h3>
-  <p>Die Aussprache verwendet die Sprachstimmen des Geräts bzw. Browsers. Fehlende Stimmen kann die App nicht selbst installieren. Die App ist ein Lernwerkzeug; Übersetzungen und Lernresultate können Fehler enthalten.</p>
-  <button class="main" id="backInfo2">Zurück zum Menü</button>
+  <div class="bar"><button class="small" id="backInfo" data-ui="menu">Мени</button></div>
+  <h1 style="margin-top:20px" data-ui="info">Помош и приватност</h1>
+  <h3 data-ui="guide">Како да вежбаш</h3>
+  <p data-ui="guideText">Избери курс, режим и категорија. Откриј го преводот на картичката и оцени го одговорот. Додавај свои зборови и извезувај ги преку Резервна копија и увоз.</p>
+  <h3 data-ui="yourData">Твојот напредок</h3>
+  <p data-ui="storageText">Зборовите, омилените и напредокот се чуваат во прелистувачот на овој уред. Секој уред има свои податоци. Нема автоматска синхронизација.</p>
+  <h3 data-ui="privacy">Приватност и зачувување</h3>
+  <p data-ui="privacyText">Напредокот останува на уредот. Бришењето на податоците од прелистувачот или на апликацијата може да го избрише. Прави копии и чувај ја JSON-датотеката приватно.</p>
+  <h3 data-ui="install">Инсталирање на телефон</h3><p data-ui="installText">Во Chrome на Android отвори го менито и избери Инсталирај апликација или Додај на почетниот екран. Во Safari на iPhone отвори Сподели и избери Додај на почетниот екран.</p>
+  <h3 data-ui="updates">Работа без интернет и ажурирања</h3>
+  <p data-ui="updatesText">По првото вчитување со интернет, апликацијата може да работи и без интернет. Потребна е врска за инсталација и ажурирање. Избери Провери за ажурирања и вчитај повторно ако е потребно.</p>
+  <h3 data-ui="notes">Изговор и учење</h3>
+  <p data-ui="notesText">За изговор се користат гласовите од уредот. Преводите и резултатите може да содржат грешки.</p>
+  <button class="main" id="backInfo2" data-ui="menu">Мени</button>
 </section>
 <section id="wordday" class="screen">
-  <div class="bar"><button class="small" id="backDay">Menü</button></div>
-  <h1 style="margin-top:20px">Wort des Tages</h1>
+  <div class="bar"><button class="small" id="backDay" data-ui="menu">Мени</button></div>
+  <h1 style="margin-top:20px" data-ui="day">Збор на денот</h1>
   <p class="sub" id="dayDate"></p>
   <div id="dayGerman" style="font-size:2rem;font-weight:800;margin:24px 0 8px"></div>
   <div id="dayMacedonian" style="font-size:1.7rem;color:var(--red);margin-bottom:24px"></div>
-  <button id="daySpeak">🔊 Vorlesen</button>
+  <button id="daySpeak" data-ui="speak">Прочитај наглас</button>
 </section>
 <section id="welcome" class="screen">
-  <h1 style="margin-top:20px">Willkommen!</h1>
-  <p class="sub">Dein Deutsch–Mazedonisch-Vokabeltrainer</p>
-  <p>Dein Lernstand wird auf diesem Gerät im Browser gespeichert. Wenn du die App mit Freunden teilst, lernt jeder auf seinem eigenen Gerät unabhängig. Es ist keine Registrierung nötig.</p>
-  <p>Wichtig: Erstelle regelmäßig ein Backup unter „Weitere Funktionen → Sicherung & Import“, damit dein Lernstand bei Gerätewechsel oder gelöschten Browserdaten nicht verloren geht.</p>
-  <button class="main" id="welcomeOk">Los geht's</button>
+  <h1 style="margin-top:20px" data-ui="welcome">Добредојде!</h1>
+  <div class="language-setting"><label for="welcomeLocale" data-ui="interface">Јазик на менито</label><select id="welcomeLocale" class="menu-language"></select></div><p class="sub" data-ui="welcomeSub">Твој личен тренер за зборови</p>
+  <p data-ui="local">Напредокот се зачувува во прелистувачот на овој уред. Секој може да учи на свој уред без сметка.</p>
+  <p data-ui="reminder">Редовно прави копии преку Други опции → Резервна копија и увоз, особено пред промена на уредот или бришење на податоците.</p>
+  <button class="main" id="welcomeOk" data-ui="begin">Започни</button>
 </section>
 
 <section id="cats" class="screen">
-  <div class="bar"><button class="small" id="back3">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Kategorie<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Категорија</small></h1>
+  <div class="bar"><button class="small" id="back3" data-ui="back">Назад</button></div>
+  <h1 style="margin-top:20px" data-ui="cat">Категорија</h1>
   <div id="catlist"></div>
 </section>
 
 <section id="modes" class="screen">
-  <div class="bar"><button class="small" id="back5">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Modus<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Режим</small></h1>
-  <button class="main" id="mlearn">Lernen · ohne Tippen<small>Учење · без пишување</small></button>
-  <button class="main" id="mtype">Tippen · Antwort eingeben<small>Пишување · внеси одговор</small></button>
-  <button class="main" id="mmc">Auswahl · 4 Antworten<small>Избор · 4 одговори</small></button>
-  <button class="main" id="mwrong">Fehler wiederholen<small>Повтори грешки</small></button>
+  <div class="bar"><button class="small" id="back5" data-ui="back">Назад</button></div>
+  <h1 style="margin-top:20px" data-ui="mode">Начин на вежбање</h1>
+  <button class="main" id="mlearn" data-ui="learn">Картички</button>
+  <button class="main" id="mtype" data-ui="type">Напиши го одговорот</button>
+  <button class="main" id="mmc" data-ui="mc">Избери одговор</button>
+  <button class="main" id="mwrong"></button>
   <button id="rlen"></button>
   <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
 </section>
 
 <section id="type" class="screen">
-  <div class="bar"><button class="small" id="back4">Menü · Мени</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="tcount"></span></span></div>
+  <div class="bar"><button class="small" id="back4" data-ui="menu">Мени</button><span><button class="small tl" data-t="fav" data-ui-label="toggleFav" aria-label="Додај или отстрани од омилени">☆</button> <button class="small tl" data-t="spk" data-ui-label="speak" aria-label="Прочитај наглас">🔊</button> <span id="tcount"></span></span></div>
   <div id="tcard">
     <div id="tlang"></div>
     <div id="tword"></div>
-    <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Antwort · Одговор">
+    <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Antwort · Одговор" data-ui-placeholder="answer">
     <div id="topts"></div>
     <div id="tfb"></div>
     <div id="tans"></div>
     <div id="tmine"></div>
     <div id="thint"></div>
   </div>
-  <button class="main" id="tcheck">Prüfen<small>Провери</small></button>
+  <button class="main" id="tcheck" data-ui="check">Провери го одговорот</button>
+  <button class="small" id="typeReport" data-ui="report">Пријави го зборот</button>
 </section>
 
+<section id="wordReport" class="screen">
+  <button id="reportBack" class="small" data-ui="back">Назад</button>
+  <h1 data-ui="report">Пријави го зборот</h1>
+  <p data-ui="reportHelp"></p>
+  <textarea id="reportText" data-ui-label="correction" rows="7" style="width:100%;font:inherit"></textarea>
+  <button id="reportDownload" data-ui="reportDownload">Преземи пријава</button>
+</section>
+<aside id="saveNotice" hidden role="alert" style="position:fixed;bottom:0;left:0;right:0;background:var(--card);color:var(--ink);padding:12px;z-index:100;border-top:2px solid currentColor">
+  <span data-ui="saveFailed"></span> <button class="small" id="retrySave" data-ui="retry">Зачувај повторно</button>
+</aside>
 <section id="search" class="screen">
-  <div class="bar"><button class="small" id="back8">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Suche · Пребарување</h1>
-  <input id="sq" autocomplete="off" placeholder="Wort · Збор">
+  <div class="bar"><button class="small" id="back8" data-ui="menu">Мени</button></div>
+  <h1 style="margin-top:20px" data-ui="search">Пребарување</h1>
+  <input id="sq" autocomplete="off" placeholder="Wort · Збор" data-ui-placeholder="word">
   <ul id="sres"></ul>
 </section>
 
 <section id="backup" class="screen">
-  <div class="bar"><button class="small" id="back9">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Sicherung & Import<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Резервна копија и увоз</small></h1>
-  <p class="sub" style="margin:0 0 12px">Sichere deinen Lernstand regelmäßig als JSON-Datei. Die Datei enthält eigene Wörter, Favoriten und Lernfortschritt. Beim Wiederherstellen wird der gespeicherte App-Stand auf diesem Gerät ersetzt.
-<br><br>Textimport: eine Zeile pro Wort, z. B. Haus;Куќа</p>
-  <textarea id="bk" rows="8" style="width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)"></textarea>
-  <button id="bkexp" style="margin-top:12px">Exportieren / Kopieren<small>Извези / Копирај</small></button>
-  <button id="bkdownload">Backup-Datei herunterladen ⬇</button>
-  <label for="bkfile" style="margin:8px 0 6px">Backup-Datei wiederherstellen</label>
+  <div class="bar"><button class="small" id="back9" data-ui="menu">Мени</button></div>
+  <h1 style="margin-top:20px" data-ui="backup">Резервна копија и увоз</h1>
+  <p class="sub" style="margin:0 0 12px" data-ui="backupHelp">Резервната копија во JSON ги содржи курсевите, категориите, зборовите, омилените и напредокот. Со враќање се заменуваат податоците на овој уред. За увоз на текст внеси по еден пар зборови во ред, одделени со точка и запирка.</p>
+  <textarea id="bk" rows="8" style="width:100%;font:inherit;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)" data-ui-label="backup" aria-label="Резервна копија и увоз"></textarea>
+  <button id="bkexp" style="margin-top:12px" data-ui="export">Извези и копирај</button>
+  <button id="bkdownload" data-ui="download">Преземи резервна копија</button>
+  <label for="bkfile" style="margin:8px 0 6px" data-ui="restore">Врати резервна копија од датотека</label>
   <input id="bkfile" type="file" accept=".json,application/json" style="font-size:16px;margin-bottom:10px">
-  <button class="main" id="bkimp">Text importieren<small>Увези текст</small></button>
+  <button class="main" id="bkimp" data-ui="import">Увези текст</button>
   <p id="bkmsg" class="sub"></p>
 </section>
 
 <section id="statsview" class="screen">
-  <div class="bar"><button class="small" id="back6">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Statistik<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Статистика · Tippen / Пишување</small></h1>
-  <p class="sub" style="margin:0 0 12px">✓ richtig · точно &nbsp; ✗ falsch · погрешно</p>
+  <div class="bar"><button class="small" id="back6" data-ui="back">Назад</button></div>
+  <h1 style="margin-top:20px" data-ui="stats">Статистика</h1>
+  <p class="sub" style="margin:0 0 12px" data-ui="legend">✓ Точно · ✗ Погрешно</p>
   <div id="statbox"></div>
   <p id="statempty" class="sub"></p>
   <div id="learned"></div>
   <div id="wordProgress"></div>
-  <button id="reset" style="margin-top:24px;border-color:var(--red);color:var(--red)">Zurücksetzen<small>Ресетирај</small></button>
+  <button id="reset" style="margin-top:24px;border-color:var(--red);color:var(--red)" data-ui="reset">Ресетирај ги резултатите</button>
 </section>
 
 <div id="modal" class="modal"><div class="box">
-  <h2 style="margin:0 0 8px">Wirklich zurücksetzen?<small style="display:block;font-size:.6em;color:var(--mute);font-weight:normal;margin-top:4px">Навистина ресетирај?</small></h2>
-  <p class="sub" style="margin:0 0 16px">Alle Ergebnisse werden gelöscht.<br>Сите резултати ќе бидат избришани.</p>
-  <button class="main" id="myes">Ja, zurücksetzen<small>Да, ресетирај</small></button>
-  <button id="mno">Abbrechen<small>Откажи</small></button>
+  <h2 style="margin:0 0 8px" data-ui="resetQ">Да се ресетираат резултатите од овој курс?</h2>
+  <p class="sub" style="margin:0 0 16px" data-ui="resetBody">Ќе се избришат резултатите, совладаноста и грешките за овој курс.</p>
+  <button class="main" id="myes" data-ui="reset">Ресетирај ги резултатите</button>
+  <button id="mno" data-ui="cancel">Откажи</button>
 </div></div>
 
 <section id="result" class="screen">
-  <h1>Ergebnis<small style="display:block;font-size:.5em;color:var(--mute);font-weight:normal">Резултат</small></h1>
+  <h1 data-ui="result">Резултат</h1>
   <p id="rscore" class="sub" style="font-size:1.8rem;color:var(--ink);margin-bottom:12px"></p>
   <ul id="rmiss"></ul>
-  <button class="main" id="rback">Menü · Мени</button>
+  <button class="main" id="rback" data-ui="menu">Мени</button>
 </section>
 
 <section id="learn" class="screen">
-  <div class="bar"><button class="small" id="back1">Menü · Мени</button><span><button class="small tl" data-t="fav">☆</button> <button class="small tl" data-t="spk">🔊</button> <span id="count"></span></span></div>
-  <div id="card" role="button" tabindex="0" aria-label="Tippen für die nächste Anzeige">
+  <div class="bar"><button class="small" id="back1" data-ui="menu">Мени</button><span><button class="small tl" data-t="fav" data-ui-label="toggleFav" aria-label="Додај или отстрани од омилени">☆</button> <button class="small tl" data-t="spk" data-ui-label="speak" aria-label="Прочитај наглас">🔊</button> <span id="count"></span></span></div>
+  <div id="card" role="button" tabindex="0" aria-label="Допри за да го видиш преводот" data-ui-label="reveal">
     <div id="lang"></div>
     <div id="word"></div>
     <div id="answer"></div>
-    <div id="cardRating" aria-label="Lernstand bewerten"><button id="cardKnown" type="button">✓ Gewusst</button><button id="cardMissed" type="button">✗ Nicht gewusst</button></div>
-    <div id="hint">Tippen: Übersetzung zeigen</div>
+    <div id="cardRating" aria-label="Колку добро го знаеше зборот?" data-ui-label="rate"><button id="cardKnown" type="button" data-ui="known">✓ Го знаев</button><button id="cardMissed" type="button" data-ui="miss">✗ Сè уште го учам</button></div>
+    <div id="hint" data-ui="reveal">Допри за да го видиш преводот</div>
   </div>
+  <button class="small" id="learnReport" data-ui="report">Пријави го зборот</button>
 </section>
 
 <section id="edit" class="screen">
-  <div class="bar"><button class="small" id="back2">Menü · Мени</button></div>
-  <h1 style="margin-top:20px">Neues Wort · Нов збор</h1>
+  <div class="bar"><button class="small" id="back2" data-ui="back">Назад</button></div>
+  <h1 style="margin-top:20px" data-ui="newWord">Нов збор</h1>
+  <div id="wordFields">
   <label for="de">Deutsch · Германски</label><input id="de" autocomplete="off">
   <label for="mk">Mazedonisch · Македонски</label><input id="mk" autocomplete="off">
-  <button class="main" id="add">Wort speichern<small>Зачувај збор</small></button>
+  </div>
+  <label for="wordCategory" data-ui="cat">Категорија</label><select id="wordCategory"></select>
+  <details><summary data-ui="newCat">Нова категорија</summary>
+    <label for="categoryName" data-ui="name">Име</label><input id="categoryName" maxlength="80">
+    <button id="addCategory" data-ui="create">Создај категорија</button>
+  </details>
+  <button class="main" id="add" data-ui="saveWord">Зачувај го зборот</button>
   <p id="msg" class="sub" style="margin:0"></p>
   <ul id="list"></ul>
 </section>
 
 
+
+<script src="./storage.js"></script>
+<script src="./interface.js?v=34"></script>
+<script src="./practice.js"></script>
+<script src="./vocabulary.js"></script>
+<script src="./learning-courses.js"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -368,34 +401,154 @@ var EXTRA5=('#Familie & Berufe|x;Schreiner|столар;Zimmermann|дрводе�
 var EXTRA6=('#Einkaufen & Restaurant|x;Laden|дуќан;Kiosk|киоск;Bäckerei|пекара;Metzgerei|месара;Einkaufszentrum|трговски центар;Einkaufswagen|количка за пазарење;Einkaufsliste|список за пазарење;Verkäuferin|продавачка;Schaufenster|излог;Sonderangebot|специјална понуда;Schlussverkauf|распродажба;Gutschein|ваучер;Garantie|гаранција;Umtausch|замена;Rückgabe|враќање;Reklamation|рекламација;Kassenzettel|фискална сметка;Mehrwertsteuer|данок на додадена вредност;Zahlung|плаќање;Bargeld|готовина;Münze|монета;Schein|банкнота;Wechselstube|менувачница;Grösse|големина;Anprobe|пробање;Kabine|кабина;passt|одговара;zu gross|премногу голем;zu klein|премногу мал;Reservierung|резервација;Tagesmenü|дневно мени;Beilage|прилог;Gericht|јадење;Wasser ohne Kohlensäure|вода без гас;Wasser mit Kohlensäure|вода со гас;Eiswürfel|коцки мраз;Strohhalm|сламка;Kellnerin|келнерка;Küchenchef|главен готвач;Menü|мени;Mahlzeit|оброк;gebraten|пржен;gekocht|варен;gegrillt|на скара;roh|сурово;vegetarisch|вегетаријански;Vegetarier|вегетаријанец;glutenfrei|без глутен;ohne Zucker|без шеќер;Imbiss|брза храна;Pommes|помфрит;Hamburger|хамбургер;Sandwich|сендвич;Pfannkuchen|палачинка;Rührei|кајгана;Spiegelei|јајце на око;Omelett|омлет;Ich nehme das|Го земам тоа;Das schmeckt gut|Вкусно е;Es war sehr lecker|Беше многу вкусно;Noch ein Bier bitte|Уште едно пиво, молам;Ich bin satt|Сит сум;Ein Tisch für drei|Маса за тројца;Getrennt oder zusammen?|Одделно или заедно?;#Ämter & Internet|x;Behörde|институција;Amt|канцеларија;Gemeinde|општина;Einwohnerkontrolle|служба за жители;Abmeldung|одјава;Aufenthalt|престој;Aufenthaltsbewilligung|дозвола за престој;Niederlassung|дозвола за населување;Visum|виза;Einreise|влез во земја;Ausreise|излез од земја;Zoll|царина;Grenzübergang|граничен премин;Führerausweis|возачка дозвола;Geburtsurkunde|извод од матична книга на родени;Heiratsurkunde|извод од матична книга на венчани;Wohnsitz|живеалиште;Postleitzahl|поштенски број;Hausnummer|куќен број;Nachname|презиме;Vorname|лично име;Geburtsort|место на раѓање;Familienstand|брачен статус;ledig|неженет;geschieden|разведен;Beglaubigung|заверка;Übersetzung|превод;Antragsformular|образец за барање;Gebühr|такса;Bearbeitungszeit|време на обработка;Warteschlange|редица;Nummer ziehen|земам број;Öffnungszeiten|работно време;geöffnet|отворено;Strafe|казна;Busse|глоба;Mahnung|опомена;Steuererklärung|даночна пријава;Haftpflichtversicherung|осигурување од одговорност;Autoversicherung|автоосигурување;Rentenversicherung|пензиско осигурување;Arbeitslosenversicherung|осигурување за невработеност;Sozialamt|центар за социјална работа;Gericht|суд;Polizeistation|полициска станица;Notruf|итен повик;Botschaft|амбасада;Konsulat|конзулат;Kontoauszug|извод од сметка;Kontonummer|број на сметка;Dauerauftrag|трајна наредба;Kredit|кредит;Schulden|долгови;Zinsen|камата;Geldautomat|банкомат;Webseite|веб-страница;Benutzername|корисничко име;anmelden|најави се;abmelden|одјави се;herunterladen|преземи;hochladen|качи;Bildschirmfoto|слика од екранот;WLAN|Wi-Fi мрежа;Speicher|меморија;Update|ажурирање;Einstellungen|поставки;Datenschutz|заштита на податоци;E-Mail-Adresse|е-пошта адреса;Spam|спам;Anruf|повик;Mailbox|говорна пошта;Videoanruf|видео повик;Nachricht senden|испрати порака;#Unterwegs & Reisen|x;Fahrplan|возен ред;Tageskarte|дневна карта;Monatskarte|месечна карта;Einzelfahrt|единечна вожња;Rückfahrt|враќање;Hinfahrt|одење;Umsteigen|префрлање;Anschluss|врска;Ausfall|откажување;Abfahrtszeit|време на поаѓање;Ankunftszeit|време на пристигнување;Bahnsteig|перон;Endstation|крајна станица;Schaffner|кондуктер;Kontrolle|контрола;Flug|лет;Flugticket|авионски билет;Boardingkarte|бординг карта;Gepäck|багаж;Handgepäck|рачен багаж;Gepäckband|лента за багаж;Sicherheitskontrolle|безбедносна контрола;Passkontrolle|пасошка контрола;Zollkontrolle|царинска контрола;Landung|слетување;Abflug|полетување;Reisebüro|туристичка агенција;Buchung|букирање;Übernachtung|ноќевање;Jugendherberge|хостел;Ferienwohnung|стан за одмор;Campingplatz|кампинг;Zelt|шатор;Schlafsack|вреќа за спиење;Landkarte|мапа;Stadtplan|план на градот;Reiseführer|туристички водич;Sehenswürdigkeit|знаменитост;Ausflug|излет;Besichtigung|разгледување;Souvenir|сувенир;Mietwagen|изнајмен автомобил;Autovermietung|изнајмување автомобили;Einbahnstrasse|еднонасочна улица;Zebrastreifen|пешачки премин;Gehweg|тротоар;Fussgänger|пешак;Radweg|велосипедска патека;Verkehr|сообраќај;Verkehrsschild|сообраќаен знак;Vorfahrt|првенство на минување;Tempolimit|ограничување на брзина;Parkverbot|забрана за паркирање;Tunnel|тунел;Mautstelle|наплатна станица;Vignette|винјета;Raststätte|одморалиште;Panne|дефект на возилото;Abschleppdienst|шлеп служба;Reifenwechsel|менување гуми;Winterreifen|зимски гуми;Sommerreifen|летни гуми;Scheibenwischer|брисачи;Scheinwerfer|фарови;Blinker|мигавци;Hupe|сирена;Sicherheitsgurt|безбедносен појас;Ölstand|ниво на масло;Kühlwasser|вода за ладење;Auspuff|ауспух;#Körper & Arzt|x;Hausarzt|матичен доктор;Facharzt|специјалист;Notfall|итен случај;Notaufnahme|итна помош;Sprechstunde|ординација;Wartezimmer|чекална;Untersuchung|преглед;Blutdruck|крвен притисок;Blutprobe|крвна проба;Röntgen|рендген;Impfung|вакцинација;Verletzung|повреда;Brandwunde|изгореница;Schwellung|оток;Entzündung|воспаление;Infektion|инфекција;Übelkeit|гадење;Durchfall|дијареја;Verstopfung|запек;Schwindel|вртоглавица;Müdigkeit|замор;Atemnot|тешко дишење;Brustschmerzen|болки во градите;Halsschmerzen|болка во грлото;Ohrenschmerzen|болка во увото;Zahnschmerzen|забоболка;Rückenschmerzen|болки во грбот;Nasenbluten|крварење од нос;Niesen|кивање;Asthma|астма;Bluthochdruck|висок крвен притисок;Herzinfarkt|срцев удар;Schlaganfall|мозочен удар;Operation|операција;Narkose|анестезија;Gips|гипс;Krücken|патерици;Rollstuhl|инвалидска количка;Pflaster|фластер;Salbe|маст;Tropfen|капки;Hustensaft|сируп за кашлица;Schmerzmittel|лек против болка;Antibiotikum|антибиотик;Thermometer|топломер;Nebenwirkung|несакан ефект;Dosierung|дозирање;Packungsbeilage|упатство за лекот;Zahnfüllung|пломба;Brust|гради;Hüfte|колк;Oberschenkel|бут;Wade|лист;Knöchel|зглоб на нога;Handgelenk|зглоб на рака;Fingernagel|нокт;Gelenk|зглоб;Sehne|тетива;Ader|вена;Nerv|нерв;Niere|бубрег;Puls|пулс;Atem|здив;Stimme|глас;Gehör|слух;Geruch|мирис;Geschmack|вкус;#Orte & Sport|x;Schwimmbad|базен;Turnhalle|сала за вежбање;Sportplatz|спортско игралиште;Stadion|стадион;Fitnessstudio|теретана;Spielplatz|игралиште;Zoo|зоолошка градина;Zirkus|циркус;Konzert|концерт;Ausstellung|изложба;Messe|саем;Marktplatz|пазарен плоштад;Hafen|пристаниште;Leuchtturm|светилник;Staudamm|брана;Kraftwerk|електрана;Bauernhof|фарма;Stall|штала;Scheune|амбар;Mühle|воденица;Kloster|манастир;Kapelle|капела;Synagoge|синагога;Tempel|храм;Schloss|замок;Ruine|урнатина;Altstadt|стар град;Vorort|предградие;Siedlung|населба;Nachbarschaft|соседство;Wohnblock|зграда;Hochhaus|облакодер;Café|кафуле;Bar|бар;Disco|дискотека;Wettkampf|натпревар;Meisterschaft|првенство;Schiedsrichter|судија;Halbzeit|полувреме;Verein|клуб;Mitglied|член;Lauf|трка;Marathon|маратон;Skifahren|скијање;Ski|скии;Schlittschuh|лизгалки;Schlitten|санки;Radfahren|возење велосипед;Boxen|бокс;Ringen|борење;Handball|ракомет;Volleyball|одбојка;Schach|шах;Karten|карти;Würfel|коцка;Brettspiel|друштвена игра;Puzzle|слагалица;Gitarre|гитара;Klavier|пијано;Geige|виолина;Trommel|тапан;Flöte|флејта;Ziehharmonika|хармоника;#Familie & Berufe|x;Urgrossmutter|прабаба;Urgrossvater|прадедо;Schwiegersohn|зет;Schwiegertochter|снаа;Schwiegermutter|свекрва;Schwiegervater|свекор;Stiefvater|очув;Stiefmutter|маќеа;Zwilling|близнак;Patenkind|кумче;Pate|кум;Waise|сираче;Witwe|вдовица;Witwer|вдовец;Verlobte|вереница;Bräutigam|младоженец;Braut|невеста;Jugendlicher|младинец;Erwachsener|возрасен;Rentner|пензионер;Kleinkind|мало дете;Enkelin|внука;Dreher|стругар;Arbeitnehmer|работник;#Zahlen & Zeit|x;Jahrhundert|век;Jahrzehnt|деценија;Quartal|квартал;Halbjahr|полугодие;Viertelstunde|четвртина час;halbe Stunde|половина час;Augenblick|момент;Dauer|траење;Zeitraum|временски период;Silvester|новогодишна ноќ;Neujahr|Нова година;Pfingsten|Духови;Wochentag|ден од неделата;Werktag|работен ден;Ruhetag|ден за одмор;Dämmerung|самрак;Sonnenaufgang|изгрев;Sonnenuntergang|зајдисонце;Dutzend|туцет;Ziffer|цифра;Nummer|број;Addition|собирање;Subtraktion|одземање;Multiplikation|множење;Division|делење;vierte|четврти;fünfte|петти;sechste|шести;siebte|седми;achte|осми;neunte|деветти;zehnte|десетти;letzte|последен;nächste|следен;#Küche & Essen|x;Müsli|мусли;Haferflocken|овесни снегулки;Toast|тост;Frischkäse|крем сирење;Schafskäse|бело сирење;Kaschkaval|кашкавал;Salami|салама;Chips|чипс;Trockenfrüchte|сушено овошје;Heidelbeere|боровинка;Himbeere|малина;Brombeere|капина;Johannisbeere|рибизла;Quitte|дуња;Sesam|сусам;Mohn|афион;Vanille|ванила;Kakao|какао;Blätterteig|лиснато тесто;Strudel|штрудла;Baklava|баклава;Halva|халва;Kompott|компот;Sirup|сируп;Pudding|пудинг;Kamillentee|чај од камилица;Pfefferminztee|чај од нане;Bergtee|планински чај;Ayran|ајран;Boza|боза;Teekanne|чајник;Schneebesen|мутилка;Nudelholz|оклагија;Kochtopf|тенџере;Backblech|плех;Schöpflöffel|кутлача;Dosenöffner|отворач за конзерви;Flaschenöffner|отворач за шишиња;Korkenzieher|вадичеп;Küchenmesser|кујнски нож;Schneidebrett|штица за сечење;Geschirr|садови;Besteck|прибор за јадење;Spülmaschine|машина за садови;Kaffeemaschine|апарат за кафе;Toaster|тостер;#Haus & Kleidung|x;Haustür|влезна врата;Schlüsselbund|куп клучеви;Hausschuhe|влечки;Pyjama|пижами;Bademantel|баден мантил;Badewanne|када;Bettwäsche|постелнина;Matratze|душек;Kleiderbügel|закачалка;Wäsche|алишта;Waschmittel|детергент;Bügeleisen|пегла;Staubsauger|правосмукалка;Mülleimer|корпа за ѓубре;Müll|ѓубре;Putzmittel|средство за чистење;Lappen|партал;Schwamm|сунѓер;Mietvertrag|договор за кирија;Vermieter|сопственик на стан;Mieter|кирајџија;Hausordnung|куќен ред;Waschküche|перална;#Arbeit & Bewerbung|x;Arbeitsmarkt|пазар на труд;Branche|бранша;Berufsschule|стручно училиште;Hochschule|високо училиште;Bewerbungsmappe|досие за апликација;Initiativbewerbung|иницијативна апликација;Online-Bewerbung|онлајн апликација;Bewerbungsschreiben|писмо за апликација;Ansprechpartner|контакт-лице;Rückruf|повратен повик;Einladung zum Gespräch|покана за разговор;Schnuppertag|пробен ден;Probearbeiten|пробна работа;Einarbeitungszeit|период на воведување;Mindestlohn|минимална плата;Gesamtarbeitsvertrag|колективен договор;Lohnfortzahlung|плата при боледување;Arbeitslosengeld|надоместок за невработеност;Stellenvermittlung|посредување при вработување;Zeitarbeit|привремена работа;Temporärfirma|агенција за привремено вработување;Praktikumsplatz|место за пракса;Firmenwagen|службен автомобил;Diensthandy|службен телефон;Gabelstapler|виљушкар;Montagehalle|монтажна хала;Werkhalle|производствена хала;Maschinenpark|машински парк;Bearbeitungszentrum|центар за обработка;Qualitätssicherung|осигурување на квалитет;Prüfplan|план за контрола;Fertigungszeichnung|цртеж за изработка;Stückliste|список на делови;Arbeitsvorbereitung|подготовка на работа;Lieferschein|испорачница;Frachtbrief|товарен лист').split(';').map(function(s){return s.split('|')});
 var EXTRA7=('Schneidwerkzeug|алат за сечење;Fräskopf|глава за глодање;Gewindeschneiden|сечење навој;Entgraten|отстранување на остри рабови;Polieren|полирање;Beschichten|премачкување;Härten|калење;Glühen|жарење;Giessen|леење;Schmieden|ковање;Stanzen|штанцање;Biegen|свиткување;Pressen|пресување;Walzen|валање;Sägen|сечење со пила;Laserschneiden|ласерско сечење;Wasserstrahlschneiden|сечење со воден млаз;Erodieren|електроерозија;3D-Druck|3Д печатење;Spritzguss|бризгање пластика;Blechteil|лимен дел;Gussteil|леан дел;Schmiedeteil|ковен дел;Drehteil|стругнат дел;Frästeil|глодан дел;Normteil|стандарден дел;Sonderteil|специјален дел;Halbzeug|полупроизвод;Zeichnungsnummer|број на цртеж;Revision|ревизија;Losgrösse|големина на серија;Fertigungsauftrag|производствен налог;Arbeitsplan|работен план;Werkzeugliste|листа на алати;Nullpunktverschiebung|поместување на нулта точка;Referenzpunkt|референтна точка;Maschinenstillstand|застој на машина;Maschinenlaufzeit|време на работа на машина;Spindeldrehzahl|вртежи на вретеното;Eilgang|брз ход;Vorschubgeschwindigkeit|брзина на помак;Schruppen|груба обработка;Schlichten|фина обработка;Aufspannung|стегање;Umspannen|престегање;Anschlag|граничник;Werkzeugverschleiss|абење на алат;Standzeit|век на траење на алат;Werkzeugbruch|кршење на алат;Kollision|судир;Späneförderer|транспортер за струготини;Kühlmittelbehälter|резервоар за течност;Absaugung|вшмукување;Druckluft|компримиран воздух;Hydrauliköl|хидраулично масло;Schmierfett|маст за подмачкување;Reinigungstuch|крпа за чистење;Entfetter|средство за одмастување;Messuhr|мерен часовник;Höhenmessgerät|висиномер;Koordinatenmessmaschine|координатна мерна машина;Rauheitsmessung|мерење на рапавост;Härteprüfung|испитување на цврстина;Erstmuster|прв примерок;Prüfbericht|извештај од проверка;Kalibrierung|калибрирање;Messfehler|грешка при мерење;Messwert|измерена вредност;Sollwert|зададена вредност;Istwert|вистинска вредност;Grenzwert|гранична вредност;Obermass|горна мерка;Untermass|долна мерка;Spiel (Toleranz)|зазор;Schweissnaht|заварен шев;Schweissdraht|жица за заварување;Schutzgas|заштитен гас;Lichtbogen|електричен лак;Elektrode|електрода;Lötstelle|место на лемење;Wareneingang|прием на стока;Warenausgang|издавање на стока;Lagerbestand|залиха;Inventur|попис;Lagerplatz|место во магацин;Gabelstaplerschein|дозвола за виљушкар;Kommissionierung|комплетирање на нарачки;Verpackung|пакување;Karton|картон;Folie|фолија;Etikett|етикета;Barcode|баркод;Scanner|скенер;Lieferzeit|рок на испорака;Spedition|шпедиција;Fracht|товар;Container|контејнер;Laderampe|рампа за утовар;Verladen|утовар;Entladen|истовар;Transportschaden|штета при транспорт;Zollpapiere|царински документи;Ausfuhr|извоз;Einfuhr|увоз;Rechnungsnummer|број на фактура;Bestellnummer|број на нарачка;Artikelnummer|број на артикл;Seriennummer|сериски број;Chargennummer|број на шаржа;Mindestbestand|минимална залиха;Nachbestellung|повторна нарачка;Lieferverzug|задоцнета испорака;Buchhaltung|сметководство;Rechnungswesen|финансиско работење;Budget|буџет;Kosten|трошоци;Gewinn|добивка;Verlust|загуба;Umsatz|промет;Einkauf|набавка;Verkauf|продажба;Marketing|маркетинг;Personal|персонал;Geschäftsjahr|деловна година;Jahresabschluss|годишна сметка;Zahlungsfrist|рок за плаќање;Zahlungsbedingungen|услови за плаќање;Skonto|попуст за брзо плаќање;Vorauszahlung|авансно плаќање;Anzahlung|аванс;Restzahlung|преостаната уплата;Gutschrift|кредитна белешка;Lastschrift|директно задолжување;Spesenabrechnung|пресметка на трошоци;Reisekosten|патни трошоци;Posteingang|влезна пошта;Postausgang|излезна пошта;Terminkalender|календар на состаноци;Aktennotiz|белешка;Tagesordnung|дневен ред;Besprechungsprotokoll|записник од состанок;Teilnehmer|учесник;Teilnehmerliste|список на учесници;Anwesenheitsliste|список на присутни;Urlaubsantrag|барање за одмор;Krankmeldung|пријава за боледување;Überstundenabrechnung|пресметка на прекувремена работа;Zeiterfassung|евидентирање на време;Stempelkarte|картичка за евиденција;Gleitzeit|флексибилно работно време;Homeoffice|работа од дома;Teilzeitarbeit|работа со скратено време;Vollzeitstelle|работно место со полно време;Wochenstunden|часови неделно;Kernarbeitszeit|основно работно време;Urlaubsvertretung|замена за време на одмор;Stellvertreter|заменик;Nachfolger|наследник;Vorgänger|претходник;Lohnbuchhaltung|пресметка на плати;Lohnausweis|извод за плата;Quellensteuer|данок на извор;Arbeitgeberbeitrag|придонес на работодавецот;Arbeitnehmerbeitrag|придонес на работникот;Versicherungsnummer|број на осигурување;Auswahlverfahren|процес на селекција;Eignungstest|тест за способност;Assessment|проценка;Vorstellungsrunde|круг на претставување;zweites Gespräch|втор разговор;Absageschreiben|писмо за одбивање;Zusageschreiben|писмо за прифаќање;Arbeitszusage|потврда за вработување;Vertragsunterzeichnung|потпишување на договор;Eintrittsdatum|датум на почеток;Austrittsdatum|датум на престанок;Kündigungsschreiben|писмо за отказ;Aufhebungsvertrag|спогодба за раскин;Zwischenzeugnis|привремена препорака;Referenzperson|лице за препорака;Motivationsschreiben|мотивационо писмо;Stellenprofil|профил на работното место;Anforderungsprofil|профил на барања;Aufgabenbereich|област на задачи;Berufsbild|профил на занимање;Karriere|кариера;Aufstiegsmöglichkeit|можност за напредување;Fachkraft|стручно лице;Hilfskraft|помошен работник;Quereinsteiger|лице што менува професија;Berufswechsel|промена на професија;Umschulung|преквалификација;Berufsberatung|професионално советување;Stellensuche|барање работа;Stellensuchender|лице што бара работа;Jobbörse|берза на работа;Jobportal|портал за работа;Stelleninserat|оглас за работа;Kontaktaufnahme|воспоставување контакт;Rückmeldung|повратна информација;Eingangsbestätigung|потврда за прием;Gesprächstermin|термин за разговор;Anreise|патување до местото;Einstellungstest|тест за вработување;Tauglichkeit|способност;ärztliche Untersuchung|лекарски преглед;Strafregisterauszug|извод од казнена евиденција;Auszubildender|ученик на занает;Lehrmeister|мајстор;Ausbilder|инструктор;Werkmeister|мајстор на производство;Vorarbeiter|предрадник;Polier|предрадник на градилиште;Bauleiter|раководител на градилиште;Projektleiter|раководител на проект;Produktionsleiter|раководител на производство;Betriebsleiter|раководител на погон;Qualitätsmanager|менаџер за квалитет;Einkäufer|набавувач;Disponent|диспечер;Logistiker|логистичар;Lagerleiter|раководител на магацин;Kranführer|кранист;Baggerfahrer|багерист;Maschinist|машинист;Maschinenbediener|ракувач со машина;CNC-Programmierer|CNC програмер;CNC-Fräser|CNC глодач;Konstrukteur|конструктор;Zeichner|цртач;Technischer Zeichner|технички цртач;Werkstoffprüfer|испитувач на материјали;Messtechniker|мерен техничар;Instandhalter|одржувач;Servicetechniker|сервисен техничар;Elektroniker|електроничар;Heizungsmonteur|монтер за греење;Sanitärinstallateur|санитарен монтер;Gebäudetechniker|техничар за згради;Reinigungsfachkraft|стручен чистач;Küchenhilfe|помошник во кујна;Servicemitarbeiter|услужен работник;Barkeeper|бармен;Rezeptionist|рецепционер;Pflegefachkraft|стручно лице за нега;Altenpfleger|негувател на стари лица;Kinderbetreuer|чувар на деца;Erzieher|воспитувач;Sozialarbeiter|социјален работник;Sachbearbeiter|референт;Verwaltungsangestellter|административен службеник;Bürokaufmann|службеник во канцеларија;Kaufmann|трговец;Verkaufsberater|продажен консултант;Aussendienstmitarbeiter|теренски работник;Kundenberater|советник за клиенти;Paketbote|курир;Briefträger|поштар;Zusteller|доставувач;Strassenarbeiter|патар;Gleisbauer|градител на пруги;Lokführer|машиновозач;Flugbegleiter|стјуард;Förster|шумар;Landschaftsgärtner|уредувач на пејсаж;Winzer|лозар;Käser|сиреџија;Beikoch|помошник готвач;Gipser|гипсер;Parkettleger|паркет-мајстор;Glaser|стаклар;Spengler|лимар;Zahntechniker|забен техничар;Physiotherapeut|физиотерапевт;Masseur|масер;Kosmetikerin|козметичарка;ich arbeite mit|работам со;ich bediene|ракувам;ich justiere|нагодувам;ich kalibriere|калибрирам;ich überwache|надгледувам;ich entgrate|отстранувам остри рабови;ich poliere|полирам;ich härte|калам;ich biege|свиткувам;ich säge|сечам со пила;ich stanze|штанцам;ich presse|пресувам;ich walze|валам;ich hämmere|чукам;ich nagle|заковувам;ich schraube|завртувам;ich löse|ослободувам;ich ziehe fest|затегнувам;ich dichte ab|заптивам;ich dosiere|дозирам;ich lade auf|товарам;ich lade ab|истоварувам;ich stapele|натрупувам;ich wiege|мерам тежина;ich beschrifte|означувам;ich etikettiere|етикетирам;ich nehme an|прифаќам;ich lehne ab|одбивам;ich genehmige|одобрувам;ich unterzeichne|потпишувам;ich beantrage|поднесувам барање;ich reiche ein|поднесувам;ich melde mich krank|се пријавувам како болен;ich nehme Urlaub|земам одмор;ich arbeite Teilzeit|работам скратено;ich mache Überstunden|работам прекувремено;ich wechsle die Stelle|менувам работа;ich suche Arbeit|барам работа;ich finde Arbeit|наоѓам работа;ich verliere die Stelle|ја губам работата;ich werde eingestellt|ме вработуваат;ich werde entlassen|ме отпуштаат;ich gehe in Rente|одам во пензија;ich bilde mich weiter|се доусовршувам;ich mache eine Ausbildung|се школувам за занает;ich absolviere|завршувам;ich bestehe die Prüfung|го положувам испитот;ich falle durch|паѓам на испит;fachkundig|стручен;kompetent|компетентен;gründlich|темелен;effizient|ефикасен;produktiv|продуктивен;teamorientiert|ориентиран кон тим;lernbereit|подготвен за учење;anpassungsfähig|прилагодлив;ehrgeizig|амбициозен;diszipliniert|дисциплиниран;hilfsbereit|подготвен да помогне;gelassen|смирен;stressresistent|отпорен на стрес;gelernt|квалификуван;ungelernt|неквалификуван;angelernt|обучен на работно место;steuerpflichtig|даночен обврзник;versichert|осигуран;unfallfrei|без несреќи;Brandschutz|заштита од пожар;Brandmelder|детектор на пожар;Löschdecke|ќебе за гасење;Sammelplatz|собирно место;Evakuierung|евакуација;Gefahrenzone|опасна зона;Absperrung|ограда;Schutzgitter|заштитна решетка;Lärmschutz|заштита од бучава;Staubmaske|маска за прашина;Schutzhandschuhe|заштитни ракавици;Augenspülung|плакнење на очи;Sicherheitsdatenblatt|безбедносен лист;Betriebsanweisung|упатство за работа;Unterweisung|инструктирање;Gefährdungsbeurteilung|проценка на ризик;Risikobewertung|оценка на ризик;Unfallmeldung|пријава на несреќа;Ersthelfer|лице за прва помош;Sicherheitsbeauftragter|одговорно лице за безбедност;Rutschgefahr|опасност од лизгање;Stolperfalle|опасност од сопнување;Quetschgefahr|опасност од дробење;Heben und Tragen|кревање и носење;Pausenraum|просторија за одмор;Raucherbereich|простор за пушачи;Rauchverbot|забрана за пушење;Alkoholverbot|забрана за алкохол;Arbeitsschutz|заштита при работа;Umweltschutz|заштита на животната средина;Mülltrennung|сепарирање на отпад;Recycling|рециклирање;Altöl|искористено масло;Sondermüll|опасен отпад;Ich arbeite seit … Jahren als …|Работам веќе … години како …;Ich habe in einer Firma gearbeitet|Работев во една фирма;Meine letzte Stelle war …|Мојата последна работа беше …;Ich suche eine neue Herausforderung|Барам нов предизвик;Ich möchte mich weiterentwickeln|Сакам да се развивам;Ich bin lernbereit|Подготвен сум да учам;Ich bin teamfähig|Способен сум за тимска работа;Ich arbeite gewissenhaft|Работам совесно;Ich übernehme Verantwortung|Преземам одговорност;Ich kann gut mit Menschen umgehen|Добро се снаоѓам со луѓе;Ich bin motiviert|Мотивиран сум;Ich möchte langfristig in der Schweiz bleiben|Сакам да останам долгорочно во Швајцарија;Haben Sie eine Stelle frei?|Имате ли слободно работно место?;Ich würde gern bei Ihnen arbeiten|Би сакал да работам кај вас;Darf ich mich vorstellen?|Може ли да се претставам?;Hier sind meine Unterlagen|Еве ги моите документи;Ich schicke Ihnen meinen Lebenslauf|Ќе ви го испратам мојот животопис;Ich rufe Sie morgen zurück|Утре ќе ви се јавам;Könnten Sie mir das bitte erklären?|Можете ли да ми го објасните тоа, молам?;Ich brauche eine Einarbeitung|Ми треба воведување во работата;Wie läuft der Arbeitstag ab?|Како изгледа работниот ден?;Wo kann ich mich umziehen?|Каде можам да се пресоблечам?;Wo ist die Stempeluhr?|Каде е часовникот за евиденција?;Wann ist Feierabend?|Кога е крајот на работното време?;Wann ist Pause?|Кога е пауза?;Ich habe eine Frage zur Maschine|Имам прашање за машината;Die Maschine funktioniert nicht|Машината не работи;Das Werkzeug ist stumpf|Алатот е затапен;Das Teil ist zu gross|Делот е преголем;Das Teil ist zu klein|Делот е премал;Das Mass stimmt nicht|Мерката не е точна;Das Mass stimmt|Мерката е точна;Ich muss neu einrichten|Морам да подесам одново;Bitte kontrollieren Sie das|Ве молам, проверете го тоа;Ich melde mich krank|Се пријавувам како болен;Ich brauche eine Arbeitsbestätigung|Ми треба потврда за работа;Ich möchte kündigen|Сакам да дадам отказ;Danke für die Chance|Благодарам за шансата;Ich freue mich auf Ihre Antwort|Се радувам на вашиот одговор;Arbeitsklima|работна атмосфера;Betriebsausflug|екскурзија на фирмата;Weihnachtsfeier|божиќна прослава;Hierarchie|хиерархија;Zuständigkeit|надлежност;Verantwortungsbereich|област на одговорност;Kompetenz|компетентност;Befugnis|овластување;Vollmacht|полномошно;Auftraggeber|нарачател;Auftragnehmer|изведувач;Subunternehmer|подизведувач;Konkurrenz|конкуренција;Marktanteil|пазарен удел;Zielgruppe|целна група;Kundenzufriedenheit|задоволство на клиентите;Beschwerde|жалба;Wartezeit|време на чекање;Termintreue|почитување на рокови;Zeitdruck|притисок од време;Stress|стрес;Arbeitsbelastung|работно оптоварување;Schichtzuschlag|додаток за смена;Nachtarbeit|ноќна работа;Wochenendarbeit|работа викенд;Bereitschaftsdienst|дежурство;Arbeitseinsatz|работен ангажман;Einsatzort|место на ангажман;Einsatzplan|план за распоредување;Arbeitsgruppe|работна група;Projektteam|проектен тим;Zwischenbericht|меѓуизвештај;Abschlussbericht|завршен извештај;Jahresgespräch|годишен разговор;Feedback|повратна информација;Lob|пофалба;Kritik|критика;Verbesserungsvorschlag|предлог за подобрување;Auszeichnung|признание;Mitarbeiterausweis|службена легитимација;Zutrittskarte|картичка за влез;Schlüsselübergabe|предавање клучеви;Arbeitsmaterial|работен материјал;Büromaterial|канцелариски материјал;Arbeitsmittel|работни средства;Verbrauchsmaterial|потрошен материјал').split(';').map(function(s){return s.split('|')});
 var EXTRA8=('#Grundwortschatz|x;Sehr gut|Многу добро;Nicht schlecht|Не е лошо;Ich auch|И јас;Ich nicht|Јас не;Du auch|И ти;Genau|Токму така;Sicher|Сигурно;Okay|Добро;Nein danke|Не, благодарам;Ja bitte|Да, молам;Wie bitte?|Како?;Was ist das?|Што е ова?;Wer ist das?|Кој е тоа?;Wo bist du?|Каде си?;Wie heisst das?|Како се вика тоа?;Wie geht es Ihnen?|Како сте?;Mir geht es gut|Добро сум;Es geht so|Така-така;Und dir?|А ти?;Freut mich|Мило ми е;Bis später|До подоцна;Schönes Wochenende|Убав викенд;Schönen Abend|Убава вечер;Das ist mein Freund|Ова е мојот пријател;Das ist meine Frau|Ова е мојата жена;Das ist mein Sohn|Ова е мојот син;Das ist meine Tochter|Ова е мојата ќерка;Ich bin verheiratet|Оженет сум;Ich habe zwei Kinder|Имам две деца;Ich bin zu Hause|Дома сум;Ich bin unterwegs|Сум на пат;Ich bin hier|Тука сум;Ich komme gleich|Доаѓам веднаш;Moment|Момент;Warte kurz|Почекај малку;Los geht’s|Одиме;Komm mit|Дојди со мене;Gehen wir|Да одиме;Das ist gut|Тоа е добро;Das ist schlecht|Тоа е лошо;Das ist wichtig|Тоа е важно;Das ist teuer|Тоа е скапо;Das ist billig|Тоа е евтино;Das ist neu|Тоа е ново;Das ist alt|Тоа е старо;Das ist weit|Тоа е далеку;Das ist nah|Тоа е блиску;Das weiss ich|Тоа го знам;Das weiss ich nicht|Тоа не го знам;Ich habe keine Ahnung|Немам поим;Ich glaube schon|Мислам дека да;Ich glaube nicht|Мислам дека не;Mach dir keine Sorgen|Не грижи се;Alles klar|Јасно;Verstanden|Разбрав;Gute Idee|Добра идеја;#Verben|x;ich schaue fern|гледам телевизија;ich höre Musik|слушам музика;ich gehe einkaufen|одам на пазар;ich gehe schlafen|одам да спијам;ich stehe früh auf|станувам рано;ich frühstücke|појадувам;ich esse zu Mittag|ручам;ich esse zu Abend|вечерам;ich koche Kaffee|варам кафе;ich trinke Wasser|пијам вода;ich putze die Zähne|ги чистам забите;ich wasche die Hände|ги мијам рацете;ich fahre Auto|возам автомобил;ich fahre Fahrrad|возам велосипед;ich nehme den Bus|земам автобус;ich warte auf den Zug|чекам воз;ich steige um|се префрлам;ich laufe zur Arbeit|одам пеш до работа;ich rufe an|се јавувам;ich schreibe eine Nachricht|пишувам порака;ich lese ein Buch|читам книга;ich lerne Deutsch|учам германски;ich übe Aussprache|вежбам изговор;ich spreche leise|зборувам тивко;ich spreche laut|зборувам гласно;ich zähle bis zehn|броам до десет;ich öffne die Tür|ја отворам вратата;ich schliesse das Fenster|го затворам прозорецот;ich schalte das Licht ein|го палам светлото;ich schalte das Licht aus|го гасам светлото;ich räume auf|средувам;ich putze die Wohnung|ја чистам станот;ich wasche Wäsche|перам алишта;ich koche Essen|готвам храна;ich decke den Tisch|ја поставувам масата;ich zahle die Rechnung|ја плаќам сметката;ich bezahle mit Karte|плаќам со картичка;ich hebe Geld ab|подигам пари;ich spare Geld|штедам пари;ich gebe Geld aus|трошам пари;ich leihe|позајмувам;ich schulde|должам;ich miete|изнајмувам;ich vermiete|давам под кирија;ich ziehe um|се селам;ich packe|спакувам;ich komme zurück|се враќам;ich besuche Freunde|посетувам пријатели;ich treffe|се среќавам;ich lade Gäste ein|поканувам гости;ich feiere|славам;ich gratuliere|честитам;ich schenke|подарувам;ich bedanke mich|се заблагодарувам;ich lächle|се насмевнувам;ich schlafe ein|заспивам;#Natur & Tiere|x;Hirsch|елен;Reh|срна;Dachs|јазовец;Igel|еж;Eichhörnchen|верверица;Kröte|крастава жаба;Eidechse|гуштер;Schildkröte|желка;Krokodil|крокодил;Giraffe|жирафа;Zebra|зебра;Kamel|камила;Nashorn|носорог;Känguru|кенгур;Pinguin|пингвин;Eule|бувка;Rabe|гавран;Krähe|врана;Storch|штркел;Schwan|лабуд;Möwe|галеб;Papagei|папагал;Kuckuck|кукавица;Specht|клукајдрвец;Wespe|оса;Hummel|бумбар;Libelle|вилин коњиц;Käfer|буба;Grille|штурец;Heuschrecke|скакулец;Floh|болва;Laus|вошка;Zecke|крлеж;Muschel|школка;Seestern|морска ѕвезда;Qualle|медуза;Tintenfisch|октопод;Eiche|даб;Buche|бука;Kiefer|бор;Tanne|ела;Birke|бреза;Weide|врба;Pappel|топола;Moos|мов;Farn|папрат;Kaktus|кактус;Gänseblümchen|маргаритка;Sonnenblume|сончоглед;Lilie|крин;Nelke|каранфил;Klee|детелина;Erdbeben|земјотрес;Überschwemmung|поплава;Dürre|суша;Lawine|лавина;Vulkan|вулкан;Gletscher|глечер;Nordpol|Северен пол;Südpol|Јужен пол;Milchstrasse|Млечен пат;Planet|планета;Dunst|измаглица;Tau|роса;Reif|слана;Hagel|град;Glatteis|поледица;Schneesturm|мразна бура;Windstoss|налет на ветер;#Gefühle & Alltag|x;Freundschaft|пријателство;Hass|омраза;Mitleid|сочувство;Trauer|жалост;Zorn|гнев;Ärger|лутина;Langeweile|досада;Neugier|љубопитство;Zweifel|сомнеж;Sehnsucht|копнеж;Ehrlichkeit|искреност;Treue|верност;Gerechtigkeit|правда;Würde|достоинство;Ehre|чест;Bildung|образование;Wissen|знаење;Wahl|избор;Zufall|случајност;Schicksal|судбина;Verstand|ум;Gedanke|мисла;Absicht|намера;Wirkung|ефект;Beispiel|пример;Unterschied|разлика;Ähnlichkeit|сличност;Vorteil|предност;Nachteil|недостаток;Möglichkeit|можност;Gelegenheit|прилика;Tradition|традиција;Kultur|култура;Religion|религија;Glaube|вера;Brauch|обичај;Sprichwort|поговорка;Witz|шега;Märchen|бајка;#Haus & Kleidung|x;Dachboden|таван;Flur|ходник;Esszimmer|трпезарија;Kinderzimmer|детска соба;Arbeitszimmer|работна соба;Gästezimmer|соба за гости;Garage|гаража;Terrasse|тераса;Schornstein|оџак;Kamin|камин;Ofen|печка;Gefrierschrank|замрзнувач;Bügelbrett|даска за пеглање;Nähmaschine|машина за шиење;Kleiderschrank|гардероба;Kommode|комода;Nachttisch|ноќно ормарче;Fussmatte|подлога за нозе;Kopfkissen|перница;Wecker|будилник;Regenmantel|дождовник;Handschuh|ракавица;Turnschuhe|патики;Badeanzug|костум за капење;Badehose|гаќи за капење;Sonnenbrille|очила за сонце;Ohrring|обетка;Armband|нараквица;Ring|прстен;#Körper & Arzt|x;Gaumen|непце;Kinn|брадичка;Augenbraue|веѓа;Wimper|трепавица;Schläfe|слепоочница;Handfläche|дланка;Ferse|петица;Zehe|прст на нога;Sohle|табан;Bauchnabel|папок;Rippe|ребро;Schädel|череп;Speichel|плунка;Schweiss|пот;#Zahlen & Zeit|x;einundzwanzig|дваесет и еден;zweihundert|двесте;dreihundert|триста;vierhundert|четиристотини;fünfhundert|петстотини;sechshundert|шестотини;siebenhundert|седумстотини;achthundert|осумстотини;neunhundert|деветстотини;zweitausend|две илјади;zehntausend|десет илјади;hunderttausend|сто илјади;Milliarde|милијарда;Drittel|третина;doppelt|двојно;dreifach|тројно;einmal|еднаш;zweimal|двапати;dreimal|трипати;selten|ретко;jedes Mal|секој пат;am Montag|во понеделник;am Wochenende|за викенд;im Sommer|во лето;im Winter|во зима;im Frühling|напролет;im Herbst|наесен;am Morgen|наутро;am Abend|навечер;in der Nacht|ноќе;um drei Uhr|во три часот;Viertel vor|без петнаесет;Viertel nach|и петнаесет;halb drei|два и пол;gestern Abend|синоќа;morgen früh|утре наутро;vor einer Woche|пред една седмица;in einer Woche|за една седмица;seit gestern|од вчера;#Orte & Sport|x;Fussballspiel|фудбалски натпревар;Tischtennis|стоно тенис;Badminton|бадминтон;Golf|голф;Rugby|рагби;Eishockey|хокеј на мраз;Turnen|гимнастика;Leichtathletik|атлетика;Gewichtheben|кревање тегови;Radrennen|велосипедска трка;Pokal|пехар;Medaille|медал;Rekord|рекорд;Stadtmauer|градски ѕид;Fussgängerzone|пешачка зона;Unterführung|подвоз;#Adjektive & Kleinwörter|x;blind|слеп;taub|глув;stumm|нем;nackt|гол;barfuss|бос;gestreift|на пруги;kariert|карирано;eckig|аголест;quadratisch|квадратен;flach|рамен;steil|стрмен;glänzend|сјаен;matt|мат;durchsichtig|проѕирен;dicht|густ;locker|лабав;fest|цврст;eng|тесен;nützlich|корисен;nutzlos|бескорисен;leicht|лесен;typisch|типичен;echt|вистински;#Arbeit & Bewerbung|x;Nebenjob|споредна работа;Ferienjob|летна работа;Selbstständigkeit|самостојна дејност;Gründer|основач;Geschäftsidee|бизнис идеја;Kundenstamm|клиентска база;Preisliste|ценовник;Mahngebühr|такса за опомена;Betriebsferien|колективен годишен одмор;Arbeitsgenehmigung|дозвола за работа;Einstellungsgespräch|разговор за вработување;Berufsausbildung|стручно образование;Studium|студии;Stipendium|стипендија').split(';').map(function(s){return s.split('|')});
-var DIRS=["DE → MK","MK → DE","Gemischt"];
-var words=[], dirIx=+load('vt_dir',0)||0;
+var languages = {
+  de:['Deutsch','Германски','de-DE','Guten Tag. Wie geht es dir?'],
+  mk:['Mazedonisch','Македонски','mk-MK','Добар ден. Како си?'],
+  en:['Englisch','Англиски','en-US','Hello! How are you?'],
+  fr:['Französisch','Француски','fr-FR','Bonjour ! Comment allez-vous ?'],
+  it:['Italienisch','Италијански','it-IT','Buongiorno! Come stai?'],
+};
+setupInterface();
+var defaultPair = 'de-mk';
+var savedPairs = load('vt_pairs', []);
+// Keep the row order and storage namespace of courses created in earlier versions.
+var targets = ['de','en','it','fr'];
+var pairList = targets.map(function(code){
+  if(code==='de')return defaultPair;
+  var previous=code+'-mk';
+  return Array.isArray(savedPairs) && savedPairs.includes(previous)?previous:'mk-'+code;
+});
+var pairId = load('vt_pair',defaultPair);
+if(!pairList.includes(pairId)) pairId=defaultPair;
+var codes=pairId.split('-'), first=languages[codes[0]], second=languages[codes[1]];
+var target=codes[0]==='mk'?codes[1]:codes[0];
+var DIRS=[codes.join(' → ').toUpperCase(),codes.slice().reverse().join(' → ').toUpperCase(),ui('mixed')];
+function switchPair(id){
+  if(!pairList.includes(id))return;
+  if(trainingStorage.retry() && save('vt_pair',id))location.reload();
+  else $('pairList').value=pairId;
+}
+targets.forEach(function(code,i){
+  $('pairList').add(new Option(languageName(code),pairList[i]));
+});
+$('pairList').value=pairId;
+$('pairList').onchange=function(){switchPair(this.value)};
+document.querySelector('.home-head .sub').textContent=languageName('mk')+' ⇄ '+languageName(target);
+[first,second].forEach(function(lang,i){
+  document.querySelector('label[for="'+(i?'mk':'de')+'"]').textContent=languageName(codes[i]);
+  $(i?'voiceTestMk':'voiceTestDe').textContent=ui('testVoice',languageName(codes[i]));
+});
+if(codes[1]==='mk'){
+  var fields=$('wordFields');
+  fields.append(document.querySelector('label[for="de"]'),$('de'));
+}
+function storageKey(key){
+  if(!pairId || pairId===defaultPair || ['vt_pair','vt_pairs','vt_theme','vt_welcome_seen','vt_ui_language'].includes(key))return key;
+  return 'vt_pair_'+pairId+'_'+key.slice(3);
+}
+var words=[], dirIx=+load('vt_dir',codes.indexOf('mk'));
 var difficulty=load('vt_difficulty','medium');
 var CATS=[['Grundwortschatz','Основни зборови'],['Zahlen & Zeit','Броеви и време'],['Einkaufen & Restaurant','Купување и ресторан'],['Unterwegs & Reisen','Патување и насоки'],['Ämter & Internet','Институции и интернет'],['Körper & Arzt','Тело и лекар'],['Familie & Berufe','Семејство и занимања'],['Küche & Essen','Кујна и храна'],['Haus & Kleidung','Дом и облека'],['Verben','Глаголи'],['Adjektive & Kleinwörter','Придавки и мали зборови'],['Orte & Sport','Места и спорт'],['Natur & Tiere','Природа и животни'],['Gefühle & Alltag','Чувства и секојдневие'],['Masse & Technik','Мерки и техника'],['Arbeit & Bewerbung','Работа и интервју']];
 var ALL=[],seen={};
 function addList(list,cat){list.forEach(function(w){if(w[0].charAt(0)==='#'){cat=w[0].slice(1);return}if(!w[1]||seen[w[0]])return;seen[w[0]]=1;ALL.push([w[0],w[1],cat])})}
-addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXTRA2,'Zahlen & Zeit');addList(EXTRA3,'Einkaufen & Restaurant');addList(EXTRA4,'Arbeit & Bewerbung');addList(EXTRA5,'Arbeit & Bewerbung');addList(EXTRA6,'Einkaufen & Restaurant');addList(EXTRA7,'Arbeit & Bewerbung');addList(EXTRA8,'Grundwortschatz');
+if(pairId===defaultPair){addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXTRA2,'Zahlen & Zeit');addList(EXTRA3,'Einkaufen & Restaurant');addList(EXTRA4,'Arbeit & Bewerbung');addList(EXTRA5,'Arbeit & Bewerbung');addList(EXTRA6,'Einkaufen & Restaurant');addList(EXTRA7,'Arbeit & Bewerbung');addList(EXTRA8,'Grundwortschatz');}
+// Keep legacy entries first so their learning history and answer keys retain precedence.
+function addCourseVocabulary(){
+  var column={en:1,de:2,it:3,fr:4}[target];
+  var mkIndex=codes.indexOf('mk'),targetIndex=1-mkIndex;
+  function key(text){return text.normalize('NFC').trim().toLocaleLowerCase()}
+  var mkWords=new Set(),targetWords=new Set();
+  function remember(w){mkWords.add(key(w[mkIndex]));targetWords.add(key(w[targetIndex]))}
+  ALL.forEach(remember);
+  (load('vt_mine',[])||[]).forEach(remember);
+  Object.entries(courseVocabulary).forEach(function(entry){
+    var category=entry[0].split('|'), initial=ALL.length;
+    entry[1].forEach(function(row){
+      var mk=row[0],foreign=row[column];
+      if(mkWords.has(key(mk))||targetWords.has(key(foreign)))return;
+      var w=mkIndex===0?[mk,foreign,category[0]]:[foreign,mk,category[0]];
+      ALL.push(w);remember(w);
+    });
+    if(ALL.length>initial && !CATS.some(function(c){return c[0]===category[0]}))CATS.push(category);
+  });
+}
+if(pairId===defaultPair){
+  addCourseVocabulary();
+}else{
+  CATS=learningCourses.map(function(group){return group.slice(0,2)});
+  var answerColumn={en:1,it:2,fr:3}[target];
+  var mkFirst=codes[0]==='mk';
+  var personalWords=load('vt_mine',null)||load('vt_words',[])||[];
+  function wordKey(text){return text.normalize('NFC').trim().toLowerCase()}
+  var personalPrompts=new Set(personalWords.map(function(w){return wordKey(w[0])}));
+  var personalAnswers=new Set(personalWords.map(function(w){return wordKey(w[1])}));
+  learningCourses.forEach(function(group){
+    group[2].forEach(function(row){
+      var foreign=row[answerColumn];
+      if(!foreign)return;
+      var left=mkFirst?row[0]:foreign,right=mkFirst?foreign:row[0];
+      if(personalPrompts.has(wordKey(left))||personalAnswers.has(wordKey(right)))return;
+      ALL.push([left,right,group[0]]);
+    });
+  });
+}
+var savedCategories=load('vt_categories',[]);
+var customCategories=Array.isArray(savedCategories)?savedCategories.filter(function(name){return typeof name==='string' && name.trim() && !(name in Object.prototype)}):[];
+function renderCategories(){
+  var select=$('wordCategory');
+  select.replaceChildren(new Option(ui('own'),''));
+  customCategories.forEach(function(name){select.add(new Option(name,name))});
+}
+customCategories.forEach(function(name){if(!CATS.some(function(c){return c[0]===name}))CATS.push([name,'Сопствена категорија'])});
+renderCategories();
+$('addCategory').onclick=function(){
+  var name=$('categoryName').value.trim();
+  if(!name){$('msg').textContent=ui('catName');return}
+  var reserved=CATS.map(function(c){return c[0]}).concat(['Eigene Wörter','Alle Wörter','Favoriten','*','!','♥']);
+  if(name in Object.prototype || reserved.some(function(s){return s.toLowerCase()===name.toLowerCase()})){
+    $('msg').textContent=ui('catExists');return
+  }
+  customCategories.push(name);CATS.push([name,'Сопствена категорија']);var stored=save('vt_categories',customCategories);
+  renderCategories();$('wordCategory').value=name;$('categoryName').value='';
+  $('msg').textContent=stored?ui('created',name):ui('saveFailed');
+};
 var mine=load('vt_mine',null);
 if(mine===null){mine=[];(load('vt_words',[])||[]).forEach(function(w){if(!seen[w[0]])mine.push([w[0],w[1]])});save('vt_mine',mine)}
-function pool(k){var m=mine.map(function(w){return [w[0],w[1],'Eigene Wörter']});if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.filter(function(w){return w[2]===k})}
-function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(de));var s=document.createElement('small');var p=pool(k),known=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;s.textContent=mk+' · '+n+' Wörter · '+known+' gelernt';b.appendChild(s);b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n)btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
+function pool(k){var m=mine.map(function(w){return [w[0],w[1],w[2]||'Eigene Wörter']});if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.concat(m).filter(function(w){return w[2]===k})}
+function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(categoryName(de)));var s=document.createElement('small');var p=pool(k),known=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;s.textContent=ui('catCount',n,known);b.appendChild(s);b.disabled=!n;b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n||customCategories.includes(c[0]))btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
 var curMode='learn',tcur=null,tstate='ask',tAt=0;
 function go(k){activeCategory=k;words=pool(k);shuffle();session={category:k,mode:curMode,pos:0};save('vt_session',session);if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}}
 var activeCategory='*';
 var stats=load('vt_stats',null)||{all:[0,0],cats:{}};
 var daily=load('vt_daily',{date:'',done:0,goal:10});
 var session=load('vt_session',null);
+if(pairId!==defaultPair){
+  var mergedCategories={'Kalender':'Zahlen & Zeit','Körper und Gesten':'Körper & Arzt'};
+  Object.keys(mergedCategories).forEach(function(oldName){
+    if(customCategories.includes(oldName))return;
+    var newName=mergedCategories[oldName], prior=stats.cats[oldName];
+    if(prior){
+      var totals=stats.cats[newName]||[0,0];
+      stats.cats[newName]=[totals[0]+prior[0],totals[1]+prior[1]];
+      delete stats.cats[oldName];
+      save('vt_stats',stats);
+    }
+    if(session && session.category===oldName){
+      session.category=newName;save('vt_session',session);
+    }
+  });
+}
 function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[cat]=[0,0];stats.cats[cat][i]++;save('vt_stats',stats)}
-function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^a-z0-9а-џ\s]/g,' ').replace(/\s+/g,' ').trim()}
+function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^\p{L}\p{M}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
 function nextType(){
   $('type').className='screen on';if(rlen&&rnd.n>=rlen){showResult();return}
   var inp=$('tin');
-  if(!words.length){$('tlang').textContent='';$('tword').textContent='Noch keine Wörter · Сè уште нема зборови';inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
+  if(!words.length){$('tlang').textContent='';$('tword').textContent=ui('empty');inp.style.display='none';$('tcheck').style.display='none';$('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';tstate='none';return}
   if(pos>=order.length)shuffle();
   var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode=curMode;save('vt_session',session)}
   var d2m=dirIx===0||(dirIx===2&&Math.random()<.5);
-  tcur={q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
-  $('tlang').textContent=d2m?'Nach Mazedonisch · На македонски':'Nach Deutsch · На германски';
+  tcur={forward:d2m,q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
+  $('tlang').textContent=ui('into',languageName(codes[d2m?1:0]));
   $('tword').textContent=tcur.q;
   inp.style.display='';inp.value='';inp.disabled=false;
   $('tcheck').style.display='';
@@ -407,24 +560,24 @@ function nextType(){
 function checkType(v){
   if(tstate!=='ask'||!tcur)return;
   var inp=$('tin'),u=(typeof v==='string')?v:inp.value,a=tcur.a;
-  var nu=norm(u),ok=nu!==''&&(nu===norm(a)||nu===norm(a.replace(/\s*\([^)]*\)/g,'')));
+  var ok=acceptedAnswers(tcur).has(norm(u.normalize('NFC')));
   rec(tcur.cat,ok);track(ok);
   $('type').className='screen on '+(ok?'ok':'bad');
-  $('tfb').textContent=ok?'Richtig · Точно ✓':'Falsch · Погрешно ✗';
+  $('tfb').textContent=ok?ui('correct'):ui('wrong');
   $('tans').textContent=tcur.a;
-  $('tmine').textContent=(!ok&&u.trim())?'Deine Antwort · Твој одговор: '+u.trim():'';
-  $('thint').textContent='Tippen: nächstes Wort · Допри: следен збор';
+  $('tmine').textContent=(!ok&&u.trim())?ui('yourAnswer',u.trim()):'';
+  $('thint').textContent=ui('next');
   inp.blur();inp.style.display='none';$('tcheck').style.display='none';
   $('topts').innerHTML='';tstate='shown';tAt=Date.now();
 }
 function showStats(){
   var box=$('statbox');box.innerHTML='';
-  function row(n,mk,a){var tot=a[0]+a[1],d=document.createElement('div'),x=document.createElement('div'),y=document.createElement('div');d.className='srow';x.className='sname';x.textContent=n+' · '+mk;y.className='sval';y.textContent='✓ '+a[0]+'  ✗ '+a[1]+'  '+(tot?Math.round(a[0]*100/tot):0)+'%';d.appendChild(x);d.appendChild(y);box.appendChild(d)}
+  function row(n,mk,a){var tot=a[0]+a[1],d=document.createElement('div'),x=document.createElement('div'),y=document.createElement('div');d.className='srow';x.className='sname';x.textContent=categoryName(n);y.className='sval';y.textContent='✓ '+a[0]+'  ✗ '+a[1]+'  '+(tot?Math.round(a[0]*100/tot):0)+'%';d.appendChild(x);d.appendChild(y);box.appendChild(d)}
   var tot=stats.all[0]+stats.all[1];
-  $('statempty').textContent=tot?'':'Noch keine Ergebnisse. Spiele den Tipp-Modus! · Сè уште нема резултати. Играј го режимот на пишување!';
+  $('statempty').textContent=tot?'':ui('noStats');
   if(tot){row('Alle Wörter','Сите зборови',stats.all);CATS.concat([['Eigene Wörter','Мои зборови']]).forEach(function(c){var a=stats.cats[c[0]];if(a&&a[0]+a[1])row(c[0],c[1],a)})}
-  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent='Gelernt (3× richtig in Folge) · Научени: '+m3+' / '+al.length;L.appendChild(h);CATS.forEach(function(c){var p=pool(c[0]),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=c[0]+' · '+c[1]+': '+n+' / '+p.length;L.appendChild(d)}});
-  var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent='Wortfortschritt · Напредок на зборовите';wp.appendChild(title);var mastered=al.filter(function(w){return (mast[w[0]]||0)>=3});var difficult=al.filter(function(w){return wrong[w[0]]});var p=document.createElement('p');p.className='sub';p.textContent='Gut gelernt: '+mastered.length+' · Noch schwierig: '+difficult.length;wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · Wiederholen';wp.appendChild(d)});
+  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent=ui('learned',m3,al.length);L.appendChild(h);CATS.forEach(function(c){var p=pool(c[0]),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=categoryName(c[0])+': '+n+' / '+p.length;L.appendChild(d)}});
+  var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent=ui('progress');wp.appendChild(title);var mastered=al.filter(function(w){return (mast[w[0]]||0)>=3});var difficult=al.filter(function(w){return wrong[w[0]]});var p=document.createElement('p');p.className='sub';p.textContent=ui('mastery',mastered.length,difficult.length);wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · '+ui('review');wp.appendChild(d)});
   show('statsview');
 }
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
@@ -435,7 +588,7 @@ $('mlearn').onclick=function(){curMode='learn';buildCats();show('cats')};
 $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
 $('back5').onclick=function(){goBack('menu')};
 $('mmc').onclick=function(){curMode='mc';buildCats();show('cats')};
-$('mwrong').onclick=function(){if(!Object.keys(wrong).length){$('mmsg').textContent='Noch keine Fehler gespeichert · Сè уште нема грешки';return}curMode='type';go('!')};
+$('mwrong').onclick=function(){if(!Object.keys(wrong).length){$('mmsg').textContent=ui('noMistakes');return}curMode='type';go('!')};
 $('rlen').onclick=function(){rlen=rlen===0?10:rlen===10?20:0;save('vt_rlen',rlen);rlabel()};
 $('rback').onclick=function(){goBack('menu')};
 $('btnstats').onclick=showStats;
@@ -448,19 +601,24 @@ if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXT
 var order=[],pos=0,shown=false,cur=null,cardRated=false;
 var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
 function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
-function rlabel(){$('rlen').innerHTML='Runde: '+(rlen?rlen+' Wörter':'Endlos')+'<small>Рунда: '+(rlen?rlen+' зборови':'бесконечно')+'</small>';$('mwrong').innerHTML='Fehler wiederholen ('+Object.keys(wrong).length+')<small>Повтори грешки</small>';$('mmsg').textContent=''}
+function rlabel(){
+  $('rlen').textContent=ui('round',rlen||ui('endless'));
+  $('mwrong').textContent=ui('repeat',Object.keys(wrong).length);
+  $('mmsg').textContent='';
+}
 function showResult(){$('rscore').textContent=rnd.ok+' / '+rnd.n+' ('+Math.round(rnd.ok*100/Math.max(rnd.n,1))+'%)';var ul=$('rmiss');ul.innerHTML='';rnd.miss.forEach(function(t){var li=document.createElement('li'),s=document.createElement('span');s.textContent=t;li.appendChild(s);ul.appendChild(li)});show('result')}
 function buildOpts(){
   var box=$('topts');box.innerHTML='';
-  var answer=tcur.a, source=words.length?words:ALL, isDe=isMk(tcur.q)===false;
-  var candidates=source.map(function(w){return isDe?w[1]:w[0]}).filter(function(x){return x&&x!==answer});
+  var answer=tcur.a, source=words.length?words:ALL, isDe=tcur.forward;
+  var accepted=acceptedAnswers(tcur);
+  var candidates=source.map(function(w){return isDe?w[1]:w[0]}).filter(function(x){return x&&!accepted.has(norm(x))});
   var unique=Array.from(new Set(candidates)),o=[answer];
   for(var i=unique.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),tmp=unique[i];unique[i]=unique[j];unique[j]=tmp}
   o=o.concat(unique.slice(0,3));o.sort(function(){return Math.random()-.5});
   o.forEach(function(t){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(e){e.stopPropagation();checkType(t)};box.appendChild(b)});
 }
-function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
-function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function load(k,d){try{return trainingStorage.read(storageKey(k)) ?? d}catch(e){return d}}
+function save(k,v){return trainingStorage.write(storageKey(k),v)}
 function $(id){return document.getElementById(id)}
 var screenHistory=[];
 var isInstalledApp=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
@@ -503,20 +661,20 @@ if(isInstalledApp){
   window.addEventListener('pageshow',ensureBackGuard);
 }
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
-function dirLabel(){var h='Lernrichtung: '+DIRS[dirIx]+'<small>Насока · ändern</small>';$('dir').innerHTML=h}
+function dirLabel(){$('dir').textContent=ui('direction',DIRS[dirIx])}
 function next(){
-  if(!words.length){$("lang").textContent="";$("word").textContent="Noch keine Wörter";$("answer").textContent="";$("hint").textContent="Füge zuerst Wörter hinzu.";return}
+  if(!words.length){$("lang").textContent="";$("word").textContent=ui('empty');$("answer").textContent="";$("hint").textContent=ui('addFirst');return}
   if(pos>=order.length)shuffle();
   var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode='learn';save('vt_session',session)}
   var de2mk=dirIx===0||(dirIx===2&&Math.random()<.5);
-  cur={q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:de2mk?"Deutsch":"Mazedonisch",cat:w[2]||"Eigene Wörter",w:w};
+  cur={forward:de2mk,q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:languageName(codes[de2mk?0:1]),cat:w[2]||"Eigene Wörter",w:w};
   $("lang").textContent=cur.l;$("word").textContent=cur.q;$("answer").textContent="";
-  $("hint").textContent="Tippen: Übersetzung zeigen";shown=false;cardRated=false;$("cardRating").style.display="none";
+  $("hint").textContent=ui('reveal');shown=false;cardRated=false;$("cardRating").style.display="none";
   $("count").textContent=Math.min(pos,order.length)+" / "+order.length;
 }
 function tap(){
   if(!words.length)return;
-  if(!shown){$("answer").textContent=cur.a;$("hint").textContent="Wie gut kanntest du das Wort?";shown=true;$("cardRating").style.display="grid"}
+  if(!shown){$("answer").textContent=cur.a;$("hint").textContent=ui('rate');shown=true;$("cardRating").style.display="grid"}
   else if(cardRated)next();
 }
 function rateCard(ok){
@@ -524,7 +682,7 @@ function rateCard(ok){
   var key=cur.w[0];
   if(ok){mast[key]=(mast[key]||0)+1;delete wrong[key]}else{mast[key]=0;wrong[key]=1}
   save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);cardRated=true;
-  $('cardRating').style.display='none';$('hint').textContent='Bewertet · Tippen für das nächste Wort';
+  $('cardRating').style.display='none';$('hint').textContent=ui('next');
 }
 $('cardKnown').onclick=function(e){e.stopPropagation();rateCard(true)};
 $('cardMissed').onclick=function(e){e.stopPropagation();rateCard(false)};
@@ -532,12 +690,12 @@ function renderList(){
   var ul=$("list");ul.innerHTML="";
   mine.forEach(function(w,i){
     var li=document.createElement("li"),sp=document.createElement("span"),b=document.createElement("button");
-    sp.textContent=w[0]+" – "+w[1];b.textContent="Löschen";
-    b.onclick=function(){mine.splice(i,1);save('vt_mine',mine);renderList()};
-    var e=document.createElement('button');e.textContent='Ändern';e.onclick=function(){$('de').value=w[0];$('mk').value=w[1];editIx=i;$('msg').textContent='Bearbeiten · Уредување …';$('de').focus()};li.appendChild(sp);li.appendChild(e);li.appendChild(b);ul.appendChild(li);
+    sp.textContent=w[0]+" – "+w[1]+(w[2]?" · "+w[2]:"");b.textContent=ui('delete');
+    b.onclick=function(){if(editIx===i){editIx=-1;$('de').value='';$('mk').value=''}else if(editIx>i){editIx--}mine.splice(i,1);save('vt_mine',mine);renderList()};
+    var e=document.createElement('button');e.textContent=ui('edit');e.onclick=function(){$('de').value=w[0];$('mk').value=w[1];editIx=i;$('wordCategory').value=w[2]||'';$('msg').textContent=ui('editing');$('de').focus()};li.appendChild(sp);li.appendChild(e);li.appendChild(b);ul.appendChild(li);
   });
 }
-$('start').onclick=function(){rlabel();show('modes')};
+$('start').onclick=function(){if(!pool('*').length){$('words').click();return}rlabel();show('modes')};
 $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")};
 $("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
@@ -545,18 +703,23 @@ $("card").onclick=tap;
 $("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}};
 $("add").onclick=function(){
   var de=$("de").value.trim(),mk=$("mk").value.trim();
-  if(!de||!mk){$("msg").textContent="Bitte beide Felder ausfüllen.";return}
-  if(editIx>=0&&mine[editIx]){mine[editIx]=[de,mk];editIx=-1}else mine.push([de,mk]);save('vt_mine',mine);
-  $("de").value="";$("mk").value="";$("msg").textContent="Gespeichert: "+de+" – "+mk;
+  if(!de||!mk){$("msg").textContent=ui('fill');return}
+  var entry=[de,mk];if($('wordCategory').value)entry.push($('wordCategory').value);
+  if(editIx>=0&&mine[editIx]){mine[editIx]=entry;editIx=-1}else mine.push(entry);var stored=save('vt_mine',mine);
+  $("de").value="";$("mk").value="";$("msg").textContent=stored?ui('saved',de+' – '+mk):ui('saveFailed');
   renderList();$("de").focus();
 };
 dirLabel();
 var fav=load('vt_fav',{}),days=load('vt_days',{n:0,last:''}),editIx=-1;
-function isMk(s){return /[а-џ]/i.test(s)}
-function deOf(x){return isMk(x.q)?x.a:x.q}
+function deOf(x){return x.w[0]}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function touchDay(){var t=new Date(),k=dayKey(t);if(days.last!==k){var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}if(daily.date!==k){daily.date=k;daily.done=0}daily.done++;save('vt_daily',daily);refreshMenu()}
-function refreshMenu(){var today=dayKey(new Date()),done=daily.date===today?(daily.done||0):0;$('streak').textContent=(days.n?'🔥 '+days.n+' Tage · дена':'')+'  🎯 '+done+'/'+(daily.goal||10);$('goalBtn').innerHTML='Tagesziel: '+(daily.goal||10)+' Wörter<small>Дневна цел: '+(daily.goal||10)+' зборови</small>'; $('resumeBtn').style.display=session?'':'none'}
+function refreshMenu(){
+  var done=daily.date===dayKey(new Date())?(daily.done||0):0;
+  $('streak').textContent=(days.n?'🔥 '+ui('days',days.n)+'  ':'')+'🎯 '+done+'/'+(daily.goal||10);
+  $('goalBtn').textContent=ui('goal',daily.goal||10);
+  $('resumeBtn').style.display=session?'':'none';
+}
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 var deviceVoices=[];
@@ -564,79 +727,83 @@ var voiceCheckTimer=null;
 function refreshDeviceVoices(){
   if(!$('voiceStatus'))return;
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
-    $('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;
+    $('voiceStatus').textContent=ui('voiceNone');return;
   }
   deviceVoices=speechSynthesis.getVoices()||[];
-  var de=deviceVoices.filter(function(v){return /^de(-|$)/i.test(v.lang||'')});
-  var mk=deviceVoices.filter(function(v){return /^mk(-|$)/i.test(v.lang||'')});
-  if(!deviceVoices.length){$('voiceStatus').textContent='Der Browser meldet noch keine Stimmen. Bitte erneut prüfen oder die Sprachstimmen-Einstellungen des Geräts kontrollieren.';return;}
-  $('voiceStatus').textContent='Gefundene Stimmen: Deutsch '+(de.length?'✓':'nicht gefunden')+' · Mazedonisch '+(mk.length?'✓':'nicht gefunden')+'.';
+  if(!deviceVoices.length){$('voiceStatus').textContent=ui('voiceEmpty');return;}
+  $('voiceStatus').textContent=[first,second].map(function(lang,i){return languageName(codes[i])+' '+(voiceFor(lang[2])?'✓':ui('missing'))}).join(' · ')+'.';
 }
 function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
 function testVoice(text,lang){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
-    $('voiceStatus').textContent='Dieser Browser unterstützt keine Sprachausgabe.';return;
+    $('voiceStatus').textContent=ui('voiceNone');return;
   }
   refreshDeviceVoices();
   var u=new SpeechSynthesisUtterance(text),v=voiceFor(lang);
   u.lang=lang;
   if(v)u.voice=v;
-  u.onerror=function(){$('voiceStatus').textContent='Die Sprachausgabe konnte nicht gestartet werden. Prüfe die Gerätestimmen.'};
+  u.onerror=function(){$('voiceStatus').textContent=ui('voiceError')};
   speechSynthesis.cancel();speechSynthesis.speak(u);
-  $('voiceStatus').textContent=(v?'Stimme gefunden.':'Keine passende Stimme gefunden; das Gerät versucht die Standardsprache.')+' Wenn du nichts hörst, prüfe Lautstärke und Sprachstimmen-Einstellungen.';
+  $('voiceStatus').textContent=ui(v?'voiceFound':'voiceDefault');
 }
-function speakAll(a){
-  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){$('voiceStatus').textContent='Sprachausgabe wird von diesem Browser nicht unterstützt.';return;}
+function speakAll(a,forward){
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){$('voiceStatus').textContent=ui('voiceNone');return;}
   deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();
-  a.forEach(function(t){var lang=isMk(t)?'mk-MK':'de-DE',voice=voiceFor(lang),u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;speechSynthesis.speak(u);});
+  a.forEach(function(t,i){var lang=((i===0)===forward?first:second)[2],voice=voiceFor(lang),u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;speechSynthesis.speak(u);});
 }
 $('voiceRefresh').onclick=function(){refreshDeviceVoices();if('speechSynthesis' in window&&speechSynthesis.getVoices().length===0){setTimeout(refreshDeviceVoices,700);setTimeout(refreshDeviceVoices,1800)}};
-$('voiceTestDe').onclick=function(){testVoice('Guten Tag. Wie geht es dir?','de-DE')};
-$('voiceTestMk').onclick=function(){testVoice('Добар ден. Како си?','mk-MK')};
-if('speechSynthesis' in window){refreshDeviceVoices();if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
+$('voiceTestDe').onclick=function(){testVoice(first[3],first[2])};
+$('voiceTestMk').onclick=function(){testVoice(second[3],second[2])};
+refreshDeviceVoices();
+if('speechSynthesis' in window){if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
 // Lernziel, Fortsetzen und Farbschema
 $('goalBtn').onclick=function(){daily.goal=(daily.goal||10)===10?20:(daily.goal||10)===20?30:10;save('vt_daily',daily);refreshMenu()};
-function updateDifficulty(){var labels={easy:['Leicht','Лесно'],medium:['Mittel','Средно'],hard:['Schwer','Тешко']};$('difficultyBtn').innerHTML='Schwierigkeit: '+labels[difficulty][0]+'<small>Тежина: '+labels[difficulty][1]+'</small>';}
+function updateDifficulty(){$('difficultyBtn').textContent=ui('difficulty',ui(difficulty))}
 $('difficultyBtn').onclick=function(){difficulty=difficulty==='easy'?'medium':difficulty==='medium'?'hard':'easy';save('vt_difficulty',difficulty);updateDifficulty()};updateDifficulty();
-$('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').innerHTML=next==='dark'?'Hellmodus einschalten<small>Вклучи светол режим</small>':'Dunkelmodus einschalten<small>Вклучи темен режим</small>'};
-var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').innerHTML=savedTheme==='dark'?'Hellmodus einschalten<small>Вклучи светол режим</small>':'Dunkelmodus einschalten<small>Вклучи темен режим</small>'}
+$('themeBtn').onclick=function(){var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);save('vt_theme',next);$('themeBtn').textContent=next==='dark'?ui('light'):ui('dark')};
+var savedTheme=load('vt_theme','');if(savedTheme){document.documentElement.setAttribute('data-theme',savedTheme);$('themeBtn').textContent=savedTheme==='dark'?ui('light'):ui('dark')}
 $('resumeBtn').onclick=function(){if(!session)return;curMode=session.mode||'learn';activeCategory=session.category||'*';words=pool(activeCategory);shuffle();var skip=Math.min(+session.pos||0,Math.max(0,order.length-1));pos=skip;if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}};
 var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu();refreshTools()};
 var _rec=rec;rec=function(c,o){_rec(c,o);touchDay()};
 var _tap=tap;tap=function(){_tap()};$('card').onclick=tap;
 var _go=go;go=function(k){_go(k);refreshTools()};
-var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode('Favoriten'));s.textContent='Омилени · '+n;b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tl');if(b){var c=curItem();if(c.it){var d=deOf(c.it);if(b.dataset.t==='fav'){if(fav[d])delete fav[d];else fav[d]=1;save('vt_fav',fav)}else speakAll(c.sh?[c.it.q,c.it.a]:[c.it.q])}}setTimeout(refreshTools,30)});
+var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode(ui('fav')));s.textContent=String(n);b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tl');if(b){var c=curItem();if(c.it){var d=deOf(c.it);if(b.dataset.t==='fav'){if(fav[d])delete fav[d];else fav[d]=1;save('vt_fav',fav)}else speakAll(c.sh?[c.it.q,c.it.a]:[c.it.q],c.it.forward)}}setTimeout(refreshTools,30)});
 function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(q.length<2)return;var pl=ALL.concat(mine),n=0;for(var i=0;i<pl.length&&n<40;i++){var w=pl[i];if(norm(w[0]).indexOf(q)>=0||norm(w[1]).indexOf(q)>=0){var li=document.createElement('li');li.textContent=w[0]+' – '+w[1];box.appendChild(li);n++}}if(!n){var l=document.createElement('li');l.textContent='—';box.appendChild(l)}}
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
+$('retrySave').onclick=trainingStorage.retry;
+$('learnReport').onclick=function(){if(words.length)openWordReport(cur)};
+$('typeReport').onclick=function(e){e.stopPropagation();if(words.length)openWordReport(tcur)};
+$('reportBack').onclick=function(){goBack('menu')};
+$('reportDownload').onclick=function(){
+  var url=URL.createObjectURL(new Blob([$('reportText').value],{type:'text/plain;charset=utf-8'}));
+  var link=document.createElement('a');link.href=url;link.download='zbornik-word-report.txt';
+  document.body.appendChild(link);link.click();link.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
+};
 function makeBackup(){
-  var data={};
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.indexOf('vt_')===0){try{data[k]=JSON.parse(localStorage.getItem(k))}catch(e){data[k]=localStorage.getItem(k)}}
-  }
+  var data=trainingStorage.snapshot();
   return {format:'vokabeltrainer-backup',version:1,createdAt:new Date().toISOString(),data:data};
 }
 $('bkexp').onclick=function(){
-  $('bk').value=JSON.stringify(makeBackup(),null,2);
+  try{$('bk').value=JSON.stringify(makeBackup(),null,2)}catch(e){$('bkmsg').textContent=ui('downloadError');return}
   try{$('bk').focus();$('bk').select()}catch(e){}
-  $('bkmsg').textContent='Backup erstellt. Du kannst den Text kopieren oder die Datei herunterladen.';
+  $('bkmsg').textContent=ui('backupReady');
 };
 $('bkdownload').onclick=function(){
   try{
     var blob=new Blob([JSON.stringify(makeBackup(),null,2)],{type:'application/json'});
     var url=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=url;a.download='vokabeltrainer-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.href=url;a.download='zbornik-backup-'+new Date().toISOString().slice(0,10)+'.json';
     document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1500);
-    $('bkmsg').textContent='Backup-Datei wurde zum Herunterladen bereitgestellt.';
-  }catch(e){$('bkmsg').textContent='Download nicht möglich. Bitte Exportieren / Kopieren verwenden.';}
+    $('bkmsg').textContent=ui('downloaded');
+  }catch(e){$('bkmsg').textContent=ui('downloadError');}
 };
 $('bkfile').onchange=function(){
   var f=this.files&&this.files[0];if(!f)return;
-  if(f.size>5*1024*1024){$('bkmsg').textContent='Datei zu groß (maximal 5 MB).';this.value='';return;}
+  if(f.size>5*1024*1024){$('bkmsg').textContent=ui('tooBig');this.value='';return;}
   var reader=new FileReader();reader.onload=function(){ $('bk').value=String(reader.result||''); $('bkimp').click(); };
-  reader.onerror=function(){$('bkmsg').textContent='Datei konnte nicht gelesen werden.';};reader.readAsText(f);
+  reader.onerror=function(){$('bkmsg').textContent=ui('readError');};reader.readAsText(f);
 };
 $('bkimp').onclick=function(){
   var t=$('bk').value.trim(),n=0,have={};
@@ -653,14 +820,17 @@ $('bkimp').onclick=function(){
     if(t.charAt(0)==='{'){
       var o=JSON.parse(t);
       if(!o||typeof o!=='object'||Array.isArray(o))throw new Error('Invalid backup');
-      if(o.format==='vokabeltrainer-backup'&&o.data&&typeof o.data==='object'&&!Array.isArray(o.data)){
-        if(!window.confirm('Gesicherten Lernstand wiederherstellen? Der aktuelle App-Stand auf diesem Gerät wird ersetzt.'))return;
-        var removeKeys=[];for(var ri=0;ri<localStorage.length;ri++){var rk=localStorage.key(ri);if(rk&&rk.indexOf('vt_')===0)removeKeys.push(rk);}
-        removeKeys.forEach(function(k){localStorage.removeItem(k);});
-        Object.keys(o.data).forEach(function(k){if(k.indexOf('vt_')===0){localStorage.setItem(k,JSON.stringify(o.data[k]));}});
-        $('bkmsg').textContent='Backup wiederhergestellt. Die App wird neu geladen …';
+      if('format' in o || 'version' in o || 'data' in o){
+        if(o.format!=='vokabeltrainer-backup'||o.version!==1)throw Error('Unsupported backup');
+        trainingStorage.validate(o.data);
+        if(!window.confirm(ui('confirmRestore')))return;
+        try{trainingStorage.restore(o.data)}catch(e){$('bkmsg').textContent=ui('restoreError');return}
+        $('bkmsg').textContent=ui('restored');
         setTimeout(function(){location.reload()},350);return;
       }
+      var legacyFields={};
+      ['mine','fav','wrong','mast','stats','days'].forEach(function(k){if(k in o)legacyFields['vt_'+k]=o[k]});
+      trainingStorage.validate(legacyFields);
       if(o.mine!==undefined&&!Array.isArray(o.mine))throw new Error('Invalid word list');
       (o.mine||[]).slice(0,5000).forEach(function(w){if(Array.isArray(w))add(w[0],w[1])});
       if(o.fav&&typeof o.fav==='object'&&!Array.isArray(o.fav)){fav=o.fav;save('vt_fav',fav)}
@@ -674,11 +844,11 @@ $('bkimp').onclick=function(){
         if(m)add(m[1],m[2]);
       });
     }
-    save('vt_mine',mine);
-    $('bkmsg').textContent='Importiert · Увезено: '+n+' neue Wörter · нови зборови';
+    var stored=save('vt_mine',mine);
+    $('bkmsg').textContent=stored?ui('imported',n):ui('saveFailed');
     refreshMenu();renderList();
   }catch(e){
-    $('bkmsg').textContent='Ungültige Sicherung oder fehlerhafter Text · Неважечка копија или текст';
+    $('bkmsg').textContent=ui('invalid');
   }
 };
 // Zusätzliche Funktionen für die Weitergabe an Freunde
@@ -690,21 +860,21 @@ $('bprivacy').onclick=function(){show('info')};
 $('backInfo').onclick=$('backInfo2').onclick=function(){show('menu')};
 $('bdayword').onclick=function(){
   var d=new Date(),stamp=d.getFullYear()*1000+Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/86400000);
-  var w=ALL.length?ALL[stamp%ALL.length]:['—','—'];
-  $('dayDate').textContent=d.toLocaleDateString();$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
+  var available=ALL.length?ALL:mine;var w=available.length?available[stamp%available.length]:[ui('empty'),ui('addFirst')];$('daySpeak').disabled=!available.length;
+  $('dayDate').textContent=d.toLocaleDateString(menuLocale);$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
 };
 $('backDay').onclick=function(){show('menu')};
-$('daySpeak').onclick=function(){var w=$('dayGerman').textContent+' . '+$('dayMacedonian').textContent;speakAll([w])};
-$('bexam').onclick=function(){curMode='type';rlen=20;save('vt_rlen',rlen);rlabel();buildCats();show('cats');$('mmsg').textContent='Prüfungsmodus: 20 Wörter, Antworten eintippen.'};
+$('daySpeak').onclick=function(){speakAll([$('dayGerman').textContent,$('dayMacedonian').textContent],true)};
+$('bexam').onclick=function(){curMode='type';rlen=20;save('vt_rlen',rlen);rlabel();buildCats();show('cats');$('mmsg').textContent=ui('exam')};
 function updateAppStatus(){
-  var parts=[];parts.push(navigator.onLine?'Online':'Offline');
-  if(navigator.storage&&navigator.storage.persisted){navigator.storage.persisted().then(function(ok){parts.push(ok?'Lokaler Speicher geschützt':'Speicher-Schutz nicht bestätigt');$('appStatus').textContent='Status: '+parts.join(' · ');});}
-  else{$('appStatus').textContent='Status: '+parts.join(' · ')+' · Speicher-Schutz wird vom Browser nicht angeboten';}
+  var parts=[];parts.push(navigator.onLine?ui('online'):ui('offline'));
+  if(navigator.storage&&navigator.storage.persisted){navigator.storage.persisted().then(function(ok){parts.push(ok?ui('protected'):ui('unprotected'));$('appStatus').textContent=parts.join(' · ');});}
+  else{$('appStatus').textContent=parts.join(' · ')+' · '+ui('noStorage');}
 }
 $('bupdate').onclick=function(){
-  var status=$('appStatus');status.textContent='Suche nach App-Updates …';
-  if(!('serviceWorker' in navigator)){status.textContent='Dieser Browser unterstützt keine App-Updateprüfung.';return;}
-  navigator.serviceWorker.getRegistration().then(function(reg){if(!reg){status.textContent='Kein Offline-App-Dienst gefunden. Bitte App mit Internetverbindung neu öffnen.';return;}return reg.update().then(function(){status.textContent=reg.waiting?'Update gefunden. Bitte App schließen und erneut öffnen.':'Updateprüfung abgeschlossen. Falls eine neue Version veröffentlicht wurde, lade die App nach kurzer Zeit neu.';}).catch(function(){status.textContent='Updateprüfung nicht möglich. Prüfe deine Internetverbindung.';});});
+  var status=$('appStatus');status.textContent=ui('checking');
+  if(!('serviceWorker' in navigator)){status.textContent=ui('noUpdateCheck');return;}
+  navigator.serviceWorker.getRegistration().then(function(reg){if(!reg){status.textContent=ui('openOnline');return;}return reg.update().then(function(){status.textContent=reg.waiting?ui('updateFound'):ui('checkDone');}).catch(function(){status.textContent=ui('checkError');});});
 };
 if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){});}
 window.addEventListener('online',updateAppStatus);window.addEventListener('offline',updateAppStatus);updateAppStatus();
@@ -715,50 +885,6 @@ document.addEventListener('keydown',function(e){
 });
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("./sw.js").catch(function(){})})}
 
-// Bilingual labels for the main navigation and common actions
-(function addMacedonianLabels(){
-  var labels={
-    bhelp:'Помош и упатство', bprivacy:'Приватност и зачувување', bexam:'Тест режим · 20 зборови', bdayword:'Прикажи го зборот на денот', bupdate:'Провери ажурирање',
-    bsearch:'Пребарување', words:'Додај зборови', bbackup:'Резервна копија и увоз',
-    bresume:'Продолжи со учење', backInfo:'Мени', backInfo2:'Назад во менито', welcomeOk:'Да започнеме',
-    backDay:'Мени', daySpeak:'🔊 Прочитај наглас · Прочитај на глас',
-    back3:'Мени', back5:'Мени', backLearn:'Мени', backType:'Мени'
-  };
-  Object.keys(labels).forEach(function(id){var el=document.getElementById(id);if(!el)return;var sm=document.createElement('small');sm.textContent=labels[id];el.appendChild(sm);});
-  var paragraphs=[
-    ['So funktioniert die App','Како работи апликацијата'],
-    ['Dein persönlicher Lernstand','Твојот личен напредок во учењето'],
-    ['Installation auf dem Handy','Инсталација на мобилен телефон'],
-    ['Offline & Updates','Без интернет и ажурирања'],
-    ['Datenschutz','Приватност'],
-    ['Wichtig','Важно']
-  ];
-  document.querySelectorAll('#info h3').forEach(function(h){var pair=paragraphs.find(function(x){return h.textContent.trim()===x[0]});if(pair){var sm=document.createElement('small');sm.style.display='block';sm.style.fontWeight='500';sm.textContent=pair[1];h.appendChild(sm);}});
-  var info=document.querySelector('#info');if(info){var ps=info.querySelectorAll('p');var translations=[
-    'Избери категорија и режим на учење. Кај картичките прво размисли, потоа откриј го одговорот и избери „Знаев“ или „Не знаев“. Можеш да додаваш сопствени зборови и да ги извезуваш преку „Резервна копија и увоз“.',
-    'Апликацијата ги зачувува напредокот, омилените и сопствените зборови локално во прелистувачот на овој уред. Пријателите што ја инсталираат на свои уреди имаат независен напредок. Нема регистрација и автоматска синхронизација.',
-    'Апликацијата не го испраќа твојот напредок на сервер. При бришење на податоците од прелистувачот или отстранување на апликацијата, локалните податоци може да се изгубат. Редовно прави резервна копија и чувај ја JSON-датотеката безбедно. Не ја споделувај јавно.',
-    'Android/Chrome: отвори го менито (три точки) и избери „Инсталирај апликација“ или „Додај на почетниот екран“. iPhone/Safari: отвори „Сподели“ и избери „На почетниот екран“. Името може да се разликува според уредот и прелистувачот.',
-    'По првото успешно вчитување, датотеките на апликацијата може да бидат достапни и без интернет. За првата инсталација и ажурирањата е потребен интернет. Отвори „Провери ажурирање“ за да провериш нова верзија. По ажурирање можеби ќе треба повторно да ја вчиташ апликацијата.',
-    'Изговорот ги користи гласовите на уредот или прелистувачот. Апликацијата не може сама да инсталира гласови. Ова е алатка за учење; преводите и резултатите може да содржат грешки.'
-  ];
-  ps.forEach(function(p,i){if(translations[i]){var m=document.createElement('p');m.textContent=translations[i];m.lang='mk';m.style.color='var(--mute)';m.style.marginTop='-8px';p.after(m);}});}
-})();
-// Keep voice status messages bilingual, including live browser updates.
-(function localizeVoiceStatus(){
-  var el=document.getElementById('voiceStatus');if(!el)return;
-  var translations=[
-    [/Sprachausgabe wird von diesem Browser nicht unterstützt\./,'Овој прелистувач не поддржува говорно читање.'],
-    [/Der Browser meldet noch keine Stimmen\. Bitte erneut prüfen oder die Sprachstimmen-Einstellungen des Geräts kontrollieren\./,'Прелистувачот сè уште не прикажува гласови. Провери повторно или провери ги поставките за глас на уредот.'],
-    [/Gefundene Stimmen: Deutsch (✓|nicht gefunden) · Mazedonisch (✓|nicht gefunden)\./,'Пронајдени гласови: германски $1 · македонски $2.'],
-    [/Dieser Browser unterstützt keine Sprachausgabe\./,'Овој прелистувач не поддржува говорно читање.'],
-    [/Die Sprachausgabe konnte nicht gestartet werden\. Prüfe die Gerätestimmen\./,'Говорното читање не може да започне. Провери ги гласовите на уредот.'],
-    [/Stimme gefunden\./,'Гласот е пронајден.'],
-    [/Keine passende Stimme gefunden; das Gerät versucht die Standardsprache\./,'Не е пронајден соодветен глас; уредот ќе ја проба стандардната јазична поставка.']
-  ];
-  var last='';function apply(){var t=el.textContent.trim();if(!t||t===last)return;last=t;var mk='';translations.some(function(pair){var m=t.match(pair[0]);if(m){mk=pair[1].replace('$1',m[1]||'').replace('$2',m[2]||'');return true;}return false;});if(mk&&!el.querySelector('[data-mk-status]')){var br=document.createElement('br'),span=document.createElement('span');span.dataset.mkStatus='1';span.textContent=mk;el.append(br,span);}}
-  new MutationObserver(function(){last='';apply();}).observe(el,{childList:true,characterData:true,subtree:true});apply();
-})();
 </script>
 </body>
 </html>
