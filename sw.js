@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vt-app-v37';
-const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js', './interface.js?v=37', './practice.js', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'vt-app-v39';
+const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js', './interface.js?v=38', './practice.js?v=39', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil(

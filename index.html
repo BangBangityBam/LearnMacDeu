@@ -230,6 +230,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     </div>
     <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
   </details>
+  <button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>
   <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
 </section>
 
@@ -239,6 +240,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <h1 style="margin-top:20px" data-ui="info">Помош и приватност</h1>
   <h3 data-ui="guide">Како да вежбаш</h3>
   <p data-ui="guideText">Избери курс, режим и категорија. Откриј го преводот на картичката и оцени го одговорот. Додавај свои зборови и извезувај ги преку Резервна копија и увоз.</p>
+  <h3 data-ui="translationNoteTitle">Белешка за преводите</h3>
+  <p data-ui="translationNote">Мојот македонски не е совршен. Во некои преводи и примери може да има грешки. Ако забележиш грешка, преку „Пријави го зборот“ можеш да предложиш исправка.</p>
   <h3 data-ui="yourData">Твојот напредок</h3>
   <p data-ui="storageText">Зборовите, омилените и напредокот се чуваат во прелистувачот на овој уред. Секој уред има свои податоци. Нема автоматска синхронизација.</p>
   <h3 data-ui="privacy">Приватност и зачувување</h3>
@@ -309,9 +312,16 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 <section id="wordReport" class="screen">
   <button id="reportBack" class="small" data-ui="back">Назад</button>
-  <h1 data-ui="report">Пријави го зборот</h1>
-  <p data-ui="reportHelp"></p>
-  <textarea id="reportText" data-ui-label="correction" rows="7" style="width:100%;font:inherit"></textarea>
+  <h1 data-ui="feedback">Предложи подобрување</h1>
+  <label for="reportKind" data-ui="feedbackTopic">Тема</label>
+  <select id="reportKind">
+    <option value="idea" data-ui="feedbackIdea">Идеја за апликацијата</option>
+    <option value="correction" data-ui="correction">Предложена исправка</option>
+  </select>
+  <label for="reportText" data-ui="feedbackMessage">Твојата порака</label>
+  <textarea id="reportText" rows="7" style="width:100%;font:inherit"></textarea>
+  <p class="sub" id="reportHelp"></p>
+  <button class="main" id="reportEmail" data-ui="prepareEmail">Подготви е-пошта</button>
   <button id="reportDownload" data-ui="reportDownload">Преземи пријава</button>
 </section>
 <aside id="saveNotice" hidden role="alert" style="position:fixed;bottom:0;left:0;right:0;background:var(--card);color:var(--ink);padding:12px;z-index:100;border-top:2px solid currentColor">
@@ -394,8 +404,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js"></script>
-<script src="./interface.js?v=37"></script>
-<script src="./practice.js"></script>
+<script src="./interface.js?v=38"></script>
+<script src="./practice.js?v=39"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script>
@@ -826,6 +836,14 @@ function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
 $('retrySave').onclick=trainingStorage.retry;
+$('feedbackMenu').onclick=function(){openWordReport(null)};
+$('reportKind').onchange=updateReportPlaceholder;
+$('reportEmail').onclick=function(){
+  var message=$('reportText').value.trim();
+  if(!message){$('reportText').focus();return}
+  var topic=$('reportKind').value==='correction'?ui('correction'):ui('feedbackIdea');
+  location.href='mailto:'+feedbackAddress+'?subject='+encodeURIComponent('Zbornik · '+topic)+'&body='+encodeURIComponent(message.replace(/\r?\n/g,'\r\n'));
+};
 $('learnReport').onclick=function(){if(words.length)openWordReport(cur)};
 $('typeReport').onclick=function(e){e.stopPropagation();if(words.length)openWordReport(tcur)};
 $('reportBack').onclick=function(){goBack('menu')};
