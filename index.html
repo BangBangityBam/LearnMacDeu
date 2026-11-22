@@ -246,6 +246,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <p data-ui="storageText">Зборовите, омилените и напредокот се чуваат во прелистувачот на овој уред. Секој уред има свои податоци. Нема автоматска синхронизација.</p>
   <h3 data-ui="privacy">Приватност и зачувување</h3>
   <p data-ui="privacyText">Напредокот останува на уредот. Бришењето на податоците од прелистувачот или на апликацијата може да го избрише. Прави копии и чувај ја JSON-датотеката приватно.</p>
+  <p data-ui="feedbackPrivacy"></p>
+  <p><a href="https://web3forms.com/privacy" target="_blank" rel="noopener noreferrer" data-ui="feedbackPolicy"></a></p>
   <h3 data-ui="install">Инсталирање на телефон</h3><p data-ui="installText">Во Chrome на Android отвори го менито и избери Инсталирај апликација или Додај на почетниот екран. Во Safari на iPhone отвори Сподели и избери Додај на почетниот екран.</p>
   <h3 data-ui="updates">Работа без интернет и ажурирања</h3>
   <p data-ui="updatesText">По првото вчитување со интернет, апликацијата може да работи и без интернет. Потребна е врска за инсталација и ажурирање. Избери Провери за ажурирања и вчитај повторно ако е потребно.</p>
@@ -319,9 +321,13 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     <option value="correction" data-ui="correction">Предложена исправка</option>
   </select>
   <label for="reportText" data-ui="feedbackMessage">Твојата порака</label>
-  <textarea id="reportText" rows="7" style="width:100%;font:inherit"></textarea>
+  <textarea id="reportText" required maxlength="5000" rows="7" style="width:100%;font:inherit"></textarea>
+  <label for="reportReply" data-ui="feedbackReply"></label>
+  <input id="reportReply" type="email" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false">
   <p class="sub" id="reportHelp"></p>
-  <button class="main" id="reportEmail" data-ui="prepareEmail">Подготви е-пошта</button>
+  <button class="main" id="reportSend" data-ui="feedbackSend"></button>
+  <p class="sub" role="status" aria-live="polite" id="reportStatus"></p>
+  <button id="reportEmail" data-ui="prepareEmail">Подготви е-пошта</button>
   <button id="reportDownload" data-ui="reportDownload">Преземи пријава</button>
 </section>
 <aside id="saveNotice" hidden role="alert" style="position:fixed;bottom:0;left:0;right:0;background:var(--card);color:var(--ink);padding:12px;z-index:100;border-top:2px solid currentColor">
@@ -405,7 +411,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 <script src="./storage.js"></script>
 <script src="./interface.js?v=38"></script>
-<script src="./practice.js?v=39"></script>
+<script src="./practice.js?v=40"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script>
@@ -837,7 +843,9 @@ $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('se
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
 $('retrySave').onclick=trainingStorage.retry;
 $('feedbackMenu').onclick=function(){openWordReport(null)};
-$('reportKind').onchange=updateReportPlaceholder;
+$('reportKind').onchange=function(){updateReportPlaceholder();saveFeedbackDraft()};
+$('reportText').oninput=saveFeedbackDraft;
+$('reportSend').onclick=sendFeedback;
 $('reportEmail').onclick=function(){
   var message=$('reportText').value.trim();
   if(!message){$('reportText').focus();return}
