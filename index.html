@@ -185,11 +185,18 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 .language-setting label{font-size:.9rem;margin:0}.language-setting select{width:auto;max-width:100%;margin:0;padding:6px 10px;min-height:40px}
 #menu #settingsOpen{width:44px;min-height:44px;flex:none;padding:4px;font-size:1.5rem}
 #soundSettings label{display:flex;align-items:center;gap:.6rem}#soundSettings input{width:auto}
+#menu .release-tag{right:auto;bottom:auto;left:clamp(14px,4vw,32px);top:calc(5px + env(safe-area-inset-top,0px));background:#141414;padding:2px 5px;border-radius:3px}
+#alphabetKeys:not([hidden]){display:grid;grid-template-columns:repeat(auto-fit,minmax(36px,1fr));gap:4px}
+#alphabetKeys button{margin:0;padding:4px;min-height:40px;width:100%}
+#catlist summary{font-weight:650;cursor:pointer;padding:12px 4px}
+#catlist details{border-bottom:1px solid var(--line)}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen on">
+  <span class="made-by release-tag" id="releaseTag"></span>
   <header class="home-head">
     <div><h1 data-ui="app">Učenje jazici - Учење јазици</h1></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
@@ -221,15 +228,15 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
       <button id="bdayword" data-ui="day">Збор на денот</button>
       <button id="bupdate" data-ui="update">Провери за ажурирања</button>
     </div>
+    <p id="releaseStatus" role="status"></p><button id="reloadRelease" hidden data-ui="reloadRelease"></button>
     <p class="voice-help" id="appStatus" aria-live="polite"></p>
   </details>
   <details class="more-menu" id="speechMenu">
     <summary data-ui="speechMenu">Изговор и гласови</summary>
     <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
     <div class="voice-actions">
-      <button type="button" id="voiceRefresh" data-ui="voices">Провери ги гласовите</button>
-      <button type="button" id="voiceTestDe"></button>
-      <button type="button" id="voiceTestMk"></button>
+      <div id="voiceList"></div>
+      <button type="button" id="voiceRefresh" data-ui="recheck"></button>
     </div>
     <details><summary data-ui="voiceGuide"></summary><p data-ui="androidGuide"></p><p data-ui="iosGuide"></p><a href="https://support.google.com/accessibility/android/answer/6006983" target="_blank" rel="noopener noreferrer">Android · Google Support</a> · <a href="https://support.apple.com/guide/iphone/iph96b214f0/ios" target="_blank" rel="noopener noreferrer">iPhone · Apple Support</a></details>
     <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
@@ -290,6 +297,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 <section id="cats" class="screen">
   <div class="bar"><button class="small" id="back3" data-ui="back">Назад</button></div>
   <h1 style="margin-top:20px" data-ui="cat">Категорија</h1>
+  <input type="search" id="categoryQuery" data-ui-label="catQuery" data-ui-placeholder="catQuery" autocomplete="off">
   <div id="catlist"></div>
 </section>
 
@@ -300,6 +308,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <button class="main" id="mtype" data-ui="type">Напиши го одговорот</button>
   <button class="main" id="mmc" data-ui="mc">Избери одговор</button>
   <button class="main" id="mwrong"></button>
+  <button id="dueReview"></button>
   <button id="rlen"></button>
   <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
 </section>
@@ -318,6 +327,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     <div id="tlang"></div>
     <div id="tword"></div>
     <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Одговор" data-ui-placeholder="answer">
+    <div id="alphabetControls" hidden><button id="alphabetToggle" type="button" class="small" data-ui-label="alphabet" aria-expanded="false" aria-controls="alphabetKeys">АБВ</button><div id="alphabetKeys" hidden></div></div>
     <div id="topts"></div>
     <div id="tfb"></div>
     <div id="tans"></div>
@@ -425,13 +435,14 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 
-<script src="./storage.js?v=41"></script>
+<script src="./storage.js?v=45"></script>
 <script src="./interface.js?v=42"></script>
 <script src="./practice.js?v=42"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./trades.js"></script>
 <script src="./study.js?v=44"></script>
+<script src="./learning-tools.js?v=45"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -475,7 +486,6 @@ $('pairList').value=pairId;
 $('pairList').onchange=function(){switchPair(this.value)};
 [first,second].forEach(function(lang,i){
   document.querySelector('label[for="'+(i?'mk':'de')+'"]').textContent=languageName(codes[i]);
-  $(i?'voiceTestMk':'voiceTestDe').textContent=ui('testVoice',languageName(codes[i]));
 });
 if(codes[1]==='mk'){
   var fields=$('wordFields');
@@ -541,9 +551,10 @@ var customCategories=Array.isArray(savedCategories)?savedCategories.filter(funct
 function renderCategories(){
   var select=$('wordCategory');
   select.replaceChildren(new Option(ui('own'),''));
-  customCategories.forEach(function(name){select.add(new Option(name,name))});
+  customCategories.slice().sort(alphabetSort).forEach(function(name){select.add(new Option(name,name))});
 }
 customCategories.forEach(function(name){if(!CATS.some(function(c){return c[0]===name}))CATS.push([name,'Сопствена категорија'])});
+CATS.sort((a,b)=>alphabetSort(categoryName(a[0]),categoryName(b[0])));
 renderCategories();
 $('addCategory').onclick=function(){
   var name=$('categoryName').value.trim();
@@ -552,14 +563,15 @@ $('addCategory').onclick=function(){
   if(name in Object.prototype || reserved.some(function(s){return s.toLowerCase()===name.toLowerCase()})){
     $('msg').textContent=ui('catExists');return
   }
-  customCategories.push(name);CATS.push([name,'Сопствена категорија']);var stored=save('vt_categories',customCategories);
+  customCategories.push(name);CATS.push([name,'Сопствена категорија']);CATS.sort((a,b)=>alphabetSort(categoryName(a[0]),categoryName(b[0])));var stored=save('vt_categories',customCategories);
   renderCategories();$('wordCategory').value=name;$('categoryName').value='';
   $('msg').textContent=stored?ui('created',name):ui('saveFailed');
 };
 var mine=load('vt_mine',null);
 if(mine===null){mine=[];(load('vt_words',[])||[]).forEach(function(w){if(!seen[w[0]])mine.push([w[0],w[1]])});save('vt_mine',mine)}
-function pool(k){var m=mine.map(function(w){return [w[0],w[1],w[2]||'Eigene Wörter']});if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.concat(m).filter(function(w){return w[2]===k})}
-function buildCats(){var box=$('catlist');box.innerHTML='';function btn(k,de,mk,n,main){var b=document.createElement('button');if(main)b.className='main';b.appendChild(document.createTextNode(categoryName(de)));var s=document.createElement('small');var p=pool(k),known=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;s.textContent=ui('catCount',n,known);b.appendChild(s);b.disabled=!n;b.onclick=function(){go(k)};box.appendChild(b)}btn('*','Alle Wörter','Сите зборови',ALL.length+mine.length,true);CATS.forEach(function(c){var n=pool(c[0]).length;if(n||customCategories.includes(c[0]))btn(c[0],c[0],c[1],n)});if(mine.length)btn('Eigene Wörter','Eigene Wörter','Мои зборови',mine.length)}
+function pool(k){var m=mine.map(function(w){return [w[0],w[1],w[2]||'Eigene Wörter']});if(k===dueKey){const day=calendarDay();return ALL.concat(m).filter(w=>isDue(w,day))}if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return ALL.concat(m).filter(function(w){return w[2]===k})}
+function buildCats(){$('categoryQuery').value='';categoryPicker()}
+$('categoryQuery').oninput=categoryPicker;
 var curMode='learn',tcur=null,tstate='ask',tAt=0;
 function go(k){activeCategory=k;words=pool(k);shuffle();session={category:k,mode:curMode,pos:0};save('vt_session',session);if(curMode!=='learn'){rnd={n:0,ok:0,miss:[]};show('type');nextType()}else{show('learn');next()}}
 var activeCategory='*';
@@ -585,6 +597,7 @@ if(pairId!==defaultPair){
 function rec(cat,ok){var i=ok?0:1;stats.all[i]++;if(!stats.cats[cat])stats.cats[cat]=[0,0];stats.cats[cat][i]++;save('vt_stats',stats)}
 function norm(s){return String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[éèê]/g,'e').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z').replace(/[^\p{L}\p{M}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim()}
 function nextType(restored){
+  alphabetFor(false);
   $('type').className='screen on';if(!restored&&rlen&&rnd.n>=rlen){showResult();return}
   if(!restored&&!prepareReview())return;
   var inp=$('tin');
@@ -600,6 +613,7 @@ function nextType(restored){
   $('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';
   $('tcount').textContent=Math.min(pos,order.length)+' / '+order.length;
   tstate='ask';
+  alphabetFor(curMode==='type'&&codes[d2m?1:0]==='mk');
   if(session&&!restored){delete session.feedback;delete session.typed}
   if(restored && restored.feedback){
     displayGrade(restored.feedback.ok,restored.feedback.input);
@@ -615,6 +629,7 @@ function checkType(v){
   displayGrade(ok,u);rememberCard();
 }
 function displayGrade(ok,u){
+  alphabetFor(false);
   var inp=$('tin');
   $('type').className='screen on '+(ok?'ok':'bad');
   $('tfb').textContent=ok?ui('correct'):ui('wrong');
@@ -651,6 +666,7 @@ $('mtype').onclick=function(){curMode='type';buildCats();show('cats')};
 $('back5').onclick=function(){goBack('menu')};
 $('mmc').onclick=function(){curMode='mc';buildCats();show('cats')};
 $('mwrong').onclick=function(){
+  reviewList='!';
   var count=pool('!').length;
   if(!count){$('mmsg').textContent=ui('noMistakes');return}
   $('reviewTitle').textContent=ui('repeat',count);
@@ -660,15 +676,24 @@ $('reviewBack').onclick=function(){goBack('modes')};
 $('reviewType').onclick=function(){startReview('type')};
 $('reviewChoice').onclick=function(){startReview('mc')};
 $('reviewCards').onclick=function(){startReview('learn')};
+var dueKey='\u0000due',reviewList='!';
+$('dueReview').onclick=function(){
+  const n=pool(dueKey).length;
+  if(!n){$('mmsg').textContent=ui('noneDue');return}
+  reviewList=dueKey;$('reviewTitle').textContent=ui('todayReview',n);show('reviewModes');
+};
 function startReview(mode){
   curMode=mode;
-  go('!');
+  go(reviewList);
 }
 // Keep the current queue until a word leaves the mistake list.
 function prepareReview(){
-  if(activeCategory!=='!')return true;
-  if(words.some(function(w){return !wrong[w[0]]})){
-    words=words.filter(function(w){return wrong[w[0]]});
+  const due=activeCategory===dueKey;
+  if(!due&&activeCategory!=='!')return true;
+  const day=calendarDay();
+  const pending=w=>due?isDue(w,day):wrong[w[0]];
+  if(words.some(function(w){return !pending(w)})){
+    words=words.filter(pending);
     shuffle();
   }
   if(words.length)return true;
@@ -676,8 +701,8 @@ function prepareReview(){
   session=null;save('vt_session',null);
   rlabel();show('modes',{noHistory:true});
   screenHistory=['menu'];
-  $('mmsg').textContent=ui('noMistakes');
-  $('mwrong').focus();
+  $('mmsg').textContent=ui(due?'noneDue':'noMistakes');
+  $(due?'dueReview':'mwrong').focus();
   return false;
 }
 $('rlen').onclick=function(){rlen=rlen===0?10:rlen===10?20:0;save('vt_rlen',rlen);rlabel()};
@@ -686,13 +711,15 @@ $('btnstats').onclick=showStats;
 $('back6').onclick=function(){goBack('menu')};
 $('reset').onclick=function(){$('modal').classList.add('on')};
 $('mno').onclick=function(){$('modal').classList.remove('on')};
-$('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
+$('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};schedule=Object.create(null);save('vt_schedule',schedule);save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
 $('modal').onclick=function(e){if(e.target===$('modal'))$('modal').classList.remove('on')};
 if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXTRA.concat(EXTRA2,EXTRA3).forEach(function(w){if(!have[w[0].toLowerCase()]){words.push(w);have[w[0].toLowerCase()]=1}});save("vt_words",words);save("vt_ver",4)}
 var order=[],pos=0,shown=false,cur=null;
 var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
-function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
+var schedule=initSchedule();
+function track(ok){var k=tcur.w[0];scheduleAnswer(k,ok);if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){
+  $('dueReview').textContent=ui('todayReview',pool(dueKey).length);
   $('rlen').textContent=ui('round',rlen||ui('endless'));
   $('mwrong').textContent=ui('repeat',pool('!').length);
   $('mmsg').textContent='';
@@ -785,7 +812,7 @@ function tap(){
 function rateCard(ok){
   if(!cur||!shown)return;
   shown=false;
-  var key=cur.w[0];
+  var key=cur.w[0];scheduleAnswer(key,ok);
   if(ok){mast[key]=(mast[key]||0)+1;delete wrong[key]}else{mast[key]=0;wrong[key]=1}
   save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);
   next(cur.w);
@@ -833,13 +860,16 @@ function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.f
 var deviceVoices=[];
 var voiceCheckTimer=null;
 function refreshDeviceVoices(){
-  if(!$('voiceStatus'))return;
-  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
-    $('voiceStatus').textContent=ui('voiceNone');return;
+  const supported='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
+  deviceVoices=supported?(speechSynthesis.getVoices()||[]):[];
+  const box=$('voiceList');box.replaceChildren();
+  for(const code of ['mk',target,...targets.filter(t=>t!==target)]){
+    const lang=languages[code],b=document.createElement('button');
+    b.type='button';b.disabled=!voiceFor(lang[2]);
+    b.textContent=languageName(code)+' · '+ui(b.disabled?'noVoice':'listen');
+    b.onclick=()=>testVoice(lang[3],lang[2]);box.appendChild(b);
   }
-  deviceVoices=speechSynthesis.getVoices()||[];
-  if(!deviceVoices.length){$('voiceStatus').textContent=ui('voiceEmpty');return;}
-  $('voiceStatus').textContent=[first,second].map(function(lang,i){return voiceFor(lang[2])?languageName(codes[i])+' ✓':ui('voiceUnavailable',languageName(codes[i]))}).join(' · ')+'.';
+  $('voiceStatus').textContent=!supported?ui('voiceNone'):deviceVoices.length?'':ui('voiceEmpty');
 }
 function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
 function testVoice(text,lang){
@@ -861,8 +891,6 @@ function speakAll(a,forward){
   a.forEach(function(t,i){var lang=((i===0)===forward?first:second)[2],voice=voiceFor(lang),u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;speechSynthesis.speak(u);});
 }
 $('voiceRefresh').onclick=function(){refreshDeviceVoices();if('speechSynthesis' in window&&speechSynthesis.getVoices().length===0){setTimeout(refreshDeviceVoices,700);setTimeout(refreshDeviceVoices,1800)}};
-$('voiceTestDe').onclick=function(){testVoice(first[3],first[2])};
-$('voiceTestMk').onclick=function(){testVoice(second[3],second[2])};
 refreshDeviceVoices();
 if('speechSynthesis' in window){if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
 // Lernziel, Fortsetzen und Farbschema
@@ -876,9 +904,15 @@ var _show=show;show=function(id,opts){_show(id,opts);if(id==='menu')refreshMenu(
 var _rec=rec;rec=function(c,o){_rec(c,o);signalAnswer(o);touchDay()};
 var _tap=tap;tap=function(){_tap()};$('card').onclick=tap;
 var _go=go;go=function(k){_go(k);refreshTools()};
-var _bc=buildCats;buildCats=function(){_bc();var n=pool('♥').length;if(!n)return;var box=$('catlist'),b=document.createElement('button'),s=document.createElement('small');b.appendChild(document.createTextNode(ui('fav')));s.textContent=String(n);b.appendChild(s);b.onclick=function(){go('♥')};box.insertBefore(b,box.children[1])};
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.tl');if(b){var c=curItem();if(c.it){var d=deOf(c.it);if(b.dataset.t==='fav'){if(fav[d])delete fav[d];else fav[d]=1;save('vt_fav',fav)}else speakAll(c.sh?[c.it.q,c.it.a]:[c.it.q],c.it.forward)}}setTimeout(refreshTools,30)});
-function doSearch(){var q=norm($('sq').value),box=$('sres');box.innerHTML='';if(q.length<2)return;var pl=ALL.concat(mine),n=0;for(var i=0;i<pl.length&&n<40;i++){var w=pl[i];if(norm(w[0]).indexOf(q)>=0||norm(w[1]).indexOf(q)>=0){var li=document.createElement('li');li.textContent=w[0]+' – '+w[1];box.appendChild(li);n++}}if(!n){var l=document.createElement('li');l.textContent='—';box.appendChild(l)}}
+function doSearch(){
+  const q=norm($('sq').value),box=$('sres');box.replaceChildren();
+  if(!q)return;
+  const found=pool('*').filter(w=>norm(w[0]).includes(q)||norm(w[1]).includes(q));
+  found.sort((a,b)=>alphabetSort(a[0],b[0])||alphabetSort(a[1],b[1]));
+  for(const w of found.slice(0,40)){const li=document.createElement('li');li.textContent=w[0]+' – '+w[1];box.appendChild(li)}
+  if(!found.length)box.textContent=ui('noHits');
+}
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
 $('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
 $('retrySave').onclick=trainingStorage.retry;
@@ -1003,11 +1037,10 @@ function updateAppStatus(){
   if(navigator.storage&&navigator.storage.persisted){navigator.storage.persisted().then(function(ok){parts.push(ok?ui('protected'):ui('unprotected'));$('appStatus').textContent=parts.join(' · ');});}
   else{$('appStatus').textContent=parts.join(' · ')+' · '+ui('noStorage');}
 }
-$('bupdate').onclick=function(){
-  var status=$('appStatus');status.textContent=ui('checking');
-  if(!('serviceWorker' in navigator)){status.textContent=ui('noUpdateCheck');return;}
-  navigator.serviceWorker.getRegistration().then(function(reg){if(!reg){status.textContent=ui('openOnline');return;}return reg.update().then(function(){status.textContent=reg.waiting?ui('updateFound'):ui('checkDone');}).catch(function(){status.textContent=ui('checkError');});});
-};
+$('releaseTag').textContent='v'+appVersion;
+$('bupdate').onclick=checkRelease;
+$('reloadRelease').onclick=()=>location.reload();
+setupAlphabet();
 if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){});}
 window.addEventListener('online',updateAppStatus);window.addEventListener('offline',updateAppStatus);updateAppStatus();
 refreshMenu();refreshTools();

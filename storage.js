@@ -15,6 +15,7 @@ var trainingStorage = (function () {
     words: x => Array.isArray(x) && x.every(w => Array.isArray(w) && [2,3].includes(w.length) && w.every(string)),
     dir: x => [0,1,2].includes(x), rlen: x => [0,10,20].includes(x), ver: count,
     difficulty: x => ['easy','medium','hard'].includes(x),
+    schedule: x=>record(x)&&Object.values(x).every(v=>Array.isArray(v)&&v.length===2&&count(v[0])&&v[0]<=5&&count(v[1])),
     mast: x => record(x) && Object.values(x).every(count),
     stats: x => record(x) && tally(x.all) && record(x.cats) && Object.values(x.cats).every(tally),
     daily: x => record(x) && typeof x.date === 'string' && count(x.done) && count(x.goal),

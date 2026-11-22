@@ -1,5 +1,5 @@
-const CACHE_NAME = 'vt-app-v44';
-const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js?v=41', './study.js?v=44', './trades.js', './interface.js?v=42', './practice.js?v=42', './manifest.webmanifest', './icon-192.png?v=43', './icon-512.png?v=43'];
+const CACHE_NAME = 'vt-app-v45';
+const APP_SHELL = ['./', './index.html', './vocabulary.js', './learning-courses.js', './storage.js?v=45', './study.js?v=44', './learning-tools.js?v=45', './trades.js', './interface.js?v=42', './practice.js?v=42', './manifest.webmanifest', './icon-192.png?v=43', './icon-512.png?v=43'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -25,6 +25,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
+  if(url.pathname===new URL('./release.json',self.location.href).pathname)return;
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).then(response => {
@@ -50,4 +51,8 @@ self.addEventListener('fetch', event => {
       });
     })
   );
+});
+
+self.addEventListener('message',event=>{
+  if(event.data?.type==='release-version' && event.ports[0])event.ports[0].postMessage({version:Number(CACHE_NAME.split('-v')[1])});
 });
