@@ -120,7 +120,6 @@ input,textarea{scroll-margin-block:24px}
 #menu{justify-content:flex-start;gap:14px}
 .home-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 12px;margin:clamp(16px,5vh,48px) 0 12px;min-width:0;width:100%}
 #menu .home-head h1{margin:0 0 8px;font-size:clamp(2.2rem,7vw,3rem)}
-#menu .home-head .sub{margin:0;font-size:.98rem}
 .streak-pill{margin:4px 0 0 auto;padding:7px 10px;border-radius:999px;background:var(--card);color:var(--mute);font-size:.86rem;white-space:normal;overflow-wrap:anywhere;max-width:100%;text-align:right;min-width:0}
 #menu .home-start{margin-top:10px;min-height:76px;font-size:1.35rem}
 #menu .dir{margin-top:0}
@@ -190,7 +189,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 <section id="menu" class="screen on">
   <header class="home-head">
-    <div><h1 data-ui="app">Зборник</h1><p class="sub">Македонски ⇄ Германски</p></div>
+    <div><h1 data-ui="app">Зборник</h1></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
   </header>
   <div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
@@ -226,8 +225,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
     <div class="voice-actions">
       <button type="button" id="voiceRefresh" data-ui="voices">Провери ги гласовите</button>
-      <button type="button" id="voiceTestDe">Deutsch testen 🔊<small>Тестирај германски</small></button>
-      <button type="button" id="voiceTestMk">Mazedonisch testen 🔊<small>Тестирај македонски</small></button>
+      <button type="button" id="voiceTestDe"></button>
+      <button type="button" id="voiceTestMk"></button>
     </div>
     <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
   </details>
@@ -289,7 +288,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <div id="tcard">
     <div id="tlang"></div>
     <div id="tword"></div>
-    <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Antwort · Одговор" data-ui-placeholder="answer">
+    <input id="tin" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Одговор" data-ui-placeholder="answer">
     <div id="topts"></div>
     <div id="tfb"></div>
     <div id="tans"></div>
@@ -313,7 +312,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 <section id="search" class="screen">
   <div class="bar"><button class="small" id="back8" data-ui="menu">Мени</button></div>
   <h1 style="margin-top:20px" data-ui="search">Пребарување</h1>
-  <input id="sq" autocomplete="off" placeholder="Wort · Збор" data-ui-placeholder="word">
+  <input id="sq" autocomplete="off" placeholder="Збор" data-ui-placeholder="word">
   <ul id="sres"></ul>
 </section>
 
@@ -371,8 +370,8 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <div class="bar"><button class="small" id="back2" data-ui="back">Назад</button></div>
   <h1 style="margin-top:20px" data-ui="newWord">Нов збор</h1>
   <div id="wordFields">
-  <label for="de">Deutsch · Германски</label><input id="de" autocomplete="off">
-  <label for="mk">Mazedonisch · Македонски</label><input id="mk" autocomplete="off">
+  <label for="de"></label><input id="de" autocomplete="off">
+  <label for="mk"></label><input id="mk" autocomplete="off">
   </div>
   <label for="wordCategory" data-ui="cat">Категорија</label><select id="wordCategory"></select>
   <details><summary data-ui="newCat">Нова категорија</summary>
@@ -433,7 +432,6 @@ targets.forEach(function(code,i){
 });
 $('pairList').value=pairId;
 $('pairList').onchange=function(){switchPair(this.value)};
-document.querySelector('.home-head .sub').textContent=languageName('mk')+' ⇄ '+languageName(target);
 [first,second].forEach(function(lang,i){
   document.querySelector('label[for="'+(i?'mk':'de')+'"]').textContent=languageName(codes[i]);
   $(i?'voiceTestMk':'voiceTestDe').textContent=ui('testVoice',languageName(codes[i]));
@@ -598,7 +596,7 @@ $('mno').onclick=function(){$('modal').classList.remove('on')};
 $('myes').onclick=function(){stats={all:[0,0],cats:{}};save('vt_stats',stats);mast={};wrong={};save('vt_mast',mast);save('vt_wrong',wrong);$('modal').classList.remove('on');showStats()};
 $('modal').onclick=function(e){if(e.target===$('modal'))$('modal').classList.remove('on')};
 if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXTRA.concat(EXTRA2,EXTRA3).forEach(function(w){if(!have[w[0].toLowerCase()]){words.push(w);have[w[0].toLowerCase()]=1}});save("vt_words",words);save("vt_ver",4)}
-var order=[],pos=0,shown=false,cur=null,cardRated=false;
+var order=[],pos=0,shown=false,cur=null;
 var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
 function track(ok){var k=tcur.w[0];if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){
@@ -662,27 +660,33 @@ if(isInstalledApp){
 }
 function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function dirLabel(){$('dir').textContent=ui('direction',DIRS[dirIx])}
-function next(){
+function next(previousWord){
   if(!words.length){$("lang").textContent="";$("word").textContent=ui('empty');$("answer").textContent="";$("hint").textContent=ui('addFirst');return}
   if(pos>=order.length)shuffle();
+  if(previousWord && words[order[pos]]===previousWord){
+    var other=order.findIndex(function(index,i){return i>pos && words[index]!==previousWord});
+    if(other!==-1)[order[pos],order[other]]=[order[other],order[pos]];
+  }
   var w=words[order[pos++]];if(session){session.pos=pos;session.category=activeCategory;session.mode='learn';save('vt_session',session)}
   var de2mk=dirIx===0||(dirIx===2&&Math.random()<.5);
   cur={forward:de2mk,q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:languageName(codes[de2mk?0:1]),cat:w[2]||"Eigene Wörter",w:w};
   $("lang").textContent=cur.l;$("word").textContent=cur.q;$("answer").textContent="";
-  $("hint").textContent=ui('reveal');shown=false;cardRated=false;$("cardRating").style.display="none";
+  $("hint").textContent=ui('reveal');shown=false;$("cardRating").style.display="none";
   $("count").textContent=Math.min(pos,order.length)+" / "+order.length;
 }
 function tap(){
   if(!words.length)return;
   if(!shown){$("answer").textContent=cur.a;$("hint").textContent=ui('rate');shown=true;$("cardRating").style.display="grid"}
-  else if(cardRated)next();
 }
 function rateCard(ok){
-  if(!cur||!shown||cardRated)return;
+  if(!cur||!shown)return;
+  shown=false;
   var key=cur.w[0];
   if(ok){mast[key]=(mast[key]||0)+1;delete wrong[key]}else{mast[key]=0;wrong[key]=1}
-  save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);cardRated=true;
-  $('cardRating').style.display='none';$('hint').textContent=ui('next');
+  save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);
+  next(cur.w);
+  refreshTools();
+  $('card').focus();
 }
 $('cardKnown').onclick=function(e){e.stopPropagation();rateCard(true)};
 $('cardMissed').onclick=function(e){e.stopPropagation();rateCard(false)};
@@ -700,7 +704,7 @@ $("words").onclick=function(){$("msg").textContent="";renderList();show("edit")}
 $("dir").onclick=function(){dirIx=(dirIx+1)%3;save("vt_dir",dirIx);dirLabel()};
 $('back1').onclick=function(){show('menu')};$('back2').onclick=function(){goBack('menu')};$('back3').onclick=function(){goBack('modes')};
 $("card").onclick=tap;
-$("card").onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();tap()}};
+$("card").onkeydown=function(e){if(e.target===this&&(e.key==="Enter"||e.key===" ")){e.preventDefault();tap()}};
 $("add").onclick=function(){
   var de=$("de").value.trim(),mk=$("mk").value.trim();
   if(!de||!mk){$("msg").textContent=ui('fill');return}
