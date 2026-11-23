@@ -93,24 +93,43 @@ function resumeStudy(){
 }
 
 let studyAudio;
+function feedbackTone(ctx,type,pitch,endPitch,start,duration,gain,attack){
+  const tone=ctx.createOscillator(),volume=ctx.createGain(),end=start+duration;
+  tone.type=type;tone.frequency.setValueAtTime(pitch,start);
+  tone.frequency.exponentialRampToValueAtTime(endPitch,end);
+  volume.gain.setValueAtTime(0.0001,start);
+  volume.gain.exponentialRampToValueAtTime(gain,start+attack);
+  volume.gain.exponentialRampToValueAtTime(0.0001,end);
+  tone.connect(volume);volume.connect(ctx.destination);
+  tone.onended=()=>{tone.disconnect();volume.disconnect()};
+  tone.start(start);tone.stop(end+0.01);
+}
+function playAnswerSound(ctx,ok){
+  const now=ctx.currentTime;
+  if(ok){
+    feedbackTone(ctx,'triangle',850,915,now,0.10,0.24,0.006);
+    feedbackTone(ctx,'sine',1568,1558,now+0.10,0.48,0.32,0.004);
+    feedbackTone(ctx,'sine',3595,3570,now+0.10,0.21,0.105,0.004);
+  }else{
+    // Add the octave and fifth above each note for a mellow brass timbre.
+    for(const [delay,hz,length] of [[0,247,0.20],[0.205,185,0.36]]){
+      feedbackTone(ctx,'sawtooth',hz,hz*0.95,now+delay,length,0.22,0.035);
+      feedbackTone(ctx,'triangle',hz*2,hz*1.9,now+delay,length,0.13,0.032);
+      feedbackTone(ctx,'sine',hz*3,hz*2.85,now+delay,length,0.08,0.038);
+    }
+  }
+}
 function signalAnswer(ok){
   if(load('vt_vibration',false)&&typeof navigator.vibrate==='function'){
-    try{navigator.vibrate(ok?40:[40,60,40])}catch(e){}
+    try{navigator.vibrate(ok?125:[155,90,185])}catch(e){}
   }
   const Audio=window.AudioContext||window.webkitAudioContext;
   if(!Audio||!load('vt_sound',false))return;
   try{
     studyAudio=studyAudio||new Audio();
-    if(studyAudio.state==='suspended')studyAudio.resume().catch(()=>{});
-    const tone=studyAudio.createOscillator(),volume=studyAudio.createGain(),start=studyAudio.currentTime;
-    tone.frequency.setValueAtTime(ok?550:310,start);
-    tone.frequency.exponentialRampToValueAtTime(ok?740:215,start+0.12);
-    volume.gain.setValueAtTime(0.0001,start);
-    volume.gain.exponentialRampToValueAtTime(0.095,start+0.012);
-    volume.gain.exponentialRampToValueAtTime(0.0001,start+0.15);
-    tone.connect(volume);volume.connect(studyAudio.destination);
-    tone.start(start);tone.stop(start+0.16);
-    tone.onended=()=>{tone.disconnect();volume.disconnect()};
+    if(studyAudio.state==='suspended'){
+      studyAudio.resume().then(()=>playAnswerSound(studyAudio,ok)).catch(()=>{});
+    }else playAnswerSound(studyAudio,ok);
   }catch(e){}
 }
 Object.assign(uiMessages,{

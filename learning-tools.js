@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=46;
+const appVersion=47;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
@@ -63,24 +63,53 @@ function scheduleAnswer(key,ok){
   save('vt_schedule',schedule);
 }
 function isDue(w,day){return !!schedule[w[0]]&&schedule[w[0]][1]<=day}
+let alphabetPreferred=false;
+function editAnswer(text,backspace=false){
+  const input=$('tin');
+  if($('alphabetKeys').hidden || !input.readOnly)return;
+  let start=input.selectionStart;
+  const end=input.selectionEnd;
+  if(backspace && start===end && start>0){
+    const before=Array.from(input.value.slice(0,start));
+    start-=before[before.length-1].length;
+  }
+  input.setRangeText(text,start,end,'end');
+  input.focus({preventScroll:true});
+  saveTypedProgress();
+}
 function setupAlphabet(){
   const box=$('alphabetKeys');
   ['љњертѕуиопшѓ','асдфгхјклчќ','зџцвбнмж'].forEach((row,index)=>{
-  Array.from(row).forEach((letter,col)=>{
-    const b=document.createElement('button');b.type='button';b.textContent=letter;
-    b.style.gridRow=String(index+1);b.style.gridColumn=(13-row.length+2*col)+' / span 2';
-    b.onmousedown=e=>e.preventDefault();
-    b.onclick=()=>{const input=$('tin');input.setRangeText(letter,input.selectionStart,input.selectionEnd,'end');input.focus();saveTypedProgress()};
-    box.appendChild(b);
+    Array.from(row).forEach((letter,col)=>{
+      const b=document.createElement('button');b.type='button';b.textContent=letter;
+      b.style.gridRow=String(index+1);b.style.gridColumn=(13-row.length+2*col)+' / span 2';
+      b.onmousedown=e=>e.preventDefault();
+      b.onclick=()=>editAnswer(letter);
+      box.appendChild(b);
+    });
   });
-  });
+  $('alphabetSpace').onmousedown=$('alphabetDelete').onmousedown=e=>e.preventDefault();
+  $('alphabetSpace').onclick=()=>editAnswer(' ');
+  $('alphabetDelete').onclick=()=>editAnswer('',true);
   $('alphabetToggle').onclick=()=>{
-    box.hidden=!box.hidden;$('alphabetToggle').setAttribute('aria-expanded',String(!box.hidden));
+    const input=$('tin'),start=input.selectionStart,end=input.selectionEnd;
+    alphabetPreferred=box.hidden;
+    input.blur();
+    alphabetFor(true);
+    if(alphabetPreferred){
+      input.focus({preventScroll:true});
+      input.setSelectionRange(start,end);
+    }
   };
 }
 function alphabetFor(visible){
-  $('alphabetControls').hidden=!visible;$('alphabetKeys').hidden=true;
-  $('alphabetToggle').setAttribute('aria-expanded','false');
+  const open=visible && alphabetPreferred,input=$('tin');
+  input.readOnly=open;
+  if(open)input.setAttribute('inputmode','none');
+  else input.removeAttribute('inputmode');
+  $('alphabetControls').hidden=!visible;
+  $('alphabetKeys').hidden=$('alphabetActions').hidden=!open;
+  $('alphabetToggle').setAttribute('aria-expanded',String(open));
 }
 function readyWorkerVersion(worker){
   return new Promise(resolve=>{
@@ -186,3 +215,6 @@ function setupDailyUpdate(){
   document.addEventListener('visibilitychange',maybeDailyUpdate);
   maybeDailyUpdate();
 }
+
+uiMessages.spaceKey=['Space','Празно место','Leertaste','Spazio','Espace'];
+uiMessages.deleteKey=['Backspace','Избриши','Löschen','Cancella','Effacer'];
