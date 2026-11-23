@@ -10,3 +10,20 @@ Version 32 includes learning-courses.js, the editable English, Italian and Frenc
 
 V.00.00.03 category-vocabulary.js. Shared category memberships are indices into one multilingual list. This file includes original practice sentences, previously included app vocabulary, and adapted dictionary and terminology data. The vocabulary compilation in this file is distributed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).
 Sources: Wiktionary contributors via the Extended Open Multilingual Wordnet (https://omwn.org/; https://github.com/omwn/omw-data/tree/main/wns/wikt), CC BY-SA 3.0; Princeton WordNet 3.0 (https://wordnet.princeton.edu/); Wikipedia contributors, linked article titles from the Macedonian Wikipedia database dump dated November 2026 (https://mk.wikipedia.org/; https://dumps.wikimedia.org/mkwiki/), CC BY-SA 4.0; Wikidata contributors, multilingual labels (https://www.wikidata.org/), CC0; Unicode CLDR localized unit, region, language and currency names (https://cldr.unicode.org/), Unicode License. Adaptations include multilingual alignment, selection, category assignment and combinations of units. Corresponding notices are in vocabulary-licenses/.
+
+V.00.01.00. Dialect practice uses individual documented examples. Regional labels cover local varieties. Spellings omit stress marks and use Cyrillic ъ for transcribed schwa (ă). Within a region, other forms may occur. Standard-only fallback cards are marked separately.
+
+Sources for dialects.js:
+Delčevo — BBC Macedonian, 9 January 2008, local speakers interviewed, https://bbcinsight.pages.dev/macedonian/news/story/2008/01/printable/080109_dialects_delcevo.shtml
+Resen — Blaže Koneski, Dialectological, Balkanistic and Onomastic Contributions, https://koneski.manu.edu.mk/wp-content/uploads/2021/10/8-tom-KONESKI.pdf
+Regional reflexes of “hand” — Blaže Koneski, Grammar, https://koneski.manu.edu.mk/wp-content/uploads/2021/11/11-tom-KONESKI.pdf
+Regional schwa spellings in peripheral varieties — Božidar Vidoeski, XI International Congress of Slavists, Bratislava, 1993, https://makslavkom.mk/wp-content/uploads/2023/08/Referati-MSK-XI-kongres-Bratislava-1993_compressed.pdf
+Further word forms — Wikipedia contributors, articles below, CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). The compiled and adapted dialect glossary in dialects.js is available under the same license.
+https://en.wikipedia.org/wiki/Kumanovo_dialect
+https://en.wikipedia.org/wiki/Tetovo_dialect
+https://en.wikipedia.org/wiki/Prilep-Bitola_dialect
+https://en.wikipedia.org/wiki/Ohrid_dialect
+https://en.wikipedia.org/wiki/Struga_dialect
+https://en.wikipedia.org/wiki/Upper_Polog_dialect
+https://en.wikipedia.org/wiki/Debar_dialect
+https://en.wikipedia.org/wiki/Skopje-Veles_dialect

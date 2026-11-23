@@ -7,7 +7,7 @@ var trainingStorage = (function () {
   const tally = x => Array.isArray(x) && x.length === 2 && x.every(count);
   const pair = x => typeof x === 'string' && /^[a-z]{2}-[a-z]{2}$/.test(x);
   const checks = {
-    pair, pairs: x => Array.isArray(x) && x.every(pair),
+    dialect_scope:x=>['different','verified','all'].includes(x), pair, pairs: x => Array.isArray(x) && x.every(pair),
     ui_language: x => ['mk','de','en','fr','it'].includes(x),
     sound: x=>typeof x==='boolean', vibration: x=>typeof x==='boolean', voice_prompt: x=>typeof x==='boolean',
     welcome_seen: x => typeof x === 'boolean', theme: x => ['dark','light',''].includes(x),

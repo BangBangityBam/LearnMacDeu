@@ -63,6 +63,7 @@ function acceptedAnswers(card) {
   const simple=s=>norm(s.normalize('NFC'));
   const answer=simple(card.a), plain=simple(card.a.replace(/\s*\([^)]*\)/g,''));
   const answers=new Set([answer,plain]);
+  if(dialectId){answers.delete('');return answers}
   const mkFirst=codes[0]==='mk', mk=simple(card.w[mkFirst?0:1]), foreign=simple(card.w[mkFirst?1:0]);
   if(codes[card.forward?1:0]==='mk'){
     const group=mkVariants.find(row=>row.includes(mk));

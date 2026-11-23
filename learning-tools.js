@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=53;
+const appVersion=145;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
@@ -20,13 +20,13 @@ const sectionFor=new Map(Object.entries(sections).flatMap(([group,list])=>list.s
 function categoryPicker(){
   const box=$('catlist'), query=norm($('categoryQuery').value);
   box.replaceChildren();
-  const entries=CATS.map(([key])=>({key,label:categoryName(key),group:customCategories.includes(key)?'personal':sectionFor.get(key)||'basics'}));
+  const entries=CATS.filter(([key])=>!dialectId || dialectScope==='all' || pool(key).length).map(([key])=>({key,label:categoryName(key),group:customCategories.includes(key)?'personal':sectionFor.get(key)||'basics'}));
   const shortcuts=[{key:'*',label:ui('all')},{key:'♥',label:ui('fav')},{key:'Eigene Wörter',label:ui('own')}];
   const sorted=items=>items.sort((a,b)=>alphabetSort(a.label,b.label));
   function button(parent,entry){
     const rows=pool(entry.key),b=document.createElement('button'),count=document.createElement('small');
     b.type='button';b.textContent=entry.label;b.disabled=!rows.length;
-    count.textContent=ui('catCount',rows.length,rows.filter(w=>(mast[w[0]]||0)>=3).length);
+    count.textContent=ui('catCount',rows.length,rows.filter(w=>(mast[progressKey(w)]||0)>=3).length);
     b.appendChild(count);b.onclick=()=>go(entry.key);parent.appendChild(b);
   }
   if(query){
@@ -62,7 +62,7 @@ function scheduleAnswer(key,ok){
   schedule[key]=[level,calendarDay()+(level?intervals[level-1]:1)];
   save('vt_schedule',schedule);
 }
-function isDue(w,day){return !!schedule[w[0]]&&schedule[w[0]][1]<=day}
+function isDue(w,day){return !!schedule[progressKey(w)]&&schedule[progressKey(w)][1]<=day}
 let alphabetPreferred=false;
 function editAnswer(text,backspace=false){
   const input=$('tin');
@@ -79,7 +79,8 @@ function editAnswer(text,backspace=false){
 }
 function setupAlphabet(){
   const box=$('alphabetKeys');
-  ['љњертѕуиопшѓ','асдфгхјклчќ','зџцвбнмж'].forEach((row,index)=>{
+  const bottom=dialectId && Object.values(dialects[dialectId][2]).some(form=>form.includes('ъ'))?'зџцвбнмжъ':'зџцвбнмж';
+  ['љњертѕуиопшѓ','асдфгхјклчќ',bottom].forEach((row,index)=>{
     Array.from(row).forEach((letter,col)=>{
       const b=document.createElement('button');b.type='button';b.textContent=letter;
       b.style.gridRow=String(index+1);b.style.gridColumn=(13-row.length+2*col)+' / span 2';

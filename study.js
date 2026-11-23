@@ -39,7 +39,7 @@ function matchingOptions(card){
   }
   for(const w of all)consider(w[dest],w[2]);
   if(candidates.size<3 && matches('…?')){
-    for(const answer of extraGapQuestions[codes[dest]])consider(answer,null);
+    for(const answer of (extraGapQuestions[codes[dest]]||[]))consider(answer,null);
   }
   const result=Array.from(candidates.values()).sort((a,b)=>gapCard?(a.wordGap-b.wordGap||a.letterGap-b.letterGap||a.score-b.score):a.score-b.score).slice(0,3).map(x=>x.answer);
   result.splice(Math.floor(Math.random()*(result.length+1)),0,card.a);
@@ -51,7 +51,7 @@ function rememberCard(){
   const item=curMode==='learn'?cur:tcur;
   if(!item)return;
   if(session.order!==order){
-    session.deck=words.map(w=>w[0]);
+    session.deck=words.map(progressKey);
     session.order=order;
   }
   session.pos=pos;session.forward=item.forward;
@@ -72,8 +72,8 @@ function resumeStudy(){
     show(curMode==='learn'?'learn':'type');if(curMode==='learn')next();else nextType();
     return;
   }
-  const available=new Map(pool('*').map(w=>[w[0],w]));
-  words.forEach(w=>available.set(w[0],w));
+  const available=new Map(unfilteredPool('*').map(w=>[progressKey(w),w]));
+  words.forEach(w=>available.set(progressKey(w),w));
   const restored=saved.deck.map(k=>available.get(k));
   // Remap surviving indices if a custom word was removed between sessions.
   const indices=new Map();words=[];

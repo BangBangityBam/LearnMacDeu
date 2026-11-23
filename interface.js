@@ -224,7 +224,7 @@ var languageNames={
   it:['Italian','италијански','Italienisch','italiano','italien'],
   fr:['French','француски','Französisch','francese','français']
 };
-function languageName(code){return languageNames[code][localeIndex]}
+function languageName(code){return Object.hasOwn(dialects,code)?dialectName(code):code==='mk' && typeof dialectId!=='undefined' && dialectId?dialectText('standard'):languageNames[code][localeIndex]}
 function ratingText(element,text){
   if(!/[✓✗]/.test(text)){element.textContent=text;return}
   element.replaceChildren();

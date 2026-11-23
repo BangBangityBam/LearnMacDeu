@@ -221,6 +221,10 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 .grade-sign{display:inline-grid;place-items:center;font:900 1.05em/1 system-ui,sans-serif;min-width:1.38em;height:1.38em;border-radius:.4em;vertical-align:middle}
 .grade-sign.yes,#type .grade-sign.yes{background:#e1f6e6;color:#146335}
 .grade-sign.no,#type .grade-sign.no{background:#ffe7e7;color:#9b1821}
+#dialectMenu{margin:.4rem 0 .8rem;padding:.65rem .85rem;border:1px solid var(--line);border-radius:12px}
+#dialectMenu summary{cursor:pointer;font-weight:650}
+#dialectMenu select{display:block;width:100%;min-width:0;margin-top:.5rem}
+#dialectOptions label{display:block;margin-top:.75rem}
 </style>
 </head>
 <body>
@@ -232,6 +236,10 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     <button id="settingsOpen" type="button" data-ui-label="settings">⚙</button>
   </header><div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
   <select id="pairList"></select>
+  <details id="dialectMenu"><summary id="dialectLabel"></summary>
+    <select id="dialectList" aria-labelledby="dialectLabel"></select>
+    <div id="dialectOptions" hidden><label for="dialectScope" id="dialectScopeLabel"></label><select id="dialectScope"></select></div>
+  </details>
   <div class="language-setting"><label for="dir" data-ui="direction">Насока</label><select id="dir"></select></div>
   <button id="difficultyBtn"></button>
 <button class="main home-start" id="start" data-ui="start">Започни со учење</button><button class="main home-start" id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button><div class="home-links"><button id="bsearch" data-ui="search">Пребарување</button><button id="btnstats" data-ui="stats">Статистика</button></div><button id="words" data-ui="words">Додај или измени зборови</button><button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>  <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
@@ -449,15 +457,16 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 
-<script src="./storage.js?v=45"></script>
-<script src="./interface.js?v=53"></script>
-<script src="./practice.js?v=51"></script>
+<script src="./storage.js?v=145"></script>
+<script src="./interface.js?v=145"></script>
+<script src="./practice.js?v=145"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./category-vocabulary.js?v=48"></script>
 <script src="./trades.js"></script>
-<script src="./study.js?v=51"></script>
-<script src="./learning-tools.js?v=53"></script>
+<script src="./dialects.js?v=145"></script>
+<script src="./study.js?v=145"></script>
+<script src="./learning-tools.js?v=145"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -486,11 +495,19 @@ var pairList = targets.map(function(code){
   return Array.isArray(savedPairs) && savedPairs.includes(previous)?previous:'mk-'+code;
 });
 var pairId = load('vt_pair',defaultPair);
-if(!pairList.includes(pairId)) pairId=defaultPair;
-var codes=pairId.split('-'), first=languages[codes[0]], second=languages[codes[1]];
+function isDialectPair(id){
+  if(typeof id!=='string')return false;
+  const parts=id.split('-');
+  return parts.length===2 && [...targets,'mk'].includes(parts[0]) && Object.hasOwn(dialects,parts[1]);
+}
+if(!pairList.includes(pairId) && !isDialectPair(pairId)) pairId=defaultPair;
+var dialectId=isDialectPair(pairId)?pairId.split('-')[1]:null;
+var partner=dialectId?pairId.split('-')[0]:null;
+var basePair=dialectId?(partner==='mk'?'mk-en':partner==='de'?defaultPair:'mk-'+partner):pairId;
+var codes=basePair.split('-'), first=languages[codes[0]], second=languages[codes[1]];
 var target=codes[0]==='mk'?codes[1]:codes[0];
 function switchPair(id){
-  if(!pairList.includes(id))return;
+  if(!pairList.includes(id)&&!isDialectPair(id))return;
   if(trainingStorage.retry() && save('vt_pair',id))location.reload();
   else $('pairList').value=pairId;
 }
@@ -499,23 +516,16 @@ targets.forEach(function(code,i){
 });
 $('pairList').value=pairId;
 $('pairList').onchange=function(){switchPair(this.value)};
-[first,second].forEach(function(lang,i){
-  document.querySelector('label[for="'+(i?'mk':'de')+'"]').textContent=languageName(codes[i]);
-});
-if(codes[1]==='mk'){
-  var fields=$('wordFields');
-  fields.append(document.querySelector('label[for="de"]'),$('de'));
-}
 function storageKey(key){
   if(!pairId || pairId===defaultPair || ['vt_pair','vt_pairs','vt_theme','vt_welcome_seen','vt_ui_language','vt_sound','vt_vibration','vt_voice_prompt'].includes(key))return key;
   return 'vt_pair_'+pairId+'_'+key.slice(3);
 }
-var words=[], dirIx=+load('vt_dir',codes.indexOf('mk'));
+var words=[], dirIx=+load('vt_dir',dialectId?1:codes.indexOf('mk'));
 var difficulty=load('vt_difficulty','medium');
 var CATS=[['Grundwortschatz','Основни зборови'],['Zahlen & Zeit','Броеви и време'],['Einkaufen & Restaurant','Купување и ресторан'],['Unterwegs & Reisen','Патување и насоки'],['Ämter & Internet','Институции и интернет'],['Körper & Arzt','Тело и лекар'],['Familie & Berufe','Семејство и занимања'],['Küche & Essen','Кујна и храна'],['Haus & Kleidung','Дом и облека'],['Verben','Глаголи'],['Adjektive & Kleinwörter','Придавки и мали зборови'],['Orte & Sport','Места и спорт'],['Natur & Tiere','Природа и животни'],['Gefühle & Alltag','Чувства и секојдневие'],['Masse & Technik','Мерки и техника'],['Arbeit & Bewerbung','Работа и интервју']];
 var ALL=[],seen={};
 function addList(list,cat){list.forEach(function(w){if(w[0].charAt(0)==='#'){cat=w[0].slice(1);return}if(!w[1]||seen[w[0]])return;seen[w[0]]=1;ALL.push([w[0],w[1],cat])})}
-if(pairId===defaultPair){addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXTRA2,'Zahlen & Zeit');addList(EXTRA3,'Einkaufen & Restaurant');addList(EXTRA4,'Arbeit & Bewerbung');addList(EXTRA5,'Arbeit & Bewerbung');addList(EXTRA6,'Einkaufen & Restaurant');addList(EXTRA7,'Arbeit & Bewerbung');addList(EXTRA8,'Grundwortschatz');}
+if(basePair===defaultPair){addList(DEFAULTS,'Grundwortschatz');addList(EXTRA,'Grundwortschatz');addList(EXTRA2,'Zahlen & Zeit');addList(EXTRA3,'Einkaufen & Restaurant');addList(EXTRA4,'Arbeit & Bewerbung');addList(EXTRA5,'Arbeit & Bewerbung');addList(EXTRA6,'Einkaufen & Restaurant');addList(EXTRA7,'Arbeit & Bewerbung');addList(EXTRA8,'Grundwortschatz');}
 // Keep legacy entries first so their learning history and answer keys retain precedence.
 function addCourseVocabulary(){
   var column={en:1,de:2,it:3,fr:4}[target];
@@ -524,7 +534,7 @@ function addCourseVocabulary(){
   var mkWords=new Set(),targetWords=new Set();
   function remember(w){mkWords.add(key(w[mkIndex]));targetWords.add(key(w[targetIndex]))}
   ALL.forEach(remember);
-  (load('vt_mine',[])||[]).forEach(remember);
+  if(!dialectId)(load('vt_mine',[])||[]).forEach(remember);
   Object.entries(courseVocabulary).forEach(function(entry){
     var category=entry[0].split('|'), initial=ALL.length;
     entry[1].forEach(function(row){
@@ -536,13 +546,13 @@ function addCourseVocabulary(){
     if(ALL.length>initial && !CATS.some(function(c){return c[0]===category[0]}))CATS.push(category);
   });
 }
-if(pairId===defaultPair){
+if(basePair===defaultPair){
   addCourseVocabulary();
 }else{
   CATS=learningCourses.map(function(group){return group.slice(0,2)});
   var answerColumn={en:1,it:2,fr:3}[target];
   var mkFirst=codes[0]==='mk';
-  var personalWords=load('vt_mine',null)||load('vt_words',[])||[];
+  var personalWords=dialectId?[]:load('vt_mine',null)||load('vt_words',[])||[];
   function wordKey(text){return text.normalize('NFC').trim().toLowerCase()}
   var personalPrompts=new Set(personalWords.map(function(w){return wordKey(w[0])}));
   var personalAnswers=new Set(personalWords.map(function(w){return wordKey(w[1])}));
@@ -587,6 +597,19 @@ for(const [category,indices] of Object.entries(categoryMemberships)){
     deck.push(word[2]===category?word:[word[0],word[1],category]);
   }
 }
+var dialectScope=dialectId?load('vt_dialect_scope',partner==='mk'?'different':'verified'):'all';
+if(dialectId){
+  buildDialectDeck();
+  codes=[partner,dialectId];first=languages[partner];second=[dialectName(dialectId),dialectName(dialectId),null,''];
+}
+setupDialectMenu();
+[first,second].forEach(function(lang,i){
+  document.querySelector('label[for="'+(i?'mk':'de')+'"]').textContent=languageName(codes[i]);
+});
+if(codes[1]==='mk'){
+  var fields=$('wordFields');
+  fields.append(document.querySelector('label[for="de"]'),$('de'));
+}
 var savedCategories=load('vt_categories',[]);
 var customCategories=Array.isArray(savedCategories)?savedCategories.filter(function(name){return typeof name==='string' && name.trim() && !(name in Object.prototype)}):[];
 function renderCategories(){
@@ -610,7 +633,12 @@ $('addCategory').onclick=function(){
 };
 var mine=load('vt_mine',null);
 if(mine===null){mine=[];(load('vt_words',[])||[]).forEach(function(w){if(!seen[w[0]])mine.push([w[0],w[1]])});save('vt_mine',mine)}
-function pool(k){var m=mine.map(function(w){return [w[0],w[1],w[2]||'Eigene Wörter']});if(k===dueKey){const day=calendarDay();return ALL.concat(m).filter(w=>isDue(w,day))}if(k==='!')return ALL.concat(m).filter(function(w){return wrong[w[0]]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[w[0]]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return (categoryDecks.get(k)||[]).concat(m.filter(function(w){return w[2]===k}))}
+function pool(k){
+  const rows=unfilteredPool(k);
+  if(!dialectId||dialectScope==='all'||['!','♥',dueKey].includes(k))return rows;
+  return rows.filter(w=>!w.status || w.status==='different' || (dialectScope==='verified' && w.status==='same'));
+}
+function unfilteredPool(k){var m=mine.map(function(w){return [w[0],w[1],w[2]||'Eigene Wörter']});if(k===dueKey){const day=calendarDay();return ALL.concat(m).filter(w=>isDue(w,day))}if(k==='!')return ALL.concat(m).filter(function(w){return wrong[progressKey(w)]});if(k==='♥')return ALL.concat(m).filter(function(w){return fav[progressKey(w)]});if(k==='*')return ALL.concat(m);if(k==='Eigene Wörter')return m;return (categoryDecks.get(k)||[]).concat(m.filter(function(w){return w[2]===k}))}
 function buildCats(){$('categoryQuery').value='';categoryPicker()}
 $('categoryQuery').oninput=categoryPicker;
 var curMode='learn',tcur=null,tstate='ask',tAt=0;
@@ -647,7 +675,7 @@ function nextType(restored){
   var w=words[order[pos++]];
   var d2m=restored?restored.forward:dirIx===0||(dirIx===2&&Math.random()<.5);
   tcur={forward:d2m,q:d2m?w[0]:w[1],a:d2m?w[1]:w[0],cat:w[2]||'Eigene Wörter',w:w};
-  $('tlang').textContent=ui('into',languageName(codes[d2m?1:0]));
+  $('tlang').textContent=ui('into',languageName(codes[d2m?1:0]))+dialectNote(w);
   $('tword').textContent=tcur.q;
   inp.style.display='';inp.value=restored&&typeof restored.typed==='string'?restored.typed:'';inp.disabled=false;
   $('tcheck').style.display='';
@@ -655,7 +683,7 @@ function nextType(restored){
   $('tfb').textContent='';$('tans').textContent='';$('tmine').textContent='';$('thint').textContent='';
   $('tcount').textContent=activeCategory==='!'?reviewCount():Math.min(pos,order.length)+' / '+order.length;
   tstate='ask';
-  alphabetFor(curMode==='type'&&codes[d2m?1:0]==='mk');
+  alphabetFor(curMode==='type'&&(codes[d2m?1:0]==='mk'||(dialectId&&d2m)));
   if(session&&!restored){delete session.feedback;delete session.typed}
   if(restored && restored.feedback){
     displayGrade(restored.feedback.ok,restored.feedback.input);
@@ -707,8 +735,8 @@ function showStats(){
   }
   if(stats.all[0]+stats.all[1])row('Alle Wörter',stats.all,false);
   played.forEach(k=>row(k,stats.cats[k],pool(k).length>0));
-  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent=ui('learned',m3,al.length);L.appendChild(h);played.forEach(function(k){var p=pool(k),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=categoryName(k)+': '+n+' / '+p.length;L.appendChild(d)}});
-  var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent=ui('progress');wp.appendChild(title);var mastered=al.filter(function(w){return (mast[w[0]]||0)>=3});var difficult=al.filter(function(w){return wrong[w[0]]});var p=document.createElement('p');p.className='sub';p.textContent=ui('mastery',mastered.length,difficult.length);wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · '+ui('review');wp.appendChild(d)});
+  var L=$('learned');L.innerHTML='';var al=unfilteredPool('*'),m3=al.filter(function(w){return (mast[progressKey(w)]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent=ui('learned',m3,al.length);L.appendChild(h);played.forEach(function(k){var p=unfilteredPool(k),n=p.filter(function(w){return (mast[progressKey(w)]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=categoryName(k)+': '+n+' / '+p.length;L.appendChild(d)}});
+  var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent=ui('progress');wp.appendChild(title);var mastered=al.filter(function(w){return (mast[progressKey(w)]||0)>=3});var difficult=al.filter(function(w){return wrong[progressKey(w)]});var p=document.createElement('p');p.className='sub';p.textContent=ui('mastery',mastered.length,difficult.length);wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · '+ui('review');wp.appendChild(d)});
   show('statsview');
 }
 $('tcheck').onclick=function(e){e.stopPropagation();checkType()};
@@ -754,14 +782,14 @@ function startReview(mode){
 }
 // Keep the current queue until a word leaves the mistake list.
 function reviewCount(){
-  const n=new Set(words.filter(w=>wrong[w[0]]).map(w=>w[0])).size;
+  const n=new Set(words.filter(w=>wrong[progressKey(w)]).map(progressKey)).size;
   return n===0?ui('reviewDone'):n===1?ui('oneLeft'):ui('wordsLeft',n);
 }
 function prepareReview(){
   const due=activeCategory===dueKey;
   if(!due&&activeCategory!=='!')return true;
   const day=calendarDay();
-  const pending=w=>due?isDue(w,day):wrong[w[0]];
+  const pending=w=>due?isDue(w,day):wrong[progressKey(w)];
   if(words.some(function(w){return !pending(w)})){
     words=words.filter(pending);
     shuffle();
@@ -787,7 +815,7 @@ if(false){var have={};words.forEach(function(w){have[w[0].toLowerCase()]=1});EXT
 var order=[],pos=0,shown=false,cur=null;
 var wrong=load('vt_wrong',{}),mast=load('vt_mast',{}),rlen=+load('vt_rlen',0)||0,rnd={n:0,ok:0,miss:[]};
 var schedule=initSchedule();
-function track(ok){var k=tcur.w[0];scheduleAnswer(k,ok);if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
+function track(ok){var k=progressKey(tcur.w);scheduleAnswer(k,ok);if(ok){mast[k]=(mast[k]||0)+1;delete wrong[k]}else{mast[k]=0;wrong[k]=1}rnd.n++;if(ok)rnd.ok++;else rnd.miss.push(tcur.q+' – '+tcur.a);save('vt_wrong',wrong);save('vt_mast',mast)}
 function rlabel(){
   $('dueReview').textContent=ui('todayReview',pool(dueKey).length);
   $('rlen').textContent=ui('round',rlen||ui('endless'));
@@ -845,9 +873,9 @@ if(isInstalledApp){
   });
   window.addEventListener('pageshow',ensureBackGuard);
 }
-function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[x.w[0]]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[x.w[0]]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[x.w[0]]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
+function shuffle(){order=[];var candidates=words.map(function(w,i){return {w:w,i:i}});if(difficulty==='easy'){var fresh=candidates.filter(function(x){return (mast[progressKey(x.w)]||0)<3});if(fresh.length)candidates=fresh;}candidates.forEach(function(x){order.push(x.i);if(wrong[progressKey(x.w)]){order.push(x.i);if(difficulty==='hard')order.push(x.i,x.i)}});if(difficulty==='hard'){candidates.forEach(function(x){if((mast[progressKey(x.w)]||0)>=3)order.push(x.i)})}for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t}pos=0}
 function setupDirection(){
-  var select=$('dir'), mkIndex=codes.indexOf('mk');
+  var select=$('dir'), mkIndex=dialectId?1:codes.indexOf('mk');
   [mkIndex,1-mkIndex].forEach(function(source){
     var label=languageName(codes[source])+' → '+languageName(codes[1-source]);
     select.add(new Option(label,String(source)));
@@ -870,7 +898,7 @@ function next(previousWord,restored){
   var w=words[order[pos++]];
   var de2mk=restored?restored.forward:dirIx===0||(dirIx===2&&Math.random()<.5);
   cur={forward:de2mk,q:de2mk?w[0]:w[1],a:de2mk?w[1]:w[0],l:languageName(codes[de2mk?0:1]),cat:w[2]||"Eigene Wörter",w:w};
-  $("lang").textContent=cur.l;$("word").textContent=cur.q;$("answer").textContent="";
+  $("lang").textContent=cur.l+dialectNote(w);$("word").textContent=cur.q;$("answer").textContent="";
   $("hint").textContent=ui('reveal');shown=false;$("cardRating").style.display="none";
   $("count").textContent=activeCategory==='!'?reviewCount():Math.min(pos,order.length)+" / "+order.length;
   rememberCard();
@@ -882,7 +910,7 @@ function tap(){
 function rateCard(ok){
   if(!cur||!shown)return;
   shown=false;
-  var key=cur.w[0];scheduleAnswer(key,ok);
+  var key=progressKey(cur.w);scheduleAnswer(key,ok);
   if(ok){mast[key]=(mast[key]||0)+1;delete wrong[key]}else{mast[key]=0;wrong[key]=1}
   save('vt_mast',mast);save('vt_wrong',wrong);rec(cur.cat,ok);
   next(cur.w);
@@ -916,7 +944,7 @@ $("add").onclick=function(){
 };
 setupDirection();
 var fav=load('vt_fav',{}),days=load('vt_days',{n:0,last:''}),editIx=-1;
-function deOf(x){return x.w[0]}
+function deOf(x){return progressKey(x.w)}
 function dayKey(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function touchDay(){var t=new Date(),k=dayKey(t);if(days.last!==k){var y=new Date(t.getTime()-864e5);days.n=days.last===dayKey(y)?days.n+1:1;days.last=k;save('vt_days',days)}if(daily.date!==k){daily.date=k;daily.done=0}daily.done++;save('vt_daily',daily);refreshMenu()}
 function refreshMenu(){
@@ -968,7 +996,7 @@ function speakAll(a,forward){
   deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();
   a.forEach(function(t,i){
     const lang=((i===0)===forward?first:second)[2];
-    speechSynthesis.speak(makeSpeech(t,lang));
+    if(lang)speechSynthesis.speak(makeSpeech(t,lang));
   });
 }
 refreshDeviceVoices();
@@ -989,7 +1017,7 @@ function doSearch(){
   const q=norm($('sq').value),box=$('sres');box.replaceChildren();
   if(!q)return;
   const found=[];
-  for(const w of pool('*')){
+  for(const w of unfilteredPool('*')){
     const keys=[norm(w[0]),norm(w[1])];
     const rank=keys.map(t=>t===q?0:t.startsWith(q)?1:t.includes(q)?2:3);
     const side=rank[1]<rank[0]?1:0;
@@ -998,17 +1026,17 @@ function doSearch(){
   found.sort((a,b)=>Number(b.exact)-Number(a.exact)||alphabetSort(a.w[a.side],b.w[b.side])||alphabetSort(a.w[1-a.side],b.w[1-b.side]));
   for(const {w,side} of found.slice(0,40)){
     const li=document.createElement('li'),details=document.createElement('details'),label=document.createElement('summary');
-    label.textContent=w[side]+' – '+w[1-side];
+    label.textContent=w[side]+' – '+w[1-side]+dialectNote(w);
     details.appendChild(label);
     const audio=document.createElement('button'),star=document.createElement('button');
     audio.type=star.type='button';
     audio.textContent='🔊 '+ui('listen');
     audio.onclick=()=>speakAll([w[side],w[1-side]],side===0);
     function updateStar(){
-      star.textContent=(fav[w[0]]?'★ ':'☆ ')+ui('fav');
-      star.setAttribute('aria-pressed',String(!!fav[w[0]]));
+      star.textContent=(fav[progressKey(w)]?'★ ':'☆ ')+ui('fav');
+      star.setAttribute('aria-pressed',String(!!fav[progressKey(w)]));
     }
-    star.onclick=()=>{if(fav[w[0]])delete fav[w[0]];else fav[w[0]]=1;save('vt_fav',fav);updateStar()};
+    star.onclick=()=>{if(fav[progressKey(w)])delete fav[progressKey(w)];else fav[progressKey(w)]=1;save('vt_fav',fav);updateStar()};
     updateStar();details.appendChild(audio);details.appendChild(star);li.appendChild(details);box.appendChild(li);
   }
   if(!found.length)box.textContent=ui('noHits');
@@ -1131,8 +1159,8 @@ $('bprivacy').onclick=function(){show('info')};
 $('backInfo').onclick=$('backInfo2').onclick=function(){goBack('menu')};
 $('bdayword').onclick=function(){
   var d=new Date(),stamp=d.getFullYear()*1000+Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/86400000);
-  var available=ALL.length?ALL:mine;var w=available.length?available[stamp%available.length]:[ui('empty'),ui('addFirst')];$('daySpeak').disabled=!available.length;
-  $('dayDate').textContent=d.toLocaleDateString(menuLocale);$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
+  var available=dialectId?pool('*'):ALL.length?ALL:mine;var w=available.length?available[stamp%available.length]:[ui('empty'),ui('addFirst')];$('daySpeak').disabled=!available.length;
+  $('dayDate').textContent=d.toLocaleDateString(menuLocale)+dialectNote(w);$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
 };
 $('backDay').onclick=function(){goBack('menu')};
 $('daySpeak').onclick=function(){speakAll([$('dayGerman').textContent,$('dayMacedonian').textContent],true)};
