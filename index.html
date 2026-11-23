@@ -249,10 +249,9 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
     <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
     <div class="voice-actions">
       <div id="voiceList"></div>
-      <button type="button" id="voiceRefresh" data-ui="recheck"></button>
     </div>
     <details><summary data-ui="voiceGuide"></summary><p data-ui="androidGuide"></p><p data-ui="iosGuide"></p><a href="https://support.google.com/accessibility/android/answer/6006983" target="_blank" rel="noopener noreferrer">Android · Google Support</a> · <a href="https://support.apple.com/guide/iphone/iph96b214f0/ios" target="_blank" rel="noopener noreferrer">iPhone · Apple Support</a></details>
-    <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор и провери повторно.</p>
+    <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор.</p>
   </details>
   <button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>
   <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
@@ -460,14 +459,14 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js?v=45"></script>
-<script src="./interface.js?v=42"></script>
+<script src="./interface.js?v=49"></script>
 <script src="./practice.js?v=42"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./category-vocabulary.js?v=48"></script>
 <script src="./trades.js"></script>
-<script src="./study.js?v=47"></script>
-<script src="./learning-tools.js?v=48"></script>
+<script src="./study.js?v=49"></script>
+<script src="./learning-tools.js?v=49"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -909,39 +908,49 @@ function refreshMenu(){
 function curItem(){if($('learn').classList.contains('on'))return {it:cur,sh:shown};if($('type').classList.contains('on'))return {it:tcur,sh:tstate==='shown'};return {}}
 function refreshTools(){var c=curItem(),d=c.it?deOf(c.it):null;Array.prototype.forEach.call(document.querySelectorAll('.tl[data-t=fav]'),function(b){b.textContent=d&&fav[d]?'★':'☆'})}
 var deviceVoices=[];
-var voiceCheckTimer=null;
+
 function refreshDeviceVoices(){
   const supported='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
   deviceVoices=supported?(speechSynthesis.getVoices()||[]):[];
   const box=$('voiceList');box.replaceChildren();
   for(const code of ['mk',target,...targets.filter(t=>t!==target)]){
     const lang=languages[code],b=document.createElement('button');
-    b.type='button';b.disabled=!voiceFor(lang[2]);
+    b.type='button';b.disabled=!supported;
     b.textContent=languageName(code)+' · '+ui(b.disabled?'noVoice':'listen');
     b.onclick=()=>testVoice(lang[3],lang[2]);box.appendChild(b);
   }
   $('voiceStatus').textContent=!supported?ui('voiceNone'):deviceVoices.length?'':ui('voiceEmpty');
 }
 function voiceFor(lang){var prefix=lang.slice(0,2).toLowerCase(),matching=deviceVoices.filter(function(v){return (v.lang||'').toLowerCase().slice(0,2)===prefix});return matching.find(function(v){return (v.lang||'').toLowerCase()===lang.toLowerCase()})||matching[0]||null;}
+function makeSpeech(text,lang){
+  const macedonian=lang.split('-')[0]==='mk';
+  const spokenLang=macedonian?'sr-RS':lang;
+  const serbianLetters={'ќ':'ћ','Ќ':'Ћ','ѓ':'ђ','Ѓ':'Ђ','ѕ':'дз','Ѕ':'Дз'};
+  const spokenText=macedonian?text.normalize('NFC').replace(/[ќЌѓЃѕЅ]/g,ch=>serbianLetters[ch]):text;
+  const utterance=new SpeechSynthesisUtterance(spokenText);
+  const voice=voiceFor(spokenLang);
+  utterance.lang=voice?voice.lang:spokenLang;
+  if(voice)utterance.voice=voice;
+  return utterance;
+}
 function testVoice(text,lang){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){
     $('voiceStatus').textContent=ui('voiceNone');return;
   }
-  refreshDeviceVoices();
-  var v=voiceFor(lang);if(!v){$('voiceStatus').textContent=ui('voiceUnavailable',languageName(lang.slice(0,2)));return}
-  var u=new SpeechSynthesisUtterance(text);
-  u.lang=lang;
-  if(v)u.voice=v;
-  u.onerror=function(){$('voiceStatus').textContent=ui('voiceError')};
+  deviceVoices=speechSynthesis.getVoices()||[];
+  const u=makeSpeech(text,lang);
+  u.onerror=function(e){if(e.error!=='canceled'&&e.error!=='interrupted')$('voiceStatus').textContent=ui('voiceError')};
+  $('voiceStatus').textContent=ui('voiceFound');
   speechSynthesis.cancel();speechSynthesis.speak(u);
-  $('voiceStatus').textContent=ui(v?'voiceFound':'voiceDefault');
 }
 function speakAll(a,forward){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){$('voiceStatus').textContent=ui('voiceNone');return;}
   deviceVoices=speechSynthesis.getVoices()||deviceVoices;speechSynthesis.cancel();
-  a.forEach(function(t,i){var lang=((i===0)===forward?first:second)[2],voice=voiceFor(lang),u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;speechSynthesis.speak(u);});
+  a.forEach(function(t,i){
+    const lang=((i===0)===forward?first:second)[2];
+    speechSynthesis.speak(makeSpeech(t,lang));
+  });
 }
-$('voiceRefresh').onclick=function(){refreshDeviceVoices();if('speechSynthesis' in window&&speechSynthesis.getVoices().length===0){setTimeout(refreshDeviceVoices,700);setTimeout(refreshDeviceVoices,1800)}};
 refreshDeviceVoices();
 if('speechSynthesis' in window){if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshDeviceVoices);window.addEventListener('load',function(){setTimeout(refreshDeviceVoices,500);setTimeout(refreshDeviceVoices,1500);setTimeout(refreshDeviceVoices,3000)});}
 // Lernziel, Fortsetzen und Farbschema
@@ -1057,7 +1066,7 @@ $('bkimp').onclick=function(){
 };
 // Zusätzliche Funktionen für die Weitergabe an Freunde
 $('voiceLater').onclick=function(){save('vt_voice_prompt',true);rlabel();show('modes')};
-$('voiceNow').onclick=function(){save('vt_voice_prompt',true);show('menu');$('speechMenu').open=true;$('voiceRefresh').onclick();$('voiceRefresh').focus()};
+$('voiceNow').onclick=function(){save('vt_voice_prompt',true);show('menu');$('speechMenu').open=true;refreshDeviceVoices();$('voiceList').firstElementChild?.focus()};
 $('settingsOpen').onclick=function(){
   $('soundToggle').checked=load('vt_sound',false);$('vibToggle').checked=load('vt_vibration',false);
   $('vibToggle').disabled=typeof navigator.vibrate!=='function';

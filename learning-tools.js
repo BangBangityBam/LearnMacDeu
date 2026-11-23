@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=48;
+const appVersion=49;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
@@ -163,7 +163,6 @@ Object.assign(uiMessages,{
   noneDue:['Nothing due today.','Денес нема зборови за повторување.','Heute sind keine Wörter zur Wiederholung fällig.','Nessuna parola da ripassare oggi.','Aucun mot à réviser aujourd’hui.'],
   listen:['Listen','Слушни','Anhören','Ascolta','Écouter'],
   noVoice:['No voice available','Нема достапен глас','Keine Stimme verfügbar','Nessuna voce disponibile','Aucune voix disponible'],
-  recheck:['Check voices again','Провери ги гласовите повторно','Stimmen erneut prüfen','Ricontrolla le voci','Vérifier à nouveau les voix'],
   currentRelease:['You are up to date ({0}).','Ја имаш последната верзија ({0}).','Du bist auf dem neuesten Stand ({0}).','Hai la versione più recente ({0}).','Votre application est à jour ({0}).'],
   newRelease:['A new version is available ({0}).','Достапна е нова верзија ({0}).','Eine neue Version ist verfügbar ({0}).','È disponibile una nuova versione ({0}).','Une nouvelle version est disponible ({0}).'],
   updateOffline:['Cannot check for updates. No internet connection.','Не може да се провери ажурирањето. Нема интернет-врска.','Updateprüfung nicht möglich. Keine Internet Verbindung.','Impossibile verificare gli aggiornamenti. Nessuna connessione Internet.','Vérification impossible. Aucune connexion Internet.'],
