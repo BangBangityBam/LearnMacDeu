@@ -201,7 +201,9 @@ var uiCategoryNames = {
 };
 var menuLocales=['en','mk','de','it','fr'];
 var nativeNames={mk:'Македонски',de:'Deutsch',en:'English',it:'Italiano',fr:'Français'};
-var menuLocale='mk';
+var preferredLanguages=[...(navigator.languages||[]),navigator.language];
+var menuLocale=preferredLanguages.filter(Boolean).map(tag=>tag.toLowerCase().split(/[-_]/)[0])
+  .find(code=>menuLocales.includes(code))||'en';
 try{
   var savedMenuLocale=trainingStorage.read('vt_ui_language');
   if(menuLocales.includes(savedMenuLocale))menuLocale=savedMenuLocale;
@@ -244,6 +246,11 @@ function setupInterface(){
   document.querySelectorAll('.menu-language').forEach(function(select){
     Object.keys(nativeNames).forEach(function(code){select.add(new Option(nativeNames[code],code))});
     select.value=menuLocale;
-    select.onchange=function(){if(trainingStorage.retry() && save('vt_ui_language',this.value))location.reload();else this.value=menuLocale};
+    select.onchange=function(){
+      if(!trainingStorage.retry() || (select===$('welcomeLocale') && !save('vt_welcome_seen',false)) || !save('vt_ui_language',this.value)){
+        this.value=menuLocale;return;
+      }
+      location.reload();
+    };
   });
 }

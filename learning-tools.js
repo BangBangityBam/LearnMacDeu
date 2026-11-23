@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=52;
+const appVersion=53;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
@@ -186,7 +186,7 @@ function setNextReminder(later,now=new Date()){
 }
 function maybeDailyUpdate(){
   const dialog=$('dailyUpdate');
-  if(document.hidden||dialog.open||currentScreen()!=='menu'||!load('vt_welcome_seen',false))return;
+  if(document.hidden||dialog.open||currentScreen()!=='menu'||!load('vt_welcome_seen',false)||!menuLocales.includes(savedMenuLocale))return;
   try{const saved=localStorage.getItem(reminderKey);if(saved!==null)reminderTime=Number(saved)||0}catch{}
   if(Date.now()<reminderTime)return;
   $('dailyVersion').textContent=releaseName(appVersion);
