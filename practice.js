@@ -8,6 +8,7 @@ var answerAlternatives = {
     ['есен','autumn','fall'], ['фрижидер','refrigerator','fridge'], ['продавница','shop','store']
   ],
   de: [
+    ['јануари','Januar','Jänner'],
     ['автомобил','Auto','Automobil','Wagen'], ['велосипед','Fahrrad','Rad'],
     ['мобилен телефон','Handy','Mobiltelefon'], ['компјутер','Computer','Rechner'],
     ['продавница','Geschäft','Laden'], ['благодарам','Danke','Danke schön']
@@ -22,6 +23,24 @@ var answerAlternatives = {
   ]
 };
 var mkVariants=[['автомобил','кола'],['благодарам','фала'],['велосипед','точак']];
+// Only a single spelling edit qualifies. A different answer already in the deck stays wrong.
+function spellingHint(card,input){
+  const clean=s=>Array.from(s.trim().normalize('NFC').toLowerCase());
+  const a=clean(card.a), b=clean(input);
+  if(Math.max(a.length,b.length)<4 || !b.length || Math.abs(a.length-b.length)>1)return '';
+  let i=0;
+  while(i<a.length && i<b.length && a[i]===b[i])i++;
+  const tail=(chars,start)=>chars.slice(start).join('');
+  let hint='';
+  if(a.length===b.length){
+    if(i+1<a.length && a[i]===b[i+1] && a[i+1]===b[i] && tail(a,i+2)===tail(b,i+2))hint='typoSwap';
+    else if(i<a.length && tail(a,i+1)===tail(b,i+1))hint='typoOne';
+  }else if(a.length>b.length && tail(a,i+1)===tail(b,i))hint='typoMissing';
+  else if(b.length>a.length && tail(b,i+1)===tail(a,i))hint='typoExtra';
+  if(!hint)return '';
+  const col=card.forward?1:0, candidate=norm(input);
+  return pool('*').some(w=>norm(w[col])===candidate)?'':hint;
+}
 function acceptedAnswers(card) {
   const simple=s=>norm(s.normalize('NFC'));
   const answer=simple(card.a), plain=simple(card.a.replace(/\s*\([^)]*\)/g,''));
@@ -128,4 +147,49 @@ Object.assign(uiMessages,{
   saveFailed:['Some changes are only in this tab. Retry saving before leaving.','Некои промени се само во ова јазиче. Обиди се повторно да ги зачуваш пред да излезеш.','Einige Änderungen sind nur in diesem Tab. Versuche vor dem Schließen erneut zu speichern.','Alcune modifiche sono solo in questa scheda. Riprova a salvarle prima di uscire.','Certaines modifications sont uniquement dans cet onglet. Réessayez de les enregistrer avant de quitter.'],
   retry:['Retry saving','Зачувај повторно','Erneut speichern','Riprova a salvare','Réessayer'],
   restoreError:['Restore failed. Your previous data is still available.','Враќањето не успеа. Претходните податоци се зачувани.','Wiederherstellung fehlgeschlagen. Die bisherigen Daten sind weiterhin verfügbar.','Ripristino non riuscito. I dati precedenti sono ancora disponibili.','La restauration a échoué. Vos données précédentes restent disponibles.']
+});
+
+Object.assign(uiMessages,{
+  "typoSwap": [
+    "Almost right – two letters are swapped.",
+    "Речиси точно – две букви се заменети по редослед.",
+    "Fast richtig – zwei Buchstaben sind vertauscht.",
+    "Quasi giusto – due lettere sono invertite.",
+    "Presque – deux lettres sont inversées."
+  ],
+  "typoOne": [
+    "Almost right – one character differs.",
+    "Речиси точно – еден знак се разликува.",
+    "Fast richtig – ein Zeichen ist anders.",
+    "Quasi giusto – un carattere è diverso.",
+    "Presque – un caractère est différent."
+  ],
+  "typoMissing": [
+    "Almost right – one character is missing.",
+    "Речиси точно – недостига еден знак.",
+    "Fast richtig – ein Zeichen fehlt.",
+    "Quasi giusto – manca un carattere.",
+    "Presque – il manque un caractère."
+  ],
+  "typoExtra": [
+    "Almost right – one extra character.",
+    "Речиси точно – има еден знак повеќе.",
+    "Fast richtig – ein Zeichen ist zu viel.",
+    "Quasi giusto – c’è un carattere in più.",
+    "Presque – il y a un caractère en trop."
+  ],
+  "practicedCount": [
+    "{0} of {1} categories practised",
+    "Вежбани категории: {0} од {1}",
+    "{0} von {1} Kategorien geübt",
+    "Categorie esercitate: {0} su {1}",
+    "Catégories travaillées : {0} sur {1}"
+  ],
+  "noPracticed": [
+    "No categories practised yet",
+    "Сè уште нема вежбани категории",
+    "Noch keine Kategorie geübt",
+    "Nessuna categoria ancora esercitata",
+    "Aucune catégorie travaillée pour le moment"
+  ]
 });

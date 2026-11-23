@@ -42,6 +42,9 @@ button small{display:block;font-size:.8em;font-weight:normal;opacity:.8;margin-t
 #tmine{font-size:1rem;margin-top:12px;opacity:.9;word-break:break-word}
 #thint{font-size:.95rem;margin-top:20px;opacity:.85}
 #type.ok{background:var(--okbg)}
+#type.near{background:#ffdb74;color:#211b0b}
+#type.near #tcard{color:#211b0b;background:#fff2c1;border-color:#8c681a}
+#type.near #tcard *{color:#211b0b}
 #type.bad{background:var(--badbg)}
 #type.ok *,#type.bad *{color:#fff}
 #type.ok #tcard,#type.bad #tcard{background:transparent;border-color:rgba(255,255,255,.55)}
@@ -406,8 +409,10 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <div class="bar"><button class="small" id="back6" data-ui="back">Назад</button></div>
   <h1 style="margin-top:20px" data-ui="stats">Статистика</h1>
   <p class="sub" style="margin:0 0 12px" data-ui="legend">✓ Точно · ✗ Погрешно</p>
+  <p id="statCoverage"></p>
   <div id="statbox"></div>
   <p id="statempty" class="sub"></p>
+  <button id="statsStart" class="main" data-ui="start" hidden></button>
   <div id="learned"></div>
   <div id="wordProgress"></div>
   <button id="reset" style="margin-top:24px;border-color:var(--red);color:var(--red)" data-ui="reset">Ресетирај ги резултатите</button>
@@ -460,13 +465,13 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 <script src="./storage.js?v=45"></script>
 <script src="./interface.js?v=49"></script>
-<script src="./practice.js?v=42"></script>
+<script src="./practice.js?v=50"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./category-vocabulary.js?v=48"></script>
 <script src="./trades.js"></script>
 <script src="./study.js?v=49"></script>
-<script src="./learning-tools.js?v=49"></script>
+<script src="./learning-tools.js?v=50"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -681,8 +686,9 @@ function checkType(v){
 function displayGrade(ok,u){
   alphabetFor(false);
   var inp=$('tin');
-  $('type').className='screen on '+(ok?'ok':'bad');
-  $('tfb').textContent=ok?ui('correct'):ui('wrong');
+  const hint=!ok&&curMode==='type'?spellingHint(tcur,u):'';
+  $('type').className='screen on '+(ok?'ok':hint?'near':'bad');
+  $('tfb').textContent=ui(ok?'correct':hint||'wrong');
   $('tans').textContent=tcur.a;
   $('tmine').textContent=(!ok&&u.trim())?ui('yourAnswer',u.trim()):'';
   $('thint').textContent=ui('next');
@@ -691,11 +697,27 @@ function displayGrade(ok,u){
 }
 function showStats(){
   var box=$('statbox');box.innerHTML='';
-  function row(n,mk,a){var tot=a[0]+a[1],d=document.createElement('div'),x=document.createElement('div'),y=document.createElement('div');d.className='srow';x.className='sname';x.textContent=categoryName(n);y.className='sval';y.textContent='✓ '+a[0]+'  ✗ '+a[1]+'  '+(tot?Math.round(a[0]*100/tot):0)+'%';d.appendChild(x);d.appendChild(y);box.appendChild(d)}
-  var tot=stats.all[0]+stats.all[1];
-  $('statempty').textContent=tot?'':ui('noStats');
-  if(tot){row('Alle Wörter','Сите зборови',stats.all);CATS.concat([['Eigene Wörter','Мои зборови']]).forEach(function(c){var a=stats.cats[c[0]];if(a&&a[0]+a[1])row(c[0],c[1],a)})}
-  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent=ui('learned',m3,al.length);L.appendChild(h);CATS.forEach(function(c){var p=pool(c[0]),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=categoryName(c[0])+': '+n+' / '+p.length;L.appendChild(d)}});
+  const categories=CATS.map(c=>c[0]);
+  if(mine.some(w=>!w[2]) || stats.cats['Eigene Wörter'])categories.push('Eigene Wörter');
+  const played=categories.filter(k=>{const a=stats.cats[k];return a&&a[0]+a[1]>0})
+    .sort((a,b)=>alphabetSort(categoryName(a),categoryName(b)));
+  $('statCoverage').textContent=ui('practicedCount',played.length,categories.length);
+  $('statempty').textContent=played.length?'':ui('noPracticed');
+  $('statsStart').hidden=!!played.length;
+  $('statsStart').onclick=()=>$('start').click();
+  function row(key,score,action){
+    const d=document.createElement(action?'button':'div');
+    d.className='srow';
+    const name=document.createElement('span'),value=document.createElement('span');
+    name.className='sname';name.textContent=categoryName(key);
+    value.className='sval';value.textContent='✓ '+score[0]+'  ✗ '+score[1]+'  '+Math.round(score[0]*100/(score[0]+score[1]))+'%';
+    d.appendChild(name);d.appendChild(value);
+    if(action){d.type='button';d.onclick=()=>go(key)}
+    box.appendChild(d);
+  }
+  if(stats.all[0]+stats.all[1])row('Alle Wörter',stats.all,false);
+  played.forEach(k=>row(k,stats.cats[k],pool(k).length>0));
+  var L=$('learned');L.innerHTML='';var al=pool('*'),m3=al.filter(function(w){return (mast[w[0]]||0)>=3}).length,h=document.createElement('p');h.className='sub';h.textContent=ui('learned',m3,al.length);L.appendChild(h);played.forEach(function(k){var p=pool(k),n=p.filter(function(w){return (mast[w[0]]||0)>=3}).length;if(n){var d=document.createElement('div');d.className='srow';d.textContent=categoryName(k)+': '+n+' / '+p.length;L.appendChild(d)}});
   var wp=$('wordProgress');wp.innerHTML='';var title=document.createElement('h3');title.textContent=ui('progress');wp.appendChild(title);var mastered=al.filter(function(w){return (mast[w[0]]||0)>=3});var difficult=al.filter(function(w){return wrong[w[0]]});var p=document.createElement('p');p.className='sub';p.textContent=ui('mastery',mastered.length,difficult.length);wp.appendChild(p);difficult.slice(0,30).forEach(function(w){var d=document.createElement('div');d.className='srow';d.textContent=w[0]+' – '+w[1]+' · '+ui('review');wp.appendChild(d)});
   show('statsview');
 }
