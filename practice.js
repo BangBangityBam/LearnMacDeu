@@ -41,6 +41,24 @@ function spellingHint(card,input){
   const col=card.forward?1:0, candidate=norm(input);
   return pool('*').some(w=>norm(w[col])===candidate)?'':hint;
 }
+function markSpellingDifference(answer,input,hint){
+  const expected=Array.from(answer.trim().normalize('NFC'));
+  const entered=Array.from(input.trim().normalize('NFC'));
+  let i=0;
+  while(i<expected.length && i<entered.length && expected[i].toLowerCase()===entered[i].toLowerCase())i++;
+  function line(node,letters,count,prefix){
+    node.textContent=prefix+letters.slice(0,i).join('');
+    if(count){
+      const mark=document.createElement('mark');
+      mark.textContent=letters.slice(i,i+count).join('');
+      node.appendChild(mark);
+    }
+    node.appendChild(document.createTextNode(letters.slice(i+count).join('')));
+  }
+  const n=hint==='typoSwap'?2:1;
+  line($('tmine'),entered,hint==='typoMissing'?0:n,ui('yourAnswer',''));
+  line($('tans'),expected,hint==='typoExtra'?0:n,'');
+}
 function acceptedAnswers(card) {
   const simple=s=>norm(s.normalize('NFC'));
   const answer=simple(card.a), plain=simple(card.a.replace(/\s*\([^)]*\)/g,''));
@@ -191,5 +209,29 @@ Object.assign(uiMessages,{
     "Noch keine Kategorie geübt",
     "Nessuna categoria ancora esercitata",
     "Aucune catégorie travaillée pour le moment"
+  ]
+});
+
+Object.assign(uiMessages,{
+  "reviewDone": [
+    "All mistakes in this round reviewed ✓",
+    "Ги повтори сите грешки од оваа рунда ✓",
+    "Alle Fehler dieser Runde wiederholt ✓",
+    "Hai ripassato tutti gli errori di questo turno ✓",
+    "Toutes les erreurs de cette série ont été revues ✓"
+  ],
+  "oneLeft": [
+    "1 word left",
+    "Уште 1 збор",
+    "Noch 1 Wort",
+    "Rimane 1 parola",
+    "Encore 1 mot"
+  ],
+  "wordsLeft": [
+    "Words remaining: {0}",
+    "Преостанати зборови: {0}",
+    "Noch {0} Wörter",
+    "Parole rimaste: {0}",
+    "Mots restants : {0}"
   ]
 });

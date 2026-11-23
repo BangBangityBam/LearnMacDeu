@@ -120,11 +120,11 @@ function playAnswerSound(ctx,ok){
   }
 }
 function signalAnswer(ok){
-  if(load('vt_vibration',false)&&typeof navigator.vibrate==='function'){
+  if(load('vt_vibration',true)&&typeof navigator.vibrate==='function'){
     try{navigator.vibrate(ok?125:[155,90,185])}catch(e){}
   }
   const Audio=window.AudioContext||window.webkitAudioContext;
-  if(!Audio||!load('vt_sound',false))return;
+  if(!Audio||!load('vt_sound',true))return;
   try{
     studyAudio=studyAudio||new Audio();
     if(studyAudio.state==='suspended'){
