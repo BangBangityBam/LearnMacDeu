@@ -1,15 +1,15 @@
 var uiMessages = {
   "app": ["Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици", "Učenje jazici - Учење јазици"],
   "interface": ["Menu language", "Јазик на менито", "Menüsprache", "Lingua dei menu", "Langue des menus"],
-  "course": ["Learning language", "Јазик за учење", "Lernsprache", "Lingua da imparare", "Langue à apprendre"],
+  "course": ["Language course", "Јазичен курс", "Sprachkurs", "Corso di lingua", "Cours de langue"],
   "start": ["Start learning", "Започни со учење", "Lernen starten", "Inizia a imparare", "Commencer"],
   "more": ["More options", "Други опции", "Weitere Funktionen", "Altre opzioni", "Autres options"],
   "helpMenu": ["Help, privacy and exam", "Помош, приватност и тест", "Hilfe, Datenschutz und Prüfung", "Aiuto, privacy ed esame", "Aide, confidentialité et examen"],
   "speechMenu": ["Pronunciation and voices", "Изговор и гласови", "Aussprache und Stimmen", "Pronuncia e voci", "Prononciation et voix"],
   "stats": ["Statistics", "Статистика", "Statistik", "Statistiche", "Statistiques"],
   "resume": ["Resume learning", "Продолжи со учење", "Lernen fortsetzen", "Riprendi lo studio", "Reprendre"],
-  "search": ["Search", "Пребарување", "Suche", "Cerca", "Rechercher"],
-  "words": ["Add or edit words", "Додај или измени зборови", "Wörter hinzufügen oder ändern", "Aggiungi o modifica parole", "Ajouter ou modifier des mots"],
+  "search": ["Search words", "Пребарај зборови", "Wörter suchen", "Cerca parole", "Rechercher des mots"],
+  "words": ["Add or edit your own words", "Додај или измени свои зборови", "Eigene Wörter hinzufügen oder ändern", "Aggiungi o modifica le tue parole", "Ajouter ou modifier mes mots"],
   "backup": ["Backup and import", "Резервна копија и увоз", "Sicherung und Import", "Backup e importazione", "Sauvegarde et importation"],
   "help": ["Help and instructions", "Помош и упатство", "Hilfe und Anleitung", "Aiuto e istruzioni", "Aide et instructions"],
   "privacy": ["Privacy and storage", "Приватност и зачувување", "Datenschutz und Speicherung", "Privacy e archiviazione", "Confidentialité et stockage"],
@@ -25,7 +25,7 @@ var uiMessages = {
   "welcome": ["Welcome!", "Добредојде!", "Willkommen!", "Benvenuto!", "Bienvenue !"],
   "welcomeSub": ["Your personal vocabulary trainer", "Твој личен тренер за зборови", "Dein persönlicher Vokabeltrainer", "Il tuo allenatore di vocaboli", "Votre carnet de vocabulaire"],
   "local": ["Your browser saves your progress on this device. Each learner can use their own device without an account.", "Напредокот се зачувува во прелистувачот на овој уред. Секој може да учи на свој уред без сметка.", "Dein Browser speichert deinen Lernstand auf diesem Gerät. Jeder kann auf seinem eigenen Gerät ohne Konto lernen.", "Il browser salva i progressi su questo dispositivo. Ogni persona può studiare sul proprio dispositivo senza un account.", "Le navigateur enregistre vos progrès sur cet appareil. Chacun peut apprendre sur son appareil sans compte."],
-  "reminder": ["Make regular backups under More options → Backup and import, especially before switching devices or clearing browser data.", "Редовно прави копии преку Други опции → Резервна копија и увоз, особено пред промена на уредот или бришење на податоците.", "Erstelle regelmäßig unter Weitere Funktionen → Sicherung und Import ein Backup, besonders vor einem Gerätewechsel oder dem Löschen der Browserdaten.", "Crea regolarmente un backup in Altre opzioni → Backup e importazione, soprattutto prima di cambiare dispositivo o cancellare i dati del browser.", "Sauvegardez régulièrement via Autres options → Sauvegarde et importation, surtout avant de changer d’appareil ou d’effacer les données du navigateur."],
+  "reminder": ["Back up regularly under Settings → Backup and import.", "Редовно прави копии преку Поставки → Резервна копија и увоз.", "Sichere deine Daten regelmäßig unter Einstellungen → Sicherung & Import.", "Fai regolarmente una copia in Impostazioni → Backup e importazione.", "Sauvegardez régulièrement vos données dans Réglages → Sauvegarde et importation."],
   "begin": ["Get started", "Започни", "Los geht’s", "Inizia", "Commencer"],
   "cat": ["Category", "Категорија", "Kategorie", "Categoria", "Catégorie"],
   "mode": ["Practice mode", "Начин на вежбање", "Lernmodus", "Modalità di studio", "Mode d’entraînement"],
@@ -223,10 +223,22 @@ var languageNames={
   fr:['French','француски','Französisch','francese','français']
 };
 function languageName(code){return languageNames[code][localeIndex]}
+function ratingText(element,text){
+  if(!/[✓✗]/.test(text)){element.textContent=text;return}
+  element.replaceChildren();
+  for(const part of text.split(/([✓✗])/)){
+    if(part==='✓'||part==='✗'){
+      const sign=document.createElement('span'),correct=part==='✓';
+      sign.className='grade-sign '+(correct?'yes':'no');
+      sign.textContent=correct?'✔':'✖';
+      element.appendChild(sign);
+    }else if(part)element.appendChild(document.createTextNode(part));
+  }
+}
 function setupInterface(){
   document.documentElement.lang=menuLocale;
   document.title=ui('app');
-  document.querySelectorAll('[data-ui]').forEach(function(el){el.textContent=ui(el.dataset.ui)});
+  document.querySelectorAll('[data-ui]').forEach(function(el){ratingText(el,ui(el.dataset.ui))});
   document.querySelectorAll('[data-ui-label]').forEach(function(el){el.setAttribute('aria-label',ui(el.dataset.uiLabel))});
   document.querySelectorAll('[data-ui-placeholder]').forEach(function(el){el.placeholder=ui(el.dataset.uiPlaceholder)});
   document.querySelectorAll('.menu-language').forEach(function(select){

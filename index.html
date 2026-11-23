@@ -211,57 +211,30 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 #sres button{width:auto;margin:.2em;min-height:42px}
 #type.near mark{color:#231800;background:#ffc447;font-weight:bold;text-decoration:underline}
 #tcheck:disabled{opacity:.5}
+#menu #bupdate{align-self:flex-start;width:auto;max-width:100%;padding:7px 10px;background:#141414;color:white;border:0;font-size:.85rem;border-radius:6px}#menu .home-head{margin:2px 0 6px}#menu #releaseStatus:empty{display:none}#menu #releaseStatus{margin:0}#menu .home-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,95px),1fr));gap:7px;width:100%}#menu .home-links button{min-width:0;padding:10px 4px;overflow-wrap:anywhere}#menu .course-options{width:100%;box-sizing:border-box}#menu .course-options[open]{padding:0 10px 10px}#showFavorites[aria-pressed=true]{border-color:var(--red);font-weight:bold}#menu #menuLocale{font-size:1rem;min-height:44px;max-width:100%}
+#speechMenu.settings-voices{border:2px solid var(--ink);border-radius:14px;background:var(--card);margin:0 0 14px}
+.settings-voices>summary{position:relative;text-align:center;font-size:1.25rem;padding:18px 40px;cursor:pointer;list-style:none}
+.settings-voices>summary::-webkit-details-marker{display:none}
+.settings-voices>summary:after{content:"▾";position:absolute;right:16px}
+.settings-voices[open]>summary:after{content:"▴"}
+.settings-voices[open]>:not(summary){margin-inline:12px;width:auto}
+.grade-sign{display:inline-grid;place-items:center;font:900 1.05em/1 system-ui,sans-serif;min-width:1.38em;height:1.38em;border-radius:.4em;vertical-align:middle}
+.grade-sign.yes,#type .grade-sign.yes{background:#e1f6e6;color:#146335}
+.grade-sign.no,#type .grade-sign.no{background:#ffe7e7;color:#9b1821}
 </style>
 </head>
 <body>
 
 <section id="menu" class="screen on">
-  <span class="made-by release-tag" id="releaseTag"></span>
-  <header class="home-head">
+<button id="bupdate"><span id="releaseTag"></span> · <span data-ui="update"></span></button><p id="releaseStatus" role="status"></p><button id="reloadRelease" hidden data-ui="reloadRelease"></button>  <header class="home-head">
     <div><h1 data-ui="app">Učenje jazici - Учење јазици</h1></div>
     <p class="streak-pill" id="streak" aria-live="polite"></p>
     <button id="settingsOpen" type="button" data-ui-label="settings">⚙</button>
-  </header>
-  <div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
+  </header><div class="language-setting"><label for="menuLocale" data-ui="interface">Јазик на менито</label><select id="menuLocale" class="menu-language"></select></div><label for="pairList" data-ui="course">Јазик за учење</label>
   <select id="pairList"></select>
   <div class="language-setting"><label for="dir" data-ui="direction">Насока</label><select id="dir"></select></div>
   <button id="difficultyBtn"></button>
-  <button class="main home-start" id="start" data-ui="start">Започни со учење</button>
-<button class="main home-start" id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button>
-  <details class="more-menu">
-    <summary data-ui="more">Други опции</summary>
-    <div class="more-actions">
-      <button id="btnstats" data-ui="stats">Статистика</button>
-      <button id="goalBtn"></button>
-      <button id="themeBtn" data-ui="theme">Смени тема</button>
-      <button id="bsearch" data-ui="search">Пребарување</button>
-      <button id="words" data-ui="words">Додај или измени зборови</button>
-      <button id="bbackup" data-ui="backup">Резервна копија и увоз</button>
-    </div>
-  </details>
-  <details class="more-menu" id="infoMenu">
-    <summary data-ui="helpMenu">Помош, приватност и тест</summary>
-    <div class="more-actions">
-      <button id="bhelp" data-ui="help">Помош и упатство</button>
-      <button id="bprivacy" data-ui="privacy">Приватност и зачувување</button>
-      <button id="bexam" data-ui="exam">Тест · 20 зборови</button>
-      <button id="bdayword" data-ui="day">Збор на денот</button>
-      <button id="bupdate" data-ui="update">Провери за ажурирања</button>
-    </div>
-    <p id="releaseStatus" role="status"></p><button id="reloadRelease" hidden data-ui="reloadRelease"></button>
-    <p class="voice-help" id="appStatus" aria-live="polite"></p>
-  </details>
-  <details class="more-menu" id="speechMenu">
-    <summary data-ui="speechMenu">Изговор и гласови</summary>
-    <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
-    <div class="voice-actions">
-      <div id="voiceList"></div>
-    </div>
-    <details><summary data-ui="voiceGuide"></summary><p data-ui="androidGuide"></p><p data-ui="iosGuide"></p><a href="https://support.google.com/accessibility/android/answer/6006983" target="_blank" rel="noopener noreferrer">Android · Google Support</a> · <a href="https://support.apple.com/guide/iphone/iph96b214f0/ios" target="_blank" rel="noopener noreferrer">iPhone · Apple Support</a></details>
-    <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор.</p>
-  </details>
-  <button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>
-  <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
+<button class="main home-start" id="start" data-ui="start">Започни со учење</button><button class="main home-start" id="resumeBtn" style="display:none" data-ui="resume">Продолжи со учење</button><div class="home-links"><button id="bsearch" data-ui="search">Пребарување</button><button id="btnstats" data-ui="stats">Статистика</button></div><button id="words" data-ui="words">Додај или измени зборови</button><button id="feedbackMenu" data-ui="feedback">Предложи подобрување</button>  <p class="made-by" aria-label="Made by Josip M.">Made by Josip M.</p>
 </section>
 
 
@@ -272,7 +245,16 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <label><input type="checkbox" id="vibToggle"><span data-ui="vibration"></span></label>
   <p id="vibHint" class="sub"></p>
   <button id="previewRight" data-ui="previewRight"></button><button id="previewWrong" data-ui="previewWrong"></button>
-</section>
+  <button id="goalBtn"></button><button id="themeBtn" data-ui="theme">Смени тема</button>  <details id="speechMenu" class="settings-voices">
+    <summary data-ui="speechMenu">Изговор и гласови</summary>
+    <p class="voice-note" id="voiceStatus" aria-live="polite"></p>
+    <div class="voice-actions">
+      <div id="voiceList"></div>
+    </div>
+    <details><summary data-ui="voiceGuide"></summary><p data-ui="androidGuide"></p><p data-ui="iosGuide"></p><a href="https://support.google.com/accessibility/android/answer/6006983" target="_blank" rel="noopener noreferrer">Android · Google Support</a> · <a href="https://support.apple.com/guide/iphone/iph96b214f0/ios" target="_blank" rel="noopener noreferrer">iPhone · Apple Support</a></details>
+    <p class="voice-help" data-ui="voiceHelp">Гласовите ги обезбедува прелистувачот или уредот. Ако недостига јазик, додај глас во поставките за говор.</p>
+  </details>
+<button id="bbackup" data-ui="backup">Резервна копија и увоз</button><button id="bhelp" data-ui="help">Помош и упатство</button><button id="bprivacy" data-ui="privacy">Приватност и зачувување</button><p id="appStatus" class="sub"></p></section>
 <section id="voiceIntro" class="screen">
   <h1 data-ui="voiceIntro"></h1><p data-ui="voiceIntroText"></p>
   <button id="voiceNow" class="main" data-ui="voiceNow"></button><button id="voiceLater" data-ui="voiceLater"></button>
@@ -340,7 +322,7 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
   <button class="main" id="mwrong"></button>
   <button id="dueReview"></button>
   <button id="rlen"></button>
-  <p id="mmsg" class="sub" style="margin:0 0 10px"></p>
+  <button id="bexam" data-ui="exam">Тест · 20 зборови</button><button id="bdayword" data-ui="day">Збор на денот</button><p id="mmsg" class="sub" style="margin:0 0 10px"></p>
 </section>
 
 <section id="reviewModes" class="screen">
@@ -468,14 +450,14 @@ select{width:100%;font:inherit;color:var(--ink);background:var(--card);border:2p
 
 
 <script src="./storage.js?v=45"></script>
-<script src="./interface.js?v=49"></script>
+<script src="./interface.js?v=52"></script>
 <script src="./practice.js?v=51"></script>
 <script src="./vocabulary.js"></script>
 <script src="./learning-courses.js"></script>
 <script src="./category-vocabulary.js?v=48"></script>
 <script src="./trades.js"></script>
 <script src="./study.js?v=51"></script>
-<script src="./learning-tools.js?v=51"></script>
+<script src="./learning-tools.js?v=52"></script>
 <script>
 var DEFAULTS=[["Hallo","Здраво"],["Danke","Благодарам"],["Bitte","Молам"],["Ja","Да"],["Nein","Не"],["Wasser","Вода"],["Brot","Леб"],["Haus","Куќа"],["Mann","Маж"],["Frau","Жена"],["Kind","Дете"],["Tag","Ден"],["Nacht","Ноќ"],["Gut","Добро"],["Schlecht","Лошо"],["Guten Morgen","Добро утро"],["Gute Nacht","Добра ноќ"],["Auf Wiedersehen","Довидување"],["Wie geht’s?","Како си?"],["Arbeit","Работа"]];
 var EXTRA=[["Guten Tag","Добар ден"],["Guten Abend","Добра вечер"],["Tschüss","Чао"],["Entschuldigung","Извинете"],["Es tut mir leid","Жал ми е"],["Ich verstehe nicht","Не разбирам"],["Ich weiss nicht","Не знам"],["Wie heisst du?","Како се викаш?"],["Ich heisse …","Јас се викам …"],["Woher kommst du?","Од каде си?"],["Sprichst du Deutsch?","Зборуваш ли германски?"],["Willkommen","Добредојде"],["Prost","Наздравје"],["Vielen Dank","Многу благодарам"],["Hilfe","Помош"],["Wo ist die Toilette?","Каде е тоалетот?"],["Wie viel kostet das?","Колку чини тоа?"],["Ich habe Hunger","Гладен сум"],["Ich habe Durst","Жеден сум"],["Ich bin müde","Уморен сум"],["ich","јас"],["du","ти"],["er","тој"],["sie (Singular)","таа"],["es","тоа"],["wir","ние"],["ihr","вие"],["sie (Plural)","тие"],["#Zahlen & Zeit"],["eins","еден"],["zwei","два"],["drei","три"],["vier","четири"],["fünf","пет"],["sechs","шест"],["sieben","седум"],["acht","осум"],["neun","девет"],["zehn","десет"],["zwanzig","дваесет"],["hundert","сто"],["tausend","илјада"],["#Familie & Berufe"],["Mutter","мајка"],["Vater","татко"],["Bruder","брат"],["Schwester","сестра"],["Sohn","син"],["Tochter","ќерка"],["Grossmutter","баба"],["Grossvater","дедо"],["Freund","пријател"],["Familie","семејство"],["#Küche & Essen"],["Essen","храна"],["Milch","млеко"],["Kaffee","кафе"],["Tee","чај"],["Bier","пиво"],["Wein","вино"],["Fleisch","месо"],["Fisch","риба"],["Käse","сирење"],["Ei","јајце"],["Apfel","јаболко"],["Salz","сол"],["Zucker","шеќер"],["Suppe","супа"],["Reis","ориз"],["Kartoffel","компир"],["Gemüse","зеленчук"],["Obst","овошје"],["#Zahlen & Zeit"],["heute","денес"],["morgen","утре"],["gestern","вчера"],["Morgen","утро"],["Abend","вечер"],["Monat","месец"],["Jahr","година"],["Stunde","час"],["Minute","минута"],["Montag","понеделник"],["Dienstag","вторник"],["Mittwoch","среда"],["Donnerstag","четврток"],["Freitag","петок"],["Samstag","сабота"],["Sonntag","недела"],["jetzt","сега"],["später","подоцна"],["immer","секогаш"],["nie","никогаш"],["#Orte & Sport"],["Stadt","град"],["Strasse","улица"],["Land","земја"],["Schule","училиште"],["Wohnung","стан"],["Zimmer","соба"],["Küche","кујна"],["Bahnhof","железничка станица"],["Flughafen","аеродром"],["Geschäft","продавница"],["Restaurant","ресторан"],["Krankenhaus","болница"],["Apotheke","аптека"],["Bank","банка"],["Kirche","црква"],["#Verben"],["ich esse","јадам"],["ich trinke","пијам"],["ich gehe","одам"],["ich komme","доаѓам"],["ich habe","имам"],["ich bin","сум"],["ich will","сакам"],["ich kann","можам"],["ich sehe","гледам"],["ich spreche","зборувам"],["ich lerne","учам"],["ich arbeite","работам"],["ich schlafe","спијам"],["ich lese","читам"],["ich schreibe","пишувам"],["ich kaufe","купувам"],["ich brauche","ми треба"],["ich lebe","живеам"],["ich gebe","давам"],["ich nehme","земам"],["ich mache","правам"],["ich höre","слушам"],["ich weiss","знам"],["#Adjektive & Kleinwörter"],["gross","голем"],["klein","мал"],["neu","нов"],["alt","стар"],["schön","убав"],["warm","топол"],["kalt","студен"],["schnell","брз"],["langsam","бавен"],["viel","многу"],["wenig","малку"],["schwer","тежок"],["einfach","лесен"],["teuer","скап"],["billig","евтин"],["richtig","точно"],["falsch","погрешно"],["müde","уморен"],["hungrig","гладен"],["glücklich","среќен"],["krank","болен"],["#Natur & Tiere"],["Sonne","сонце"],["Mond","месечина"],["Regen","дожд"],["Schnee","снег"],["Wind","ветер"],["Baum","дрво"],["Berg","планина"],["See","езеро"],["Meer","море"],["Hund","куче"],["Katze","мачка"],["Auto","автомобил"],["Zug","воз"],["Bus","автобус"],["Telefon","телефон"],["Geld","пари"],["Buch","книга"],["Tisch","маса"],["Stuhl","стол"],["Tür","врата"],["Fenster","прозорец"],["Schlüssel","клуч"],["Name","име"],["Wort","збор"],["Sprache","јазик"],["Zeit","време"],["Liebe","љубов"],["#Grundwortschatz"],["was","што"],["wer","кој"],["wo","каде"],["wann","кога"],["warum","зошто"],["wie","како"],["wie viel","колку"],["#Körper & Arzt"],["Kopf","глава"],["Hand","рака"],["Bein","нога"],["Auge","око"],["Herz","срце"],["Mund","уста"],["Ohr","уво"],["Nase","нос"],["#Adjektive & Kleinwörter"],["rot","црвен"],["blau","син"],["grün","зелен"],["gelb","жолт"],["schwarz","црн"],["weiss","бел"],["links","лево"],["rechts","десно"],["geradeaus","право"],["hier","овде"],["dort","таму"],["und","и"],["oder","или"],["aber","но"],["mit","со"],["ohne","без"]];
@@ -513,7 +495,7 @@ function switchPair(id){
   else $('pairList').value=pairId;
 }
 targets.forEach(function(code,i){
-  $('pairList').add(new Option(languageName(code),pairList[i]));
+  $('pairList').add(new Option(languageName(code)+' ↔ '+languageName('mk'),pairList[i]));
 });
 $('pairList').value=pairId;
 $('pairList').onchange=function(){switchPair(this.value)};
@@ -694,7 +676,7 @@ function displayGrade(ok,u){
   var inp=$('tin');
   const hint=!ok&&curMode==='type'?spellingHint(tcur,u):'';
   $('type').className='screen on '+(ok?'ok':hint?'near':'bad');
-  $('tfb').textContent=ui(ok?'correct':hint||'wrong');
+  ratingText($('tfb'),ui(ok?'correct':hint||'wrong'));
   $('tans').textContent=tcur.a;
   $('tmine').textContent=(!ok&&u.trim())?ui('yourAnswer',u.trim()):'';
   if(hint)markSpellingDifference(tcur.a,u,hint);
@@ -718,7 +700,7 @@ function showStats(){
     d.className='srow';
     const name=document.createElement('span'),value=document.createElement('span');
     name.className='sname';name.textContent=categoryName(key);
-    value.className='sval';value.textContent='✓ '+score[0]+'  ✗ '+score[1]+'  '+Math.round(score[0]*100/(score[0]+score[1]))+'%';
+    value.className='sval';ratingText(value,'✓ '+score[0]+'  ✗ '+score[1]+'  '+Math.round(score[0]*100/(score[0]+score[1]))+'%');
     d.appendChild(name);d.appendChild(value);
     if(action){d.type='button';d.onclick=()=>go(key)}
     box.appendChild(d);
@@ -1032,7 +1014,7 @@ function doSearch(){
   if(!found.length)box.textContent=ui('noHits');
 }
 $('bsearch').onclick=function(){$('sq').value='';$('sres').innerHTML='';show('search')};$('sq').oninput=doSearch;$('back8').onclick=function(){show('menu')};
-$('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){show('menu')};
+$('bbackup').onclick=function(){$('bkmsg').textContent='';$('bk').value='';show('backup')};$('back9').onclick=function(){goBack('menu')};
 $('retrySave').onclick=trainingStorage.retry;
 $('feedbackMenu').onclick=function(){openWordReport(null)};
 $('reportKind').onchange=function(){updateReportPlaceholder();saveFeedbackDraft()};
@@ -1124,7 +1106,7 @@ $('bkimp').onclick=function(){
 };
 // Zusätzliche Funktionen für die Weitergabe an Freunde
 $('voiceLater').onclick=function(){save('vt_voice_prompt',true);rlabel();show('modes')};
-$('voiceNow').onclick=function(){save('vt_voice_prompt',true);show('menu');$('speechMenu').open=true;refreshDeviceVoices();$('voiceList').firstElementChild?.focus()};
+$('voiceNow').onclick=function(){save('vt_voice_prompt',true);$('settingsOpen').onclick();$('speechMenu').open=true;refreshDeviceVoices();$('voiceList').firstElementChild?.focus()};
 $('settingsOpen').onclick=function(){
   $('soundToggle').checked=load('vt_sound',true);$('vibToggle').checked=load('vt_vibration',true);
   $('vibToggle').disabled=typeof navigator.vibrate!=='function';
@@ -1141,13 +1123,13 @@ if(!load(onboardingKey,false)){show('welcome',{noHistory:true});}
 $('welcomeOk').onclick=function(){save(onboardingKey,true);show('menu',{noHistory:true});maybeDailyUpdate();};
 $('bhelp').onclick=function(){show('info')};
 $('bprivacy').onclick=function(){show('info')};
-$('backInfo').onclick=$('backInfo2').onclick=function(){show('menu')};
+$('backInfo').onclick=$('backInfo2').onclick=function(){goBack('menu')};
 $('bdayword').onclick=function(){
   var d=new Date(),stamp=d.getFullYear()*1000+Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/86400000);
   var available=ALL.length?ALL:mine;var w=available.length?available[stamp%available.length]:[ui('empty'),ui('addFirst')];$('daySpeak').disabled=!available.length;
   $('dayDate').textContent=d.toLocaleDateString(menuLocale);$('dayGerman').textContent=w[0];$('dayMacedonian').textContent=w[1];show('wordday');
 };
-$('backDay').onclick=function(){show('menu')};
+$('backDay').onclick=function(){goBack('menu')};
 $('daySpeak').onclick=function(){speakAll([$('dayGerman').textContent,$('dayMacedonian').textContent],true)};
 $('bexam').onclick=function(){curMode='type';rlen=20;save('vt_rlen',rlen);rlabel();buildCats();show('cats');$('mmsg').textContent=ui('exam')};
 function updateAppStatus(){

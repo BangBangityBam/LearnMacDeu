@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=51;
+const appVersion=52;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
