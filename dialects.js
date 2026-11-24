@@ -1,18 +1,35 @@
 // Each entry links an attested local spelling to a specific sense in the glossary.
 // Regional examples are not mechanical spelling rules.
 const dialects = {
-  dl:['Delčevski','Делчевски',{надвор:'вонка',куќа:'кашча',шпорет:'кофтор',врапче:'џингар',тоа:'това',зборувам:'думам'}],
-  ku:['Kumanovski','Кумановски',{трева:'трава',рака:'рука',пат:'пут',волк:'вук',каде:'куде',торби:'торбе'}],
+  sm:['Strumički','Струмички',{јас:'јазе',ти:'тизе',зарем:'мер',летна:'фркна',домати:'френки',пиперки:'чушки',стомак:'курем',трошка:'ронка',надвор:'вонка',грав:'фасуљ',саксија:'цреп'}],
+  be:['Berovski','Беровски',{виљушка:'бунела',јаглен:'ваглен',длабок:'дебок',тој:'он',сум:'сам'}],
+  kp:['Krivopalanečki','Кривопаланечки',{јас:'ја',тој:'он',таа:'она',рака:'рука',пат:'пут',трева:'трава',во:'у',зборува:'зборуе',мравка:'брабинок',мравјалник:'брабинарник',скакулец:'скачка',стапица:'клуса',мисирка:'курка',мачор:'марок',раскрсница:'раскрсница'}],
+  dl:['Delčevski','Делчевски',{надвор:'вонка',куќа:'кашча',шпорет:'кофтор',врапче:'џингар',нели:'еле',свеќи:'свешча',влегувам:'флазам',тоа:'това',зборувам:'думам'}],
+  ku:['Kumanovski','Кумановски',{трева:'трава',рака:'рука',пат:'пут',волк:'вук',каде:'куде',торби:'торбе',тој:'он',јас:'ја',кога:'к’т',сега:'с’к',со:'сас',никогаш:'никад'}],
   te:['Tetovski','Тетовски',{јаболко:'јабука',трева:'трава',орев:'орав',пат:'пут',јаже:'јуже',многу:'млогу'}],
   pb:['Prilepsko-bitolski','Прилепско-битолски',{рака:'рака',фустан:'вустан',внатре:'натре',многу:'ногу'}],
-  oh:['Ohridski','Охридски',{братучед:'брачед',пат:'път',врба:'върба',прсти:'пърсти',дрво:'дърво',волна:'вълна',жолто:'жълто',солза:'сълза',цвет:'цут'}],
-  st:['Struški','Струшки',{цвет:'цут',сега:'сеа',луѓе:'луџе',јас:'јаска',чевли:'кондури',лубеница:'карпуз',диња:'пипун',пат:'път',врба:'върба',прсти:'пърсти',дрво:'дърво',волна:'вълна',жолто:'жълто',солза:'сълза'}],
-  go:['Gostivarski','Гостиварски',{куќа:'куча',цвет:'цут',цена:'цена',пат:'път',врба:'върба',прсти:'пърсти',дрво:'дърво',волна:'вълна',жолто:'жълто',солза:'сълза','тој пишува':'тој пишуват'}],
-  db:['Debarski','Дебарски',{рака:'рока',крв:'корв',пат:'път',врба:'върба',прсти:'пърсти',дрво:'дърво',волна:'вълна',жолто:'жълто',солза:'сълза'}],
-  sv:['Skopsko-veleški','Скопско-велешки',{страв:'страв',човек:'човек',куќа:'куќа',рака:'ръка',во:'у',тие:'тија'}],
-  re:['Gornoprespanski (Resen)','Горнопреспански (Ресен)',{знаеме:'знеме',пат:'път',врба:'върба',прсти:'пърсти',дрво:'дърво',волна:'вълна',жолто:'жълто',солза:'сълза',рака:'ръка'}]
+  oh:['Ohridski','Охридски',{братучед:'брачед',пат:'п’т',врба:'в’рба',прсти:'п’рсти',дрво:'д’рво',волна:'в’лна',жолто:'ж’лто',солза:'с’лза',цвет:'цут'}],
+  st:['Struški','Струшки',{цвет:'цут',сега:'сеа',луѓе:'луџе',јас:'јаска',чевли:'кондури',лубеница:'карпуз',диња:'пипун',пат:'п’т',врба:'в’рба',прсти:'п’рсти',дрво:'д’рво',волна:'в’лна',жолто:'ж’лто',солза:'с’лза'}],
+  go:['Gostivarski','Гостиварски',{куќа:'куча',цвет:'цут',цена:'цена',пат:'п’т',врба:'в’рба',прсти:'п’рсти',дрво:'д’рво',волна:'в’лна',жолто:'ж’лто',солза:'с’лза','тој пишува':'тој пишуват'}],
+  db:['Debarski','Дебарски',{рака:'рока',крв:'корв',пат:'п’т',врба:'в’рба',прсти:'п’рсти',дрво:'д’рво',волна:'в’лна',жолто:'ж’лто',солза:'с’лза'}],
+  sv:['Skopsko-veleški','Скопско-велешки',{страв:'страв',човек:'човек',куќа:'куќа',рака:'р’ка',во:'у',тие:'тија'}],
+  re:['Gornoprespanski (Resen)','Горнопреспански (Ресен)',{знаеме:'знеме',пат:'п’т',врба:'в’рба',прсти:'п’рсти',дрво:'д’рво',волна:'в’лна',жолто:'ж’лто',солза:'с’лза',рака:'р’ка'}]
 };
 const dialectGlosses = {
+  мравка:['Ameise','ant','formica','fourmi'],
+  мравјалник:['Ameisenhaufen','anthill','formicaio','fourmilière'],скакулец:['Heuschrecke','grasshopper','cavalletta','sauterelle'],
+  стапица:['Falle','trap','trappola','piège'],мисирка:['Truthenne','turkey hen','tacchina','dinde'],
+  мачор:['Kater','tomcat','gatto maschio','chat mâle'],раскрсница:['Kreuzung','crossroads','incrocio','carrefour'],
+  домати:['Tomaten','tomatoes','pomodori','tomates'],пиперки:['Paprikaschoten','peppers','peperoni','poivrons'],
+  стомак:['Bauch','belly','pancia','ventre'],трошка:['Krümel','crumb','briciola','miette'],грав:['Bohnen','beans','fagioli','haricots'],
+  саксија:['Blumentopf','flowerpot','vaso da fiori','pot de fleurs'],нели:['nicht wahr','isn’t that so','non è vero','n’est-ce pas'],
+  свеќи:['Kerzen','candles','candele','bougies'],влегувам:['ich trete ein','I enter','io entro','j’entre'],
+  кога:['wann','when','quando','quand'],со:['mit','with','con','avec'],никогаш:['niemals','never','mai','jamais'],
+  ти:['du','you (singular)','tu','tu'],зарем:['etwa (in einer Frage)','really (in a question)','forse (in una domanda)','vraiment (dans une question)'],
+  летна:['flog los','flew off','prese il volo','prit son envol'],виљушка:['Gabel','fork','forchetta','fourchette'],
+  јаглен:['Kohle','coal','carbone','charbon'],длабок:['tief','deep','profondo','profond'],
+  тој:['er','he','lui','il'],таа:['sie (Einzahl)','she','lei','elle'],сум:['ich bin','I am','io sono','je suis'],
+  зборува:['spricht','speaks','parla','parle'],
   надвор:['draußen','outside','fuori','dehors'],куќа:['Haus','house','casa','maison'],
   шпорет:['Küchenherd','cooking stove','cucina a fornelli','cuisinière'],врапче:['Spatz','sparrow','passero','moineau'],
   тоа:['das da','that','quello','cela'],зборувам:['ich spreche','I speak','io parlo','je parle'],
@@ -43,28 +60,73 @@ function dialectName(id){return dialects[id][menuLocale==='mk'?1:0]}
 function progressKey(word){return word.progressKey || word[0]}
 function dialectNote(word){
   if(!dialectId || !word.status)return '';
-  return ' · '+dialectText({fallback:'missing',same:'same',different:'forms'}[word.status]);
+  return ' · '+dialectText({fallback:'missing',same:'same',different:'forms'}[word.status])+(word.site?' · '+word.site:'');
 }
+const atlasSites={go:'Вруток',te:'Теарце',sv:'Ракотинци',oh:'Пештани',pb:'Дихово',be:'Берово'};
 function buildDialectDeck(){
-  const local=dialects[dialectId][2], mkSide=codes.indexOf('mk'), counts=new Set();
+  const local={...dialects[dialectId][2]}, glosses={...dialectGlosses};
+  const fromAtlas=new Set();
+  for(const [standard,translations,sites] of atlasVocabulary){
+    if(!Object.hasOwn(sites,dialectId) || Object.hasOwn(local,standard))continue;
+    local[standard]=sites[dialectId];glosses[standard]=translations;fromAtlas.add(standard);
+  }
+  const mkSide=codes.indexOf('mk'), counts=new Set();
   const foreignColumn=targets.indexOf(partner);
   function project(row){
     const standard=row[mkSide], key=catalogKey(standard), foreign=row[1-mkSide];
-    const known=Object.hasOwn(local,key) && (partner==='mk' || catalogKey(foreign)===catalogKey(dialectGlosses[key][foreignColumn]));
+    const known=Object.hasOwn(local,key) && (partner==='mk' || catalogKey(foreign)===catalogKey(glosses[key][foreignColumn]));
     const word=[partner==='mk'?standard:foreign,known?local[key]:standard,row[2]];
     word.progressKey='base:'+row[0];
+    word.standard=standard;word.partnerGloss=foreign;
     word.status=known?(local[key]===key?'same':'different'):'fallback';
-    if(known)counts.add(key);
+    if(known){counts.add(key);if(fromAtlas.has(key))word.site=atlasSites[dialectId]}
     return word;
   }
   ALL=ALL.map(project);
   for(const [category,deck] of categoryDecks)categoryDecks.set(category,deck.map(project));
   for(const [key,form] of Object.entries(local)){
     if(counts.has(key))continue;
-    const word=[partner==='mk'?key:dialectGlosses[key][foreignColumn],form,'Grundwortschatz'];
+    const word=[partner==='mk'?key:glosses[key][foreignColumn],form,'Grundwortschatz'];
     word.status=key===form?'same':'different';
     word.progressKey='form:'+key;
+    word.standard=key;word.partnerGloss=glosses[key][partner==='mk'?1:foreignColumn];
+    if(fromAtlas.has(key))word.site=atlasSites[dialectId];
     ALL.push(word);categoryDecks.get(word[2]).push(word);
+  }
+}
+function addLocalReadings(){
+  const column=partner==='mk'?1:targets.indexOf(partner);
+  const entries=new Map(localityVocabulary.filter(row=>row[2][dialectId]).map(([key,translations,sites])=>[key,{
+    translation:translations[column], readings:sites[dialectId], cards:new Map(), answers:new Set()
+  }]));
+  function bind(word,global){
+    const entry=entries.get(catalogKey(word.standard));
+    if(!entry || catalogKey(word.partnerGloss)!==catalogKey(entry.translation))return;
+    if(global)entry.cards.set(progressKey(word),word);
+    const primary=entry.readings[0];
+    if(word.status==='fallback'){
+      word[1]=primary[0];word.site=primary[1];
+      word.status=catalogKey(primary[0])===catalogKey(word.standard)?'same':'different';
+    }
+    entry.answers.add(word[1]);
+    word.dialectAnswers=entry.answers;
+  }
+  ALL.forEach(word=>bind(word,true));
+  for(const deck of categoryDecks.values())deck.forEach(word=>bind(word,false));
+  for(const [standard,entry] of entries){
+    const represented=new Set(Array.from(entry.cards.values(),card=>catalogKey(card[1])));
+    const exemplar=entry.cards.values().next().value;
+    const category=exemplar?exemplar[2]:'Grundwortschatz';
+    for(const [form,site] of entry.readings){
+      entry.answers.add(form);
+      if(catalogKey(form)===standard || represented.has(catalogKey(form)))continue;
+      represented.add(catalogKey(form));
+      const word=[partner==='mk'?standard:entry.translation,form,category];
+      word.progressKey='local:'+standard+':'+form;
+      word.standard=standard;word.partnerGloss=entry.translation;
+      word.site=site;word.status='different';word.dialectAnswers=entry.answers;
+      ALL.push(word);categoryDecks.get(category).push(word);
+    }
   }
 }
 function setupDialectMenu(){

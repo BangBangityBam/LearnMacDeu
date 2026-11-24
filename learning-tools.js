@@ -1,5 +1,5 @@
 // Keep monotonically increasing build numbers for older installations and the worker.
-const appVersion=145;
+const appVersion=148;
 function releaseName(build){
   const sequence=build-45;
   return 'V.'+[Math.floor(sequence/10000),Math.floor(sequence/100)%100,sequence%100].map(n=>String(n).padStart(2,'0')).join('.');
@@ -79,8 +79,7 @@ function editAnswer(text,backspace=false){
 }
 function setupAlphabet(){
   const box=$('alphabetKeys');
-  const bottom=dialectId && Object.values(dialects[dialectId][2]).some(form=>form.includes('ъ'))?'зџцвбнмжъ':'зџцвбнмж';
-  ['љњертѕуиопшѓ','асдфгхјклчќ',bottom].forEach((row,index)=>{
+  ['љњертѕуиопшѓ','асдфгхјклчќ','зџцвбнмж'].forEach((row,index)=>{
     Array.from(row).forEach((letter,col)=>{
       const b=document.createElement('button');b.type='button';b.textContent=letter;
       b.style.gridRow=String(index+1);b.style.gridColumn=(13-row.length+2*col)+' / span 2';
@@ -89,7 +88,9 @@ function setupAlphabet(){
       box.appendChild(b);
     });
   });
-  $('alphabetSpace').onmousedown=$('alphabetDelete').onmousedown=e=>e.preventDefault();
+  $('alphabetApostrophe').setAttribute('aria-label',['Apostrophe','Апостроф','Apostroph','Apostrofo','Apostrophe'][localeIndex]);
+  $('alphabetApostrophe').onclick=()=>editAnswer('’');
+  $('alphabetApostrophe').onmousedown=$('alphabetSpace').onmousedown=$('alphabetDelete').onmousedown=e=>e.preventDefault();
   $('alphabetSpace').onclick=()=>editAnswer(' ');
   $('alphabetDelete').onclick=()=>editAnswer('',true);
   $('alphabetToggle').onclick=()=>{
